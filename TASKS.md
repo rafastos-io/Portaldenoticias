@@ -166,4 +166,4 @@ O executor sempre escolhe a tarefa P0 `READY` de menor número cujas dependênci
 
 Ao concluir uma tarefa, atualizar para `DONE` e trocar dependentes de `BLOCKED` para `READY` quando todas as dependências estiverem concluídas e nenhuma decisão externa faltar.
 
-T013 permanece bloqueada até a rotação da secret exposta no working tree, a confirmação do remoto GitHub e a autenticação da Vercel.
+T013 permanece bloqueada até a rotação da secret exposta no working tree e a autenticação da Vercel. O remoto GitHub foi confirmado e a implementação está publicada na PR `#1`.

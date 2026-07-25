@@ -8,8 +8,8 @@ Atualizado em: 25/07/2026.
 - recorte MVP-0: concluído;
 - auditoria independente da documentação: aprovada, sem bloqueios P0/P1;
 - aplicação: scaffold, estrutura visual e gate ADM aprovados;
-- Git: repositório local existente; scaffold ainda não commitado e remoto preexistente não alterado;
-- GitHub: conta `rafastos-io` autenticada;
+- Git: repositório local limpo; implementação commitada e sincronizada com a branch remota;
+- GitHub: implementação publicada em `rafastos-io/Portaldenoticias`, branch `agent/mvp0-specification`, PR draft `#1` aberta para `main`;
 - Supabase: projeto definitivo `Portaldenoticias` (`yhatwpxsxntlorfgxpdl`), `us-east-2`, Postgres 17, ativo e saudável;
 - Vercel: conector não disponível; CLI instalada, mas sessão/token inválido;
 - tarefa concluída: `T001`;
@@ -28,9 +28,8 @@ Atualizado em: 25/07/2026.
 
 ## Bloqueios externos
 
-1. Confirmar se o remoto GitHub preexistente `rafastos-io/Portaldenoticias` é o destino correto antes de qualquer push.
-2. Autenticar novamente a Vercel antes do deploy.
-3. Rotacionar a `SUPABASE_SECRET_KEY` no Supabase antes do deploy e configurar a nova chave na Vercel; o valor atual apareceu temporariamente em `.env.example` no working tree, mas a varredura confirmou zero ocorrências em arquivos rastreados e no histórico Git.
+1. Autenticar novamente a Vercel antes do deploy.
+2. Rotacionar a `SUPABASE_SECRET_KEY` no Supabase antes do deploy e configurar a nova chave na Vercel; o valor atual apareceu temporariamente em `.env.example` no working tree, mas a varredura confirmou zero ocorrências em arquivos rastreados e no histórico Git.
 
 ## Evidências de implementação
 
@@ -232,4 +231,4 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Desbloquear `T013`: rotacionar a secret Supabase, confirmar o remoto GitHub e autenticar a Vercel. Depois, configurar as variáveis no destino, executar o deploy e validar o preview.
+Desbloquear `T013`: rotacionar a secret Supabase e autenticar a Vercel. Depois, configurar as variáveis no destino, executar o deploy e validar o preview.
