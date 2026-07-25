@@ -104,9 +104,9 @@ Não implementar:
 - escrita direta por `anon` bloqueada;
 - migrations e seed no repositório;
 - Storage com buckets e políticas aplicadas por migration e testadas;
-- projeto definitivo ainda precisa ser escolhido.
+- projeto definitivo: `Portaldenoticias` (`yhatwpxsxntlorfgxpdl`), região `us-east-2`.
 
-Existe um projeto Supabase disponível na conta, chamado `rafastos-io's Project`, em São Paulo e atualmente inativo. Ele não foi alterado nem escolhido automaticamente.
+O projeto foi criado e escolhido explicitamente pelo responsável em 25/07/2026. O projeto anterior `rafastos-io's Project` permanece inativo e fora do escopo.
 
 ## Vercel
 

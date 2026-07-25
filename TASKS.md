@@ -6,18 +6,18 @@ O executor sempre escolhe a tarefa P0 `READY` de menor número cujas dependênci
 
 | ID | Pri. | Estado | Dependências | Entrega |
 |---|---|---|---|---|
-| T001 | P0 | READY | - | Scaffold Next.js/TypeScript/Tailwind/pnpm e checks |
-| T002 | P0 | BLOCKED | T001 | Estrutura visual base, design tokens e shell público/admin |
-| T003 | P0 | BLOCKED | T001 | Vincular projeto Supabase definitivo e criar migrations |
-| T004 | P0 | BLOCKED | T003 | Seed idempotente com 3 marcas e 24 matérias |
-| T005 | P0 | BLOCKED | T001 | Gate ADM `USER / User123`, cookie e logout |
-| T006 | P0 | BLOCKED | T003,T005 | CMS: listar, criar, editar, publicar, pausar e retomar |
-| T007 | P0 | BLOCKED | T002,T004 | Portal público: home, editoria e matéria |
-| T008 | P0 | BLOCKED | T002,T003,T004,T005 | Central white-label: tokens, variantes e preview |
-| T009 | P0 | BLOCKED | T004,T007,T008 | Três tenants visualmente distintos |
-| T010 | P0 | BLOCKED | T004,T007 | Rota JSON demo com `demo: true` |
-| T011 | P0 | BLOCKED | T005,T006,T008 | Auditoria mínima com ator `demo-operator` |
-| T012 | P0 | BLOCKED | T006,T007,T008 | QA desktop/mobile, acessibilidade e estados |
+| T001 | P0 | DONE | - | Scaffold Next.js/TypeScript/Tailwind/pnpm e checks |
+| T002 | P0 | DONE | T001 | Estrutura visual base, design tokens e shell público/admin |
+| T003 | P0 | DONE | T001 | Vincular projeto Supabase definitivo e criar migrations |
+| T004 | P0 | DONE | T003 | Seed idempotente com 3 marcas e 24 matérias |
+| T005 | P0 | DONE | T001 | Gate ADM `USER / User123`, cookie e logout |
+| T006 | P0 | DONE | T003,T005 | CMS: listar, criar, editar, publicar, pausar e retomar |
+| T007 | P0 | DONE | T002,T004 | Portal público: home, editoria e matéria |
+| T008 | P0 | DONE | T002,T003,T004,T005 | Central white-label: tokens, variantes e preview |
+| T009 | P0 | DONE | T004,T007,T008 | Três tenants visualmente distintos |
+| T010 | P0 | DONE | T004,T007 | Rota JSON demo com `demo: true` |
+| T011 | P0 | DONE | T005,T006,T008 | Auditoria mínima com ator `demo-operator` |
+| T012 | P0 | DONE | T006,T007,T008 | QA desktop/mobile, acessibilidade e estados |
 | T013 | P0 | BLOCKED | T009,T010,T011,T012 | Build final, variáveis e deploy Vercel |
 | T014 | P0 | BLOCKED | T013 | Auditoria final independente e handoff |
 
@@ -166,4 +166,4 @@ O executor sempre escolhe a tarefa P0 `READY` de menor número cujas dependênci
 
 Ao concluir uma tarefa, atualizar para `DONE` e trocar dependentes de `BLOCKED` para `READY` quando todas as dependências estiverem concluídas e nenhuma decisão externa faltar.
 
-T003 permanece bloqueada até o usuário escolher o projeto Supabase existente ou autorizar a criação de um projeto específico.
+T013 permanece bloqueada até a rotação da secret exposta no working tree, a confirmação do remoto GitHub e a autenticação da Vercel.

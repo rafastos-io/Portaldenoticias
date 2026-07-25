@@ -133,8 +133,8 @@ Cada seed deve conter título, linha fina abaixo, corpo demonstrativo com 4 a 7 
 Além do tenant principal:
 
 - DEMO-001, 003 e 006 aparecem em Atlas;
-- DEMO-006, 017 e 020 aparecem em Horizonte;
-- DEMO-010, 011 e 019 aparecem em Lúmen;
+- DEMO-017 e 020 também aparecem em Horizonte; DEMO-006 já tem Horizonte como tenant principal;
+- DEMO-010 e 011 também aparecem em Lúmen; DEMO-019 já tem Lúmen como tenant principal;
 - títulos distribuídos podem receber chamadas diferentes, sem duplicar a revisão canônica.
 
 ## Estados e casos obrigatórios
