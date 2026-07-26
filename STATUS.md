@@ -26,15 +26,14 @@ Atualizado em: 26/07/2026.
 - tarefa concluída: `T010`;
 - tarefa concluída: `T011`;
 - tarefa concluída: `T012`;
-- tarefa `T013`: em andamento para corrigir/republicar o login;
-- tarefa `T014`: bloqueada até a reverificação publicada;
+- tarefa concluída: `T013`;
+- tarefa concluída: `T014`;
 - Ciclo 2: documentação `docs/17` a `docs/21` e prompt operacional criados.
+- próxima tarefa executável: `C202`.
 
 ## Bloqueios externos
 
-Nenhum bloqueio de acesso ativo. Antes de fechar `T013`, ainda é obrigatório
-publicar a correção em Preview, executar o smoke e promover/reverificar
-Production.
+Nenhum bloqueio externo ativo.
 
 O incidente histórico da secret exposta apenas no working tree continua
 registrado. A varredura anterior confirmou zero ocorrências rastreadas; qualquer
@@ -60,20 +59,20 @@ deploy novo deve repetir a verificação do bundle.
 - causa: `x-forwarded-host` era priorizado e o `host`/alias público ficava fora
   da lista de origens exatas.
 
-### Correção local
+### Correção final
 
-- a origem agora é comparada com `host` e `x-forwarded-host`;
-- aliases exatos de `VERCEL_PROJECT_PRODUCTION_URL` e `VERCEL_URL` são aceitos;
-- quando a Vercel não entrega `Origin` à Server Action, a mutação só é aceita
-  com `Sec-Fetch-Site: same-origin`; ausente ou `cross-site` continua recusado;
-- origem externa continua recusada;
-- placeholders que começam com `replace-with-` são recusados como segredo;
-- Next Server Actions recebem aliases exatos adicionais, sem wildcard;
-- teste focado: 10 casos aprovados;
-- lint e typecheck aprovados;
-- browser local: login redirecionou para `/admin`;
-- `/api/admin/session` retornou ator `demo-operator` e `demo=true`;
-- logout retornou para `/admin/login`.
+- a validação CSRF duplicada foi removida depois que os Previews mostraram que
+  aliases protegidos podem chegar à aplicação com host e Fetch Metadata
+  reescritos pela Vercel;
+- a proteção nativa dos Server Actions permanece ativa com `allowedOrigins`
+  exatos e sem wildcard;
+- o login exige token HMAC de finalidade específica, emitido por request e
+  válido por 15 minutos;
+- sessão HMAC de 4 horas, cookie `HttpOnly`, `SameSite=Strict`, `Secure` na
+  Vercel e rate limit de 5 tentativas em 10 minutos permanecem ativos;
+- placeholders que começam com `replace-with-` continuam recusados como
+  segredo;
+- todas as mutações administrativas revalidam a sessão no servidor.
 
 ### Primeiro Preview do reparo
 
@@ -84,6 +83,21 @@ deploy novo deve repetir a verificação do bundle.
 - a primeira versão continuou recusando o login e não foi promovida;
 - a defesa foi ajustada para o fallback restrito de `Sec-Fetch-Site`;
 - teste focado ampliado para 11 casos.
+
+### Fechamento publicado de T013/T014
+
+- commit promovido: `fb312ba`;
+- Preview validado: `dpl_FvQf45QTuUpZ9n8CdwisqBoBXcw5`;
+- Production promovida: `dpl_APNGiVduwMjLmgsoTq7sTzGog6AF`;
+- URL pública: `https://portaldenoticias-five.vercel.app`;
+- login `USER / User123` redirecionou para `/admin`;
+- `/api/admin/session` autenticada retornou `demo-operator` e `demo=true`;
+- Conteúdo, Identidade visual e Trilha de auditoria carregaram sem erro;
+- logout retornou para `/admin/login`;
+- após logout, `/api/admin/session` retornou `unauthorized`;
+- `pnpm check`: lint, tipos, 52 testes e build aprovados;
+- auditoria independente do commit final: aprovada sem P0/P1;
+- advisor de segurança do Supabase: zero alertas.
 
 ### Evidências visuais
 
@@ -142,7 +156,8 @@ independente de `T014`. O `pnpm check` final já passou com 53 testes.
 - sessão stateless assinada por HMAC-SHA256, duração de 4 horas e ator `demo-operator`;
 - cookie `HttpOnly`, `SameSite=Strict`, `Secure` em produção/Vercel, `Path=/`, `maxAge` e prioridade alta;
 - `/admin` protegido em layout dinâmico; actions e Route Handler revalidam a sessão no servidor;
-- mutações validam `Origin` contra host/protocolo ou `NEXT_PUBLIC_APP_URL`;
+- Server Actions usam a proteção CSRF nativa do Next com aliases exatos;
+- login usa token HMAC curto e específico, além da validação nativa;
 - rate limit simples por endereço: 5 tentativas em 10 minutos, com armazenamento limitado por processo;
 - login com erro acessível, logout e aviso permanente de autenticação real desativada;
 - `pnpm check`: lint, typecheck, 10 testes e build concluídos;
@@ -193,7 +208,7 @@ independente de `T014`. O `pnpm check` final já passou com 53 testes.
 
 - tela protegida lista e filtra matérias pelo `owner_tenant_id` do tenant selecionado, com estados vazio, carregando e erro de configuração;
 - formulários server-side criam rascunho e nova revisão, com validação de título, linha fina, corpo, UUIDs, autor e editoria;
-- actions revalidam cookie demonstrativo e origem antes de qualquer mutação;
+- actions revalidam a sessão demonstrativa no servidor antes de qualquer mutação;
 - transições aceitas: rascunho para publicado, publicado para pausado e pausado para publicado;
 - pausa exige motivo e confirmação explícita na interface e novamente no servidor;
 - RPCs transacionais usam `security invoker`, `search_path` vazio e `EXECUTE` exclusivo de `service_role`;
@@ -225,7 +240,7 @@ independente de `T014`. O `pnpm check` final já passou com 53 testes.
 ### T008 — central de identidade white-label
 
 - rota protegida `/admin/identidade` permite selecionar um tenant e editar nome/logo textual, slogan, cinco cores, tipografia e variantes aprovadas de cabeçalho, hero e cartões;
-- formulário e Server Action revalidam sessão demo, origem, UUID, limites de texto, cores hexadecimais, allowlists e contraste WCAG mínimo de 4,5:1;
+- formulário e Server Action revalidam sessão demo, UUID, limites de texto, cores hexadecimais, allowlists e contraste WCAG mínimo de 4,5:1;
 - JSONs persistidos também passam pelo parser seguro antes de chegar ao runtime; valores desconhecidos não são convertidos em estilos;
 - previews de 1440 px e 390 px usam iframes das próprias rotas públicas, garantindo o mesmo resolvedor, componentes e conteúdo do portal;
 - migration `add_cms_theme_update` atualiza transacionalmente apenas a versão vigente do tenant demo e grava `theme.updated` com ator `demo-operator`;
@@ -307,5 +322,5 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Concluir `T013`: publicar a correção em Preview, executar login/sessão/logout,
-promover Production e registrar URL, deployment, commit e evidências.
+Executar `C202`: transformar o smoke manual aprovado em verificação automatizada
+de Preview e Production, mantendo a promoção bloqueada quando o fluxo falhar.

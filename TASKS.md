@@ -18,8 +18,8 @@ O executor sempre escolhe a tarefa P0 `READY` de menor número cujas dependênci
 | T010 | P0 | DONE | T004,T007 | Rota JSON demo com `demo: true` |
 | T011 | P0 | DONE | T005,T006,T008 | Auditoria mínima com ator `demo-operator` |
 | T012 | P0 | DONE | T006,T007,T008 | QA desktop/mobile, acessibilidade e estados |
-| T013 | P0 | IN_PROGRESS | T009,T010,T011,T012 | Build final, variáveis, correção do login e deploy Vercel |
-| T014 | P0 | BLOCKED | T013 | Auditoria final independente e handoff |
+| T013 | P0 | DONE | T009,T010,T011,T012 | Build final, variáveis, correção do login e deploy Vercel |
+| T014 | P0 | DONE | T013 | Auditoria final independente e handoff |
 
 ## Fila do Ciclo 2
 
@@ -29,7 +29,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | ID | Pri. | Estado | Dependências | Entrega |
 |---|---|---|---|---|
 | C201 | P0 | DONE | - | Especificar escopo, variantes, QA e sistema de agentes |
-| C202 | P0 | BLOCKED | T013 | Smoke automatizado Preview/Production |
+| C202 | P0 | READY | T013 | Smoke automatizado Preview/Production |
 | C203 | P0 | BLOCKED | T014,C202 | Baseline visual/funcional aprovado para o Ciclo 2 |
 | C210 | P1 | BLOCKED | C203 | Contexto global de tenant no ADM |
 | C211 | P1 | BLOCKED | C210 | Workbench de identidade com preview vivo |
@@ -303,6 +303,6 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 
 Ao concluir uma tarefa, atualizar para `DONE` e trocar dependentes de `BLOCKED` para `READY` quando todas as dependências estiverem concluídas e nenhuma decisão externa faltar.
 
-T013 está em andamento: Vercel e Supabase estão acessíveis, o domínio público foi
-identificado e a falha de origem do login foi reproduzida e corrigida
-localmente. Falta publicar e reverificar antes de liberar T014/C202.
+T013 e T014 estão concluídas: login, sessão, páginas protegidas e logout foram
+reverificados em Preview e Production, e o auditor independente aprovou o commit
+final sem achados P0/P1. A próxima tarefa executável é C202.
