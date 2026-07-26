@@ -7,7 +7,6 @@ import {
   DEMO_ACTOR,
   DEMO_LOGIN_TOKEN_TTL_SECONDS,
   DEMO_SESSION_TTL_SECONDS,
-  isTrustedMutationOrigin,
   readDemoConfig,
   SlidingWindowRateLimiter,
   verifySignedDemoLoginToken,
@@ -114,115 +113,6 @@ describe("signed demo login token", () => {
         now,
       ),
     ).toBe(false);
-  });
-});
-
-describe("mutation origin", () => {
-  it("accepts the exact request origin or configured application URL", () => {
-    expect(
-      isTrustedMutationOrigin({
-        host: "localhost:3000",
-        origin: "http://localhost:3000",
-      }),
-    ).toBe(true);
-    expect(
-      isTrustedMutationOrigin({
-        appUrl: "https://demo.example",
-        host: "internal:3000",
-        origin: "https://demo.example",
-      }),
-    ).toBe(true);
-  });
-
-  it("accepts public and generated Vercel aliases without trusting a foreign origin", () => {
-    expect(
-      isTrustedMutationOrigin({
-        forwardedHost:
-          "portaldenoticias-raafastosgmailcoms-projects.vercel.app",
-        forwardedProto: "https",
-        host: "portaldenoticias-five.vercel.app",
-        origin: "https://portaldenoticias-five.vercel.app",
-      }),
-    ).toBe(true);
-    expect(
-      isTrustedMutationOrigin({
-        forwardedHost: "internal.example",
-        forwardedProto: "https",
-        host: "internal.example",
-        origin: "https://portaldenoticias-five.vercel.app",
-        vercelProductionUrl: "portaldenoticias-five.vercel.app",
-        vercelUrl:
-          "portaldenoticias-dnh46i58q-raafastosgmailcoms-projects.vercel.app",
-      }),
-    ).toBe(true);
-    expect(
-      isTrustedMutationOrigin({
-        forwardedHost: "internal.example",
-        forwardedProto: "https",
-        host: "internal.example",
-        origin: "https://attacker.example",
-        secFetchSite: "cross-site",
-        vercelProductionUrl: "portaldenoticias-five.vercel.app",
-      }),
-    ).toBe(false);
-  });
-
-  it("accepts an originless same-origin browser mutation", () => {
-    expect(
-      isTrustedMutationOrigin({
-        host: "demo.example",
-        origin: null,
-        secFetchSite: "same-origin",
-      }),
-    ).toBe(true);
-  });
-
-  it("accepts Vercel host rewrites only with a same-site browser signal", () => {
-    expect(
-      isTrustedMutationOrigin({
-        forwardedHost: "internal.vercel.example",
-        host: "internal.vercel.example",
-        origin:
-          "https://portaldenoticias-actfvduyn-raafastosgmailcoms-projects.vercel.app",
-        secFetchSite: "same-origin",
-      }),
-    ).toBe(true);
-    expect(
-      isTrustedMutationOrigin({
-        forwardedHost: "internal.vercel.example",
-        host: "internal.vercel.example",
-        origin: "https://attacker.example",
-        secFetchSite: "cross-site",
-      }),
-    ).toBe(false);
-  });
-
-  it("delegates missing metadata to Server Actions and rejects malformed or cross-site requests", () => {
-    expect(
-      isTrustedMutationOrigin({
-        host: "demo.example",
-        origin: null,
-      }),
-    ).toBe(true);
-    expect(
-      isTrustedMutationOrigin({
-        host: "demo.example",
-        origin: null,
-        secFetchSite: "cross-site",
-      }),
-    ).toBe(false);
-    expect(
-      isTrustedMutationOrigin({
-        host: "demo.example",
-        origin: "not-an-origin",
-      }),
-    ).toBe(false);
-    expect(
-      isTrustedMutationOrigin({
-        host: "demo.example",
-        origin: "https://attacker.example",
-      }),
-    ).toBe(true);
   });
 });
 

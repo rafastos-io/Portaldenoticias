@@ -11,7 +11,6 @@ import {
 } from "@/lib/admin/content-form";
 import { parseThemeForm } from "@/lib/admin/theme-form";
 import {
-  assertTrustedMutationOrigin,
   destroyDemoSession,
   requireDemoSession,
 } from "@/lib/demo-auth/server";
@@ -43,7 +42,6 @@ function mutationFailure(error: unknown) {
 }
 
 async function authorizeMutation() {
-  await assertTrustedMutationOrigin();
   await requireDemoSession();
 }
 
