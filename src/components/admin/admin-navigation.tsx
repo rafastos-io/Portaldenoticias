@@ -3,22 +3,35 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useActiveAdminTenant } from "@/components/admin/admin-tenant-controls";
+import {
+  adminHref,
+  type AdminTenant,
+} from "@/lib/admin/tenant-context";
+
 const items = [
-  { href: "/admin#conteudo", label: "Conteúdo", pathname: "/admin" },
+  { hash: "#conteudo", label: "Conteúdo", pathname: "/admin" },
   {
-    href: "/admin/identidade",
+    hash: "",
     label: "Identidades",
     pathname: "/admin/identidade",
   },
   {
-    href: "/admin/auditoria",
+    hash: "",
     label: "Auditoria",
     pathname: "/admin/auditoria",
   },
-];
+] as const;
 
-export function AdminNavigation() {
+export function AdminNavigation({
+  fallbackTenantId,
+  tenants,
+}: {
+  fallbackTenantId?: string;
+  tenants: AdminTenant[];
+}) {
   const pathname = usePathname();
+  const activeTenant = useActiveAdminTenant(tenants, fallbackTenantId);
 
   return (
     <nav
@@ -35,7 +48,11 @@ export function AdminNavigation() {
                 ? "block shrink-0 rounded-md bg-white/12 px-3 py-2.5 text-sm font-bold text-white no-underline"
                 : "block shrink-0 rounded-md px-3 py-2.5 text-sm font-semibold text-slate-300 no-underline hover:bg-white/8 hover:text-white"
             }
-            href={item.href}
+            href={
+              activeTenant
+                ? adminHref(item.pathname, activeTenant.id, item.hash)
+                : item.pathname
+            }
             key={item.label}
           >
             {item.label}

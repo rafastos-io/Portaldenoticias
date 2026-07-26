@@ -1,14 +1,21 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import type { TenantMutationState } from "@/components/admin/tenant-mutation-form";
 import {
   ContentFormError,
   parseEditorialForm,
   parseStatusForm,
   readUuid,
 } from "@/lib/admin/content-form";
+import {
+  ADMIN_TENANT_COOKIE,
+  assessTenantMutationContext,
+  safeAdminReturnPath,
+} from "@/lib/admin/tenant-context";
 import { parseThemeForm } from "@/lib/admin/theme-form";
 import {
   destroyDemoSession,
@@ -16,6 +23,7 @@ import {
 } from "@/lib/demo-auth/server";
 import {
   createAdminContent,
+  listAdminTenants,
   setAdminContentStatus,
   updateAdminContent,
 } from "@/lib/supabase/content-repository";
@@ -41,8 +49,50 @@ function mutationFailure(error: unknown) {
   return "Não foi possível concluir a alteração. Revise os dados e tente novamente.";
 }
 
-async function authorizeMutation() {
+async function authorizeMutation(formData?: FormData) {
   await requireDemoSession();
+
+  if (!formData) return null;
+
+  const tenants = await listAdminTenants();
+  const targetTenantId = String(formData.get("tenantId") ?? "") || undefined;
+  const contextTenantId =
+    String(formData.get("contextTenantId") ?? "") || undefined;
+  const confirmedTenantId =
+    String(formData.get("confirmTenantMismatch") ?? "") || undefined;
+  const cookieStore = await cookies();
+  const assessment = assessTenantMutationContext({
+    activeCookieTenantId: cookieStore.get(ADMIN_TENANT_COOKIE)?.value,
+    allowedTenantIds: tenants.map((tenant) => tenant.id),
+    confirmedTenantId,
+    contextTenantId,
+    targetTenantId,
+  });
+
+  if (assessment.ok) return null;
+
+  if (assessment.kind === "confirmation") {
+    const tenant = tenants.find((item) => item.id === assessment.tenantId);
+    if (!tenant) {
+      return {
+        message:
+          "O contexto informado não é válido. Recarregue a página antes de tentar novamente.",
+        status: "error",
+      } satisfies TenantMutationState;
+    }
+    return {
+      message: `A operação foi aberta em ${tenant.display_name}, mas o seletor global aponta para outro tenant. Nenhuma alteração foi executada.`,
+      status: "confirmation",
+      tenantId: tenant.id,
+      tenantName: tenant.display_name,
+    } satisfies TenantMutationState;
+  }
+
+  return {
+    message:
+      "O contexto informado não é válido. Recarregue a página antes de tentar novamente.",
+    status: "error",
+  } satisfies TenantMutationState;
 }
 
 export async function logoutAction() {
@@ -51,8 +101,39 @@ export async function logoutAction() {
   redirect("/admin/login");
 }
 
-export async function createContentAction(formData: FormData) {
+export async function switchTenantAction(formData: FormData) {
   await authorizeMutation();
+  const tenants = await listAdminTenants();
+  const tenantId = String(formData.get("tenantId") ?? "");
+  const selected = tenants.find((tenant) => tenant.id === tenantId);
+
+  if (!selected) {
+    redirect(
+      `/admin?error=${encodeURIComponent("Contexto de tenant inválido.")}`,
+    );
+  }
+
+  const cookieStore = await cookies();
+  cookieStore.set(ADMIN_TENANT_COOKIE, selected.id, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 30,
+    path: "/admin",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  const returnPath = safeAdminReturnPath(formData.get("returnTo"));
+  const url = new URL(returnPath, "https://broadcast.local");
+  url.searchParams.set("tenant", selected.id);
+  redirect(`${url.pathname}?${url.searchParams.toString()}`);
+}
+
+export async function createContentAction(
+  _state: TenantMutationState,
+  formData: FormData,
+): Promise<TenantMutationState> {
+  const authorization = await authorizeMutation(formData);
+  if (authorization) return authorization;
   let tenantId = "";
 
   try {
@@ -73,8 +154,12 @@ export async function createContentAction(formData: FormData) {
   redirect(adminLocation(tenantId, "success", "Rascunho criado."));
 }
 
-export async function updateContentAction(formData: FormData) {
-  await authorizeMutation();
+export async function updateContentAction(
+  _state: TenantMutationState,
+  formData: FormData,
+): Promise<TenantMutationState> {
+  const authorization = await authorizeMutation(formData);
+  if (authorization) return authorization;
   let tenantId = "";
 
   try {
@@ -97,11 +182,13 @@ export async function updateContentAction(formData: FormData) {
 }
 
 async function changeStatus(
+  _state: TenantMutationState,
   formData: FormData,
   status: "published" | "paused",
   success: string,
-) {
-  await authorizeMutation();
+): Promise<TenantMutationState> {
+  const authorization = await authorizeMutation(formData);
+  if (authorization) return authorization;
   let tenantId = "";
 
   try {
@@ -122,20 +209,33 @@ async function changeStatus(
   redirect(adminLocation(tenantId, "success", success));
 }
 
-export async function publishContentAction(formData: FormData) {
-  return changeStatus(formData, "published", "Matéria publicada.");
+export async function publishContentAction(
+  state: TenantMutationState,
+  formData: FormData,
+) {
+  return changeStatus(state, formData, "published", "Matéria publicada.");
 }
 
-export async function pauseContentAction(formData: FormData) {
-  return changeStatus(formData, "paused", "Matéria pausada.");
+export async function pauseContentAction(
+  state: TenantMutationState,
+  formData: FormData,
+) {
+  return changeStatus(state, formData, "paused", "Matéria pausada.");
 }
 
-export async function resumeContentAction(formData: FormData) {
-  return changeStatus(formData, "published", "Matéria retomada.");
+export async function resumeContentAction(
+  state: TenantMutationState,
+  formData: FormData,
+) {
+  return changeStatus(state, formData, "published", "Matéria retomada.");
 }
 
-export async function saveThemeAction(formData: FormData) {
-  await authorizeMutation();
+export async function saveThemeAction(
+  _state: TenantMutationState,
+  formData: FormData,
+): Promise<TenantMutationState> {
+  const authorization = await authorizeMutation(formData);
+  if (authorization) return authorization;
   let tenantId = "";
 
   try {

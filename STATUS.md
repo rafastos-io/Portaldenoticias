@@ -31,7 +31,7 @@ Atualizado em: 26/07/2026.
 - Ciclo 2: documentação `docs/17` a `docs/21` e prompt operacional criados.
 - tarefa concluída: `C202`;
 - tarefa concluída: `C203`;
-- próxima tarefa executável: `C210` (`P1`, `READY`);
+- tarefa em verificação: `C210` (`P1`);
 - nenhuma tarefa `P0` permanece pronta ou aberta.
 
 ## Bloqueios externos
@@ -184,6 +184,33 @@ Estado: `DONE`.
 - verificador independente e auditor adversarial aprovaram `C203` para `DONE`
   e `C210` para `READY`, sem P0;
 - evidências: `artifacts/c203-baseline-2026-07-26/`.
+
+## C210 — contexto global de tenant no ADM
+
+Estado: `VERIFY`.
+
+- cabeçalho administrativo concentra um único seletor de tenant ativo e link
+  para o portal correspondente;
+- query validada prevalece sobre cookie de contexto `HttpOnly`; tenant
+  ausente usa o default demonstrativo e query/cookie inválido falha fechado;
+- Conteúdo, Identidades e Auditoria preservam tenant e filtros sem seletores
+  locais duplicados;
+- queries e mutações continuam recebendo tenant explícito e validado no
+  servidor pela allowlist de tenants demo;
+- mutação aberta em A depois da troca global para B retorna confirmação antes
+  do repositório; adulteração é negada e confirmação explícita executa uma única
+  chamada;
+- navegador local: persistência entre as três áreas, slug público, filtro
+  `status=published`, contexto inválido, 390 px e 1440 px aprovados, sem
+  overflow global;
+- ensaio A → B exibiu a confirmação acessível e consulta remota confirmou a
+  matéria ainda `published` antes do segundo passo;
+- `pnpm check`: lint, tipos, 83 testes e build aprovados;
+- verificador independente e auditor adversarial aprovaram o diff corrigido
+  sem P0/P1/P2;
+- nenhuma migration, dependência, criação ou duplicação de tenant;
+- pendente: commit, Preview imutável, smoke publicado, promoção do mesmo
+  artefato e reverificação de Production.
 
 ## Evidências de implementação
 
@@ -386,5 +413,5 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Não há P0 pronta. A próxima tarefa executável é `C210` (`P1`, `READY`):
-implementar o contexto global de tenant no ADM em uma fatia separada.
+Não há P0 pronta. Publicar `C210` em Preview, executar o smoke e promover o
+mesmo artefato apenas após a aprovação independente do ambiente.

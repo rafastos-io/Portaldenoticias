@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 
 import {
   createContentAction,
@@ -8,6 +9,14 @@ import {
   updateContentAction,
 } from "@/app/admin/(protected)/actions";
 import {
+  TenantMutationForm,
+  type TenantMutationState,
+} from "@/components/admin/tenant-mutation-form";
+import {
+  ADMIN_TENANT_COOKIE,
+  resolveAdminTenant,
+} from "@/lib/admin/tenant-context";
+import {
   findOwnedContentItem,
   getAdminEditorOptions,
   listAdminContent,
@@ -16,7 +25,6 @@ import {
 } from "@/lib/supabase/content-repository";
 import { requireDemoSession } from "@/lib/demo-auth/server";
 
-const HORIZON_TENANT_ID = "00000000-0000-4000-8000-000000000002";
 const statusLabels: Record<AdminContentStatus, string> = {
   draft: "Rascunho",
   paused: "Pausado",
@@ -78,7 +86,10 @@ function EditorialForm({
   initial,
   tenantId,
 }: {
-  action: (formData: FormData) => Promise<void>;
+  action: (
+    state: TenantMutationState,
+    formData: FormData,
+  ) => Promise<TenantMutationState>;
   authors: Array<{ display_name: string; id: string }>;
   categories: Array<{ id: string; name: string }>;
   contentId?: string;
@@ -97,7 +108,11 @@ function EditorialForm({
     "min-h-11 rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-slate-950 transition-colors hover:border-slate-500";
 
   return (
-    <form action={action} className="mt-6 grid gap-5">
+    <TenantMutationForm
+      action={action}
+      className="mt-6 grid gap-5"
+      tenantId={tenantId}
+    >
       <input name="tenantId" type="hidden" value={tenantId} />
       {contentId ? (
         <input name="contentId" type="hidden" value={contentId} />
@@ -210,30 +225,37 @@ function EditorialForm({
           Cancelar
         </Link>
       </div>
-    </form>
+    </TenantMutationForm>
   );
 }
 
 async function loadAdminData(input: {
+  cookieTenant?: string;
   editId?: string;
   requestedTenant?: string;
   status?: AdminContentStatus;
 }) {
   try {
     const tenants = await listAdminTenants();
-    const selectedTenant =
-      tenants.find((tenant) => tenant.id === input.requestedTenant) ??
-      tenants.find((tenant) => tenant.id === HORIZON_TENANT_ID) ??
-      tenants[0];
+    const resolution = resolveAdminTenant(
+      tenants,
+      input.requestedTenant,
+      input.cookieTenant,
+    );
 
-    if (!selectedTenant) {
+    if (!resolution.ok) {
+      const noTenants = resolution.reason === "no-tenants";
       return {
-        description:
-          "Nenhum tenant demonstrativo está disponível. Execute o seed idempotente antes de operar o CMS.",
+        description: noTenants
+          ? "Nenhum tenant demonstrativo está disponível. Execute o seed idempotente antes de operar o CMS."
+          : "O contexto solicitado não corresponde a um tenant demonstrativo disponível. Selecione novamente no cabeçalho.",
         ok: false as const,
-        title: "Catálogo sem tenants",
+        title: noTenants
+          ? "Catálogo sem tenants"
+          : "Contexto de tenant inválido",
       };
     }
+    const selectedTenant = resolution.tenant;
 
     const [items, options, editedItem] = await Promise.all([
       listAdminContent(selectedTenant.id, input.status),
@@ -284,8 +306,14 @@ export default async function AdminPage({
   const mode = singleParam(params.mode);
   const success = singleParam(params.success);
   const errorNotice = singleParam(params.error);
+  const cookieStore = await cookies();
 
-  const loaded = await loadAdminData({ editId, requestedTenant, status });
+  const loaded = await loadAdminData({
+    cookieTenant: cookieStore.get(ADMIN_TENANT_COOKIE)?.value,
+    editId,
+    requestedTenant,
+    status,
+  });
   if (!loaded.ok) {
     return (
       <AdminUnavailable
@@ -295,7 +323,7 @@ export default async function AdminPage({
     );
   }
 
-  const { editedItem, items, options, selectedTenant, tenants } = loaded;
+  const { editedItem, items, options, selectedTenant } = loaded;
   const showEditor = mode === "new" || Boolean(editedItem);
   const statusCounts = {
     draft: items.filter((item) => item.workflow_status === "draft").length,
@@ -329,23 +357,13 @@ export default async function AdminPage({
 
           <section
             aria-label="Escopo do catálogo"
-            className="grid gap-4 border-b border-slate-300 py-6 md:grid-cols-[minmax(16rem,1fr)_minmax(16rem,1fr)_auto]"
+            className="border-b border-slate-300 py-6"
           >
-            <form className="contents" method="get">
-              <label className="grid gap-2 text-sm font-bold">
-                Tenant
-                <select
-                  className="min-h-11 rounded-md border border-slate-300 bg-white px-3"
-                  defaultValue={selectedTenant.id}
-                  name="tenant"
-                >
-                  {tenants.map((tenant) => (
-                    <option key={tenant.id} value={tenant.id}>
-                      {tenant.display_name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+            <form
+              className="flex flex-col gap-4 sm:flex-row sm:items-end"
+              method="get"
+            >
+              <input name="tenant" type="hidden" value={selectedTenant.id} />
               <label className="grid gap-2 text-sm font-bold">
                 Status
                 <select
@@ -552,9 +570,10 @@ export default async function AdminPage({
                               <summary className="cursor-pointer text-xs font-bold text-amber-800">
                                 Pausar publicação
                               </summary>
-                              <form
+                              <TenantMutationForm
                                 action={pauseContentAction}
                                 className="ml-auto mt-3 grid max-w-xs gap-3 rounded-md bg-amber-50 p-3 text-left"
+                                tenantId={selectedTenant.id}
                               >
                                 <input
                                   name="contentId"
@@ -592,7 +611,7 @@ export default async function AdminPage({
                                 >
                                   Confirmar pausa
                                 </button>
-                              </form>
+                              </TenantMutationForm>
                             </details>
                           ) : null}
                         </td>
@@ -614,13 +633,16 @@ function StatusButton({
   label,
   tenantId,
 }: {
-  action: (formData: FormData) => Promise<void>;
+  action: (
+    state: TenantMutationState,
+    formData: FormData,
+  ) => Promise<TenantMutationState>;
   contentId: string;
   label: string;
   tenantId: string;
 }) {
   return (
-    <form action={action}>
+    <TenantMutationForm action={action} tenantId={tenantId}>
       <input name="contentId" type="hidden" value={contentId} />
       <input name="tenantId" type="hidden" value={tenantId} />
       <button
@@ -629,7 +651,7 @@ function StatusButton({
       >
         {label}
       </button>
-    </form>
+    </TenantMutationForm>
   );
 }
 

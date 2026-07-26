@@ -1,4 +1,11 @@
 import { saveThemeAction } from "@/app/admin/(protected)/actions";
+import { cookies } from "next/headers";
+
+import { TenantMutationForm } from "@/components/admin/tenant-mutation-form";
+import {
+  ADMIN_TENANT_COOKIE,
+  resolveAdminTenant,
+} from "@/lib/admin/tenant-context";
 import {
   APPROVED_CARDS,
   APPROVED_FONTS,
@@ -10,7 +17,6 @@ import { requireDemoSession } from "@/lib/demo-auth/server";
 import { listAdminTenants } from "@/lib/supabase/content-repository";
 import { getAdminTheme } from "@/lib/supabase/theme-repository";
 
-const HORIZON_TENANT_ID = "00000000-0000-4000-8000-000000000002";
 const control =
   "min-h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950";
 
@@ -118,22 +124,31 @@ function PortalPreview({
   );
 }
 
-async function loadIdentity(requestedTenant?: string) {
+async function loadIdentity(
+  requestedTenant?: string,
+  cookieTenant?: string,
+) {
   try {
     const tenants = await listAdminTenants();
-    const selectedTenant =
-      tenants.find((tenant) => tenant.id === requestedTenant) ??
-      tenants.find((tenant) => tenant.id === HORIZON_TENANT_ID) ??
-      tenants[0];
+    const resolution = resolveAdminTenant(
+      tenants,
+      requestedTenant,
+      cookieTenant,
+    );
 
-    if (!selectedTenant) {
+    if (!resolution.ok) {
+      const noTenants = resolution.reason === "no-tenants";
       return {
-        description:
-          "Nenhum tenant demonstrativo está disponível. Execute o seed idempotente.",
+        description: noTenants
+          ? "Nenhum tenant demonstrativo está disponível. Execute o seed idempotente."
+          : "O contexto solicitado não corresponde a um tenant demonstrativo disponível. Selecione novamente no cabeçalho.",
         ok: false as const,
-        title: "Central sem tenants",
+        title: noTenants
+          ? "Central sem tenants"
+          : "Contexto de tenant inválido",
       };
     }
+    const selectedTenant = resolution.tenant;
 
     const theme = await getAdminTheme(selectedTenant.id);
     if (!theme) {
@@ -171,7 +186,11 @@ export default async function IdentityPage({
   await requireDemoSession();
 
   const params = await searchParams;
-  const loaded = await loadIdentity(single(params.tenant));
+  const cookieStore = await cookies();
+  const loaded = await loadIdentity(
+    single(params.tenant),
+    cookieStore.get(ADMIN_TENANT_COOKIE)?.value,
+  );
 
   if (!loaded.ok) {
     return (
@@ -189,7 +208,7 @@ export default async function IdentityPage({
     );
   }
 
-  const { selectedTenant, tenants, theme } = loaded;
+  const { selectedTenant, theme } = loaded;
   const success = single(params.success);
   const error = single(params.error);
 
@@ -208,31 +227,6 @@ export default async function IdentityPage({
             aceita CSS, JavaScript ou uploads de código.
           </p>
         </header>
-
-        <section className="border-b border-slate-300 py-6">
-          <form className="flex flex-col gap-3 sm:flex-row sm:items-end" method="get">
-            <label className="grid flex-1 gap-2 text-sm font-bold">
-              Tenant
-              <select
-                className={control}
-                defaultValue={selectedTenant.id}
-                name="tenant"
-              >
-                {tenants.map((tenant) => (
-                  <option key={tenant.id} value={tenant.id}>
-                    {tenant.display_name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
-              className="min-h-11 rounded-md border border-slate-400 bg-white px-4 text-sm font-bold hover:bg-slate-50"
-              type="submit"
-            >
-              Trocar identidade
-            </button>
-          </form>
-        </section>
 
         {success ? (
           <p
@@ -261,9 +255,10 @@ export default async function IdentityPage({
               são validadas novamente no servidor.
             </p>
 
-            <form
+            <TenantMutationForm
               action={saveThemeAction}
               className="mt-6 grid gap-6 rounded-lg border border-slate-300 bg-white p-5"
+              tenantId={selectedTenant.id}
             >
               <input name="tenantId" type="hidden" value={selectedTenant.id} />
               <label className="grid gap-2 text-sm font-bold">
@@ -362,7 +357,7 @@ export default async function IdentityPage({
               >
                 Salvar identidade
               </button>
-            </form>
+            </TenantMutationForm>
           </section>
 
           <section aria-labelledby="preview-title" className="min-w-0">

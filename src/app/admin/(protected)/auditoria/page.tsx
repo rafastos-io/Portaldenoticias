@@ -1,13 +1,17 @@
+import { cookies } from "next/headers";
+
 import {
   AUDIT_ACTIONS,
   isAuditAction,
   listAdminAuditEvents,
   type AuditAction,
 } from "@/lib/supabase/audit-repository";
+import {
+  ADMIN_TENANT_COOKIE,
+  resolveAdminTenant,
+} from "@/lib/admin/tenant-context";
 import { requireDemoSession } from "@/lib/demo-auth/server";
 import { listAdminTenants } from "@/lib/supabase/content-repository";
-
-const HORIZON_TENANT_ID = "00000000-0000-4000-8000-000000000002";
 
 const actionLabels: Record<AuditAction, string> = {
   "content.created": "Matéria criada",
@@ -33,22 +37,32 @@ function formatTime(value: string) {
   }).format(new Date(value));
 }
 
-async function loadAudit(requestedTenant?: string, action?: AuditAction) {
+async function loadAudit(
+  requestedTenant?: string,
+  cookieTenant?: string,
+  action?: AuditAction,
+) {
   try {
     const tenants = await listAdminTenants();
-    const selectedTenant =
-      tenants.find((tenant) => tenant.id === requestedTenant) ??
-      tenants.find((tenant) => tenant.id === HORIZON_TENANT_ID) ??
-      tenants[0];
+    const resolution = resolveAdminTenant(
+      tenants,
+      requestedTenant,
+      cookieTenant,
+    );
 
-    if (!selectedTenant) {
+    if (!resolution.ok) {
+      const noTenants = resolution.reason === "no-tenants";
       return {
-        description:
-          "Nenhum tenant demonstrativo está disponível. Execute o seed idempotente.",
+        description: noTenants
+          ? "Nenhum tenant demonstrativo está disponível. Execute o seed idempotente."
+          : "O contexto solicitado não corresponde a um tenant demonstrativo disponível. Selecione novamente no cabeçalho.",
         ok: false as const,
-        title: "Auditoria sem tenants",
+        title: noTenants
+          ? "Auditoria sem tenants"
+          : "Contexto de tenant inválido",
       };
     }
+    const selectedTenant = resolution.tenant;
 
     const events = await listAdminAuditEvents(selectedTenant.id, action);
     return { events, ok: true as const, selectedTenant, tenants };
@@ -79,7 +93,12 @@ export default async function AuditPage({
   const params = await searchParams;
   const requestedAction = single(params.action);
   const action = isAuditAction(requestedAction) ? requestedAction : undefined;
-  const loaded = await loadAudit(single(params.tenant), action);
+  const cookieStore = await cookies();
+  const loaded = await loadAudit(
+    single(params.tenant),
+    cookieStore.get(ADMIN_TENANT_COOKIE)?.value,
+    action,
+  );
 
   if (!loaded.ok) {
     return (
@@ -97,7 +116,7 @@ export default async function AuditPage({
     );
   }
 
-  const { events, selectedTenant, tenants } = loaded;
+  const { events, selectedTenant } = loaded;
 
   return (
     <main className="px-5 py-8 lg:px-8 lg:py-10" id="admin-main">
@@ -117,23 +136,10 @@ export default async function AuditPage({
 
         <section className="border-b border-slate-300 py-6">
           <form
-            className="grid gap-4 md:grid-cols-[minmax(16rem,1fr)_minmax(16rem,1fr)_auto]"
+            className="flex flex-col gap-4 sm:flex-row sm:items-end"
             method="get"
           >
-            <label className="grid gap-2 text-sm font-bold">
-              Tenant
-              <select
-                className="min-h-11 rounded-md border border-slate-300 bg-white px-3"
-                defaultValue={selectedTenant.id}
-                name="tenant"
-              >
-                {tenants.map((tenant) => (
-                  <option key={tenant.id} value={tenant.id}>
-                    {tenant.display_name}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <input name="tenant" type="hidden" value={selectedTenant.id} />
             <label className="grid gap-2 text-sm font-bold">
               Ação
               <select
