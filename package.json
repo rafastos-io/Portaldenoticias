@@ -13,6 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "demo:reset": "node --env-file-if-exists=.env.local scripts/reset-demo.mjs",
+    "smoke:admin": "node --env-file-if-exists=.env.local scripts/smoke-admin.mjs",
+    "release:promote": "node --env-file-if-exists=.env.local scripts/promote-with-smoke.mjs",
     "build": "next build",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
@@ -30,6 +32,7 @@
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.11",
+    "playwright": "1.62.0",
     "postgres": "3.4.9",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.3",

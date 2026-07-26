@@ -29,7 +29,7 @@ Atualizado em: 26/07/2026.
 - tarefa concluída: `T013`;
 - tarefa concluída: `T014`;
 - Ciclo 2: documentação `docs/17` a `docs/21` e prompt operacional criados.
-- próxima tarefa executável: `C202`.
+- tarefa em verificação: `C202`.
 
 ## Bloqueios externos
 
@@ -118,8 +118,32 @@ Pasta: `artifacts/audit-2026-07-26/`.
 
 ### Próximo passo
 
-Publicar Preview, repetir o smoke, promover Production e acionar o verificador
-independente de `T014`. O `pnpm check` final já passou com 53 testes.
+Publicar o commit aprovado de `C202` em Preview, executar o smoke automatizado
+na URL imutável do deployment e promover o mesmo artefato somente após a
+aprovação independente publicada.
+
+## C202 — smoke automatizado publicado
+
+Estado: `VERIFY`.
+
+- runner Playwright cobre aviso demo, login inválido e válido, sessão 401/200,
+  Conteúdo, Identidades, Auditoria, logout e novo 401;
+- negativos automatizados recusam Origin externa e cookie adulterado;
+- Production também valida `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/` e
+  expiração do cookie;
+- falhas retornam código não zero e geram relatório e screenshot sanitizados;
+- gate exige a mesma URL HTTPS imutável para smoke do Preview e
+  `vercel promote`, fixa o alias público de Production e bloqueia alvos
+  divergentes antes da rede;
+- bypass da Vercel é enviado apenas à origin exata do Preview e usa
+  `maxRedirects=0`; teste integrado A → 302 → B confirmou zero header no
+  destino externo;
+- `pnpm check`: lint, tipos, 75 testes e build aprovados;
+- smoke local e Production atual: 15 etapas aprovadas;
+- verificador independente e auditor adversarial: implementação local aprovada
+  sem P0/P1 após dois ciclos de correção;
+- pendente: commit, Preview exato, smoke publicado, promoção e reverificação de
+  Production.
 
 ## Evidências de implementação
 
