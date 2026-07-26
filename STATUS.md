@@ -64,6 +64,8 @@ deploy novo deve repetir a verificação do bundle.
 
 - a origem agora é comparada com `host` e `x-forwarded-host`;
 - aliases exatos de `VERCEL_PROJECT_PRODUCTION_URL` e `VERCEL_URL` são aceitos;
+- quando a Vercel não entrega `Origin` à Server Action, a mutação só é aceita
+  com `Sec-Fetch-Site: same-origin`; ausente ou `cross-site` continua recusado;
 - origem externa continua recusada;
 - placeholders que começam com `replace-with-` são recusados como segredo;
 - Next Server Actions recebem aliases exatos adicionais, sem wildcard;
@@ -72,6 +74,16 @@ deploy novo deve repetir a verificação do bundle.
 - browser local: login redirecionou para `/admin`;
 - `/api/admin/session` retornou ator `demo-operator` e `demo=true`;
 - logout retornou para `/admin/login`.
+
+### Primeiro Preview do reparo
+
+- commit: `461d052`;
+- deployment: `dpl_5GcoofGF9UD6BKiEuowAMDtjUr3i`;
+- build Vercel aprovado;
+- o smoke mostrou que a Vercel pode omitir `Origin` no contexto observado;
+- a primeira versão continuou recusando o login e não foi promovida;
+- a defesa foi ajustada para o fallback restrito de `Sec-Fetch-Site`;
+- teste focado ampliado para 11 casos.
 
 ### Evidências visuais
 

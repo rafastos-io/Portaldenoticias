@@ -131,11 +131,28 @@ describe("mutation origin", () => {
     ).toBe(false);
   });
 
+  it("accepts an originless same-origin browser mutation", () => {
+    expect(
+      isTrustedMutationOrigin({
+        host: "demo.example",
+        origin: null,
+        secFetchSite: "same-origin",
+      }),
+    ).toBe(true);
+  });
+
   it("rejects absent, malformed and cross-site origins", () => {
     expect(
       isTrustedMutationOrigin({
         host: "demo.example",
         origin: null,
+      }),
+    ).toBe(false);
+    expect(
+      isTrustedMutationOrigin({
+        host: "demo.example",
+        origin: null,
+        secFetchSite: "cross-site",
       }),
     ).toBe(false);
     expect(

@@ -200,6 +200,7 @@ type TrustedOriginInput = {
   forwardedProto?: string | null;
   host?: string | null;
   origin?: string | null;
+  secFetchSite?: string | null;
   vercelProductionUrl?: string;
   vercelUrl?: string;
 };
@@ -214,11 +215,12 @@ export function isTrustedMutationOrigin({
   forwardedProto,
   host,
   origin,
+  secFetchSite,
   vercelProductionUrl,
   vercelUrl,
 }: TrustedOriginInput): boolean {
   if (!origin) {
-    return false;
+    return normalizeForwardedValue(secFetchSite) === "same-origin";
   }
 
   let originUrl: URL;
