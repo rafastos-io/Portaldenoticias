@@ -27,7 +27,7 @@ function SubmitButton() {
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ loginToken }: { loginToken: string }) {
   const [state, formAction] = useActionState(
     loginAction,
     initialLoginState,
@@ -35,6 +35,7 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="mt-8 space-y-5">
+      <input name="loginToken" type="hidden" value={loginToken} />
       <div>
         <label className="text-sm font-bold text-slate-800" htmlFor="user">
           Usuário

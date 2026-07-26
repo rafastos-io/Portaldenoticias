@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  createSignedDemoLoginToken,
   createSignedDemoSession,
   credentialsMatch,
   DEMO_ACTOR,
+  DEMO_LOGIN_TOKEN_TTL_SECONDS,
   DEMO_SESSION_TTL_SECONDS,
   isTrustedMutationOrigin,
   readDemoConfig,
   SlidingWindowRateLimiter,
+  verifySignedDemoLoginToken,
   verifySignedDemoSession,
 } from "./core";
 
@@ -82,6 +85,38 @@ describe("signed demo session", () => {
   });
 });
 
+describe("signed demo login token", () => {
+  const now = Date.UTC(2026, 6, 24, 12);
+
+  it("accepts an intact token only inside its short validity window", () => {
+    const token = createSignedDemoLoginToken(strongSecret, now);
+    expect(verifySignedDemoLoginToken(token, strongSecret, now)).toBe(
+      true,
+    );
+    expect(
+      verifySignedDemoLoginToken(
+        token,
+        strongSecret,
+        now + DEMO_LOGIN_TOKEN_TTL_SECONDS * 1000,
+      ),
+    ).toBe(false);
+  });
+
+  it("rejects a changed token and a different secret", () => {
+    const token = createSignedDemoLoginToken(strongSecret, now);
+    expect(
+      verifySignedDemoLoginToken(`${token}tampered`, strongSecret, now),
+    ).toBe(false);
+    expect(
+      verifySignedDemoLoginToken(
+        token,
+        `${strongSecret}-different`,
+        now,
+      ),
+    ).toBe(false);
+  });
+});
+
 describe("mutation origin", () => {
   it("accepts the exact request origin or configured application URL", () => {
     expect(
@@ -139,6 +174,26 @@ describe("mutation origin", () => {
         secFetchSite: "same-origin",
       }),
     ).toBe(true);
+  });
+
+  it("accepts Vercel host rewrites only with a same-site browser signal", () => {
+    expect(
+      isTrustedMutationOrigin({
+        forwardedHost: "internal.vercel.example",
+        host: "internal.vercel.example",
+        origin:
+          "https://portaldenoticias-actfvduyn-raafastosgmailcoms-projects.vercel.app",
+        secFetchSite: "same-origin",
+      }),
+    ).toBe(true);
+    expect(
+      isTrustedMutationOrigin({
+        forwardedHost: "internal.vercel.example",
+        host: "internal.vercel.example",
+        origin: "https://attacker.example",
+        secFetchSite: "cross-site",
+      }),
+    ).toBe(false);
   });
 
   it("rejects absent, malformed and cross-site origins", () => {

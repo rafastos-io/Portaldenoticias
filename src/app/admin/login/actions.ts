@@ -9,6 +9,7 @@ import {
   demoLoginRateLimiter,
   getLoginRateLimitKey,
   getServerDemoConfig,
+  isValidDemoLoginToken,
 } from "@/lib/demo-auth/server";
 
 export type LoginState = {
@@ -25,6 +26,19 @@ export async function loginAction(
   _previousState: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
+  const loginToken = readCredential(formData, "loginToken");
+
+  try {
+    if (!isValidDemoLoginToken(loginToken)) {
+      throw new Error("Token de login inválido.");
+    }
+  } catch {
+    return {
+      message: "A sessão de login expirou. Recarregue a página e tente novamente.",
+      status: "error",
+    };
+  }
+
   try {
     await assertTrustedMutationOrigin();
   } catch {

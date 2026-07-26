@@ -4,6 +4,7 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import {
+  createSignedDemoLoginToken,
   createSignedDemoSession,
   DEMO_SESSION_TTL_SECONDS,
   isTrustedMutationOrigin,
@@ -11,6 +12,7 @@ import {
   LOGIN_RATE_LIMIT_WINDOW_MS,
   readDemoConfig,
   SlidingWindowRateLimiter,
+  verifySignedDemoLoginToken,
   verifySignedDemoSession,
 } from "@/lib/demo-auth/core";
 
@@ -33,6 +35,16 @@ if (process.env.NODE_ENV !== "production") {
 
 export function getServerDemoConfig() {
   return readDemoConfig(process.env);
+}
+
+export function createDemoLoginToken() {
+  const config = getServerDemoConfig();
+  return createSignedDemoLoginToken(config.sessionSecret);
+}
+
+export function isValidDemoLoginToken(value: string | undefined) {
+  const config = getServerDemoConfig();
+  return verifySignedDemoLoginToken(value, config.sessionSecret);
 }
 
 function sessionCookieOptions(maxAge = DEMO_SESSION_TTL_SECONDS) {

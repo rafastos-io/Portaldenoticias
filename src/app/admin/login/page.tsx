@@ -4,12 +4,15 @@ import Link from "next/link";
 
 import { DemoNotice } from "@/components/demo-notice";
 import { LoginForm } from "@/app/admin/login/login-form";
+import { createDemoLoginToken } from "@/lib/demo-auth/server";
 
 export const metadata: Metadata = {
   title: "Entrar no ADM | Broadcast Saúde & Longevidade",
 };
 
 export default function AdminLoginPage() {
+  const loginToken = createDemoLoginToken();
+
   return (
     <main className="min-h-screen bg-[#f4f5f3]">
       <DemoNotice admin compact />
@@ -77,7 +80,7 @@ export default function AdminLoginPage() {
             <p className="mt-3 text-sm leading-6 text-slate-600">
               Use as credenciais fictícias fornecidas para explorar o MVP-0.
             </p>
-            <LoginForm />
+            <LoginForm loginToken={loginToken} />
             <p className="mt-7 border-t border-slate-300 pt-5 text-xs leading-5 text-slate-500">
               Este gate protege apenas dados fictícios e deve ser substituído
               antes de qualquer uso em produção real.

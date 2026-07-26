@@ -6,6 +6,7 @@ import {
 
 export const DEMO_ACTOR = "demo-operator";
 export const DEMO_SESSION_TTL_SECONDS = 4 * 60 * 60;
+export const DEMO_LOGIN_TOKEN_TTL_SECONDS = 15 * 60;
 export const LOGIN_RATE_LIMIT_ATTEMPTS = 5;
 export const LOGIN_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 
@@ -29,6 +30,13 @@ type DemoSessionPayload = {
   actor: typeof DEMO_ACTOR;
   exp: number;
   iat: number;
+  v: typeof SESSION_VERSION;
+};
+
+type DemoLoginTokenPayload = {
+  exp: number;
+  iat: number;
+  purpose: "demo-login";
   v: typeof SESSION_VERSION;
 };
 
@@ -120,6 +128,92 @@ export function createSignedDemoSession(
   const signature = signSessionPayload(encodedPayload, secret);
 
   return `${encodedPayload}.${signature}`;
+}
+
+export function createSignedDemoLoginToken(
+  secret: string,
+  now = Date.now(),
+): string {
+  const issuedAt = Math.floor(now / 1000);
+  const payload: DemoLoginTokenPayload = {
+    exp: issuedAt + DEMO_LOGIN_TOKEN_TTL_SECONDS,
+    iat: issuedAt,
+    purpose: "demo-login",
+    v: SESSION_VERSION,
+  };
+  const encodedPayload = Buffer.from(
+    JSON.stringify(payload),
+    "utf8",
+  ).toString("base64url");
+  const signature = signSessionPayload(encodedPayload, secret);
+
+  return `${encodedPayload}.${signature}`;
+}
+
+function isDemoLoginTokenPayload(
+  value: unknown,
+): value is DemoLoginTokenPayload {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const payload = value as Partial<DemoLoginTokenPayload>;
+  return (
+    payload.purpose === "demo-login" &&
+    payload.v === SESSION_VERSION &&
+    Number.isInteger(payload.iat) &&
+    Number.isInteger(payload.exp)
+  );
+}
+
+export function verifySignedDemoLoginToken(
+  value: string | undefined,
+  secret: string,
+  now = Date.now(),
+): boolean {
+  if (!value) {
+    return false;
+  }
+
+  const parts = value.split(".");
+  if (parts.length !== 2) {
+    return false;
+  }
+
+  const [encodedPayload, receivedSignature] = parts;
+  if (!encodedPayload || !receivedSignature) {
+    return false;
+  }
+
+  const expectedSignature = signSessionPayload(encodedPayload, secret);
+  const receivedBuffer = Buffer.from(receivedSignature, "base64url");
+  const expectedBuffer = Buffer.from(expectedSignature, "base64url");
+
+  if (
+    receivedBuffer.length !== expectedBuffer.length ||
+    !timingSafeEqual(receivedBuffer, expectedBuffer)
+  ) {
+    return false;
+  }
+
+  try {
+    const payload = JSON.parse(
+      Buffer.from(encodedPayload, "base64url").toString("utf8"),
+    ) as unknown;
+
+    if (!isDemoLoginTokenPayload(payload)) {
+      return false;
+    }
+
+    const nowInSeconds = Math.floor(now / 1000);
+    return (
+      payload.exp > nowInSeconds &&
+      payload.iat <= nowInSeconds + 60 &&
+      payload.exp - payload.iat === DEMO_LOGIN_TOKEN_TTL_SECONDS
+    );
+  } catch {
+    return false;
+  }
 }
 
 function isDemoSessionPayload(value: unknown): value is DemoSessionPayload {
@@ -219,8 +313,14 @@ export function isTrustedMutationOrigin({
   vercelProductionUrl,
   vercelUrl,
 }: TrustedOriginInput): boolean {
+  const fetchSite = normalizeForwardedValue(secFetchSite);
+
+  if (fetchSite === "cross-site") {
+    return false;
+  }
+
   if (!origin) {
-    return normalizeForwardedValue(secFetchSite) === "same-origin";
+    return fetchSite === "same-origin" || fetchSite === "same-site";
   }
 
   let originUrl: URL;
@@ -268,7 +368,14 @@ export function isTrustedMutationOrigin({
     }
   }
 
-  return allowedOrigins.has(originUrl.origin.toLowerCase());
+  if (allowedOrigins.has(originUrl.origin.toLowerCase())) {
+    return true;
+  }
+
+  // Vercel can rewrite the request host before a Server Action runs. In that
+  // case the browser's Fetch Metadata remains the reliable same-site signal,
+  // while Next.js has already performed its own Origin/Host validation.
+  return fetchSite === "same-origin" || fetchSite === "same-site";
 }
 
 type RateLimitEntry = {
