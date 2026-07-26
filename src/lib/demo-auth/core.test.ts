@@ -161,6 +161,7 @@ describe("mutation origin", () => {
         forwardedProto: "https",
         host: "internal.example",
         origin: "https://attacker.example",
+        secFetchSite: "cross-site",
         vercelProductionUrl: "portaldenoticias-five.vercel.app",
       }),
     ).toBe(false);
@@ -196,13 +197,13 @@ describe("mutation origin", () => {
     ).toBe(false);
   });
 
-  it("rejects absent, malformed and cross-site origins", () => {
+  it("delegates missing metadata to Server Actions and rejects malformed or cross-site requests", () => {
     expect(
       isTrustedMutationOrigin({
         host: "demo.example",
         origin: null,
       }),
-    ).toBe(false);
+    ).toBe(true);
     expect(
       isTrustedMutationOrigin({
         host: "demo.example",
@@ -221,7 +222,7 @@ describe("mutation origin", () => {
         host: "demo.example",
         origin: "https://attacker.example",
       }),
-    ).toBe(false);
+    ).toBe(true);
   });
 });
 

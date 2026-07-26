@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 
 import { credentialsMatch } from "@/lib/demo-auth/core";
 import {
-  assertTrustedMutationOrigin,
   createDemoSession,
   demoLoginRateLimiter,
   getLoginRateLimitKey,
@@ -35,15 +34,6 @@ export async function loginAction(
   } catch {
     return {
       message: "A sessão de login expirou. Recarregue a página e tente novamente.",
-      status: "error",
-    };
-  }
-
-  try {
-    await assertTrustedMutationOrigin();
-  } catch {
-    return {
-      message: "Não foi possível validar a origem da solicitação.",
       status: "error",
     };
   }

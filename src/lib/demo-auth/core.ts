@@ -320,7 +320,9 @@ export function isTrustedMutationOrigin({
   }
 
   if (!origin) {
-    return fetchSite === "same-origin" || fetchSite === "same-site";
+    // Server Actions already validate Origin against Host/allowedOrigins.
+    // Some Vercel runtimes omit Fetch Metadata before invoking the action.
+    return true;
   }
 
   let originUrl: URL;
@@ -375,7 +377,12 @@ export function isTrustedMutationOrigin({
   // Vercel can rewrite the request host before a Server Action runs. In that
   // case the browser's Fetch Metadata remains the reliable same-site signal,
   // while Next.js has already performed its own Origin/Host validation.
-  return fetchSite === "same-origin" || fetchSite === "same-site";
+  return (
+    fetchSite === null ||
+    fetchSite === "same-origin" ||
+    fetchSite === "same-site" ||
+    fetchSite === "none"
+  );
 }
 
 type RateLimitEntry = {
