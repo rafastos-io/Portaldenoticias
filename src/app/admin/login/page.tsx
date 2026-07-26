@@ -6,6 +6,8 @@ import { DemoNotice } from "@/components/demo-notice";
 import { LoginForm } from "@/app/admin/login/login-form";
 import { createDemoLoginToken } from "@/lib/demo-auth/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Entrar no ADM | Broadcast Saúde & Longevidade",
 };
