@@ -18,8 +18,28 @@ O executor sempre escolhe a tarefa P0 `READY` de menor número cujas dependênci
 | T010 | P0 | DONE | T004,T007 | Rota JSON demo com `demo: true` |
 | T011 | P0 | DONE | T005,T006,T008 | Auditoria mínima com ator `demo-operator` |
 | T012 | P0 | DONE | T006,T007,T008 | QA desktop/mobile, acessibilidade e estados |
-| T013 | P0 | BLOCKED | T009,T010,T011,T012 | Build final, variáveis e deploy Vercel |
+| T013 | P0 | IN_PROGRESS | T009,T010,T011,T012 | Build final, variáveis, correção do login e deploy Vercel |
 | T014 | P0 | BLOCKED | T013 | Auditoria final independente e handoff |
+
+## Fila do Ciclo 2
+
+O Ciclo 2 só avança depois que o ambiente publicado estiver estável. O escopo
+está em `docs/17-plano-ciclo-de-melhoria.md`.
+
+| ID | Pri. | Estado | Dependências | Entrega |
+|---|---|---|---|---|
+| C201 | P0 | DONE | - | Especificar escopo, variantes, QA e sistema de agentes |
+| C202 | P0 | BLOCKED | T013 | Smoke automatizado Preview/Production |
+| C203 | P0 | BLOCKED | T014,C202 | Baseline visual/funcional aprovado para o Ciclo 2 |
+| C210 | P1 | BLOCKED | C203 | Contexto global de tenant no ADM |
+| C211 | P1 | BLOCKED | C210 | Workbench de identidade com preview vivo |
+| C212 | P1 | BLOCKED | C211 | Variantes estruturais reais de header, hero e cards |
+| C213 | P1 | BLOCKED | C210,C211 | Criar/duplicar tenant demo por preset |
+| C214 | P1 | BLOCKED | C213 | Logo e mídia fictícia com Storage isolado |
+| C220 | P1 | BLOCKED | C210 | Templates e variantes de cadastro editorial |
+| C221 | P1 | BLOCKED | C220 | Distribuição e overrides por tenant |
+| C230 | P1 | BLOCKED | C212,C214 | Densidade editorial e navegação mobile |
+| C240 | P1 | BLOCKED | C213,C214,C221,C230 | Matriz final de QA e auditoria adversarial |
 
 ## Critérios por tarefa
 
@@ -151,6 +171,7 @@ O executor sempre escolhe a tarefa P0 `READY` de menor número cujas dependênci
 - variáveis documentadas;
 - migrations aplicadas;
 - preview funcional;
+- smoke manual mínimo de login, sessão, ADM e logout em Preview/Production;
 - nenhum segredo no bundle;
 - Vercel conectada ao Git.
 
@@ -162,8 +183,126 @@ O executor sempre escolhe a tarefa P0 `READY` de menor número cujas dependênci
 - `STATUS.md` contém URL, commit, checks e limitações;
 - nenhuma tarefa P0 permanece aberta sem justificativa.
 
+### C201
+
+- `docs/17` a `docs/21` aprovados;
+- escopo incluído/excluído explícito;
+- papéis de líder, executor, verificador e auditor adversarial;
+- matriz de evidências;
+- prompt executável do ciclo.
+
+### C202
+
+- transformar o smoke manual de T013 em fluxo repetível e automatizado;
+- Preview e Production;
+- login inválido e válido;
+- sessão 200 e 401;
+- Conteúdo, Identidades e Auditoria;
+- logout;
+- falha produz evidência e impede promoção.
+
+### C203
+
+- registrar commit e URLs vigentes;
+- smoke publicado de C202 aprovado;
+- capturar home, login, Conteúdo e Identidades em 390 px e 1440 px;
+- consolidar achados em P0/P1/P2;
+- zero P0 aberto;
+- P1 recebe tarefa/dono antes de liberar C210;
+- não implementar melhoria visual nesta tarefa.
+
+### C210
+
+- tenant ativo único aparece no cabeçalho;
+- seleção persiste entre Conteúdo, Identidades e Auditoria;
+- links administrativos preservam o contexto;
+- ações continuam validando tenant no servidor;
+- ação fora do contexto exige confirmação;
+- teste negativo A → B;
+- não criar/duplicar tenant ainda.
+
+### C211
+
+- seletor de cor e hexadecimal sincronizados;
+- preview local antes de salvar;
+- 390/768/1440;
+- alterações pendentes, desfazer e restaurar preset;
+- validação de contraste em tempo real e no servidor;
+- salvar/recarregar versão vigente;
+- não criar nova marca nem histórico/rollback.
+
+### C212
+
+- três headers, três heroes e três cards estruturalmente distintos;
+- mesma base segura de componentes;
+- todas as variantes em 390 e 1440;
+- conteúdo essencial visível com movimento reduzido;
+- nenhuma variante muda apenas cor/alinhamento;
+- não criar tenant ou mídia.
+
+### C213
+
+- criar quarta marca demo por preset sem editar código;
+- duplicar tema/placements/distribuições por referência;
+- nunca duplicar corpo canônico;
+- slug único, `kind/status=demo` e `is_demo=true`;
+- troca sem rebuild;
+- auditoria e teste negativo;
+- não implementar upload de logo nesta tarefa.
+
+### C214
+
+- upload de logo/imagem fictícia no bucket privado;
+- chave prefixada por tenant;
+- MIME, tamanho, dimensões, alt, crédito e direito;
+- leitura e remoção recusadas para outro tenant;
+- fallback seguro;
+- nenhuma mídia real ou upload livre.
+
+### C220
+
+- templates: padrão, explicador/análise, patrocinada fictícia, correção e sem
+  mídia;
+- campos condicionais e labels obrigatórios;
+- erro preserva dados e foca o campo;
+- submissão dupla bloqueada;
+- listar/filtrar tipo, correção, patrocínio e mídia;
+- não editar distribuição nesta tarefa.
+
+### C221
+
+- selecionar dois ou mais tenants de destino;
+- editar headline/subtitle override;
+- revogar um destino sem afetar os demais;
+- pausa/retomada preserva destinos;
+- corpo canônico permanece único;
+- auditoria e teste negativo A → B;
+- apenas canal portal demonstrativo.
+
+### C230
+
+- hero mais compacto ou grade acima da dobra;
+- metadados editoriais nos cards;
+- navegação mobile com indicação clara de rolagem/menu;
+- imagens fictícias variadas do catálogo aprovado;
+- sem overflow e com foco/zoom 200%;
+- comparação das quatro marcas em 390/1440;
+- não alterar workflow ou schema editorial.
+
+### C240
+
+- matriz de `docs/20` executada;
+- quatro marcas × portal/CMS/identidade;
+- login, tenant, distribuição, mídia e origem auditados adversarialmente;
+- advisors Supabase revisados após todo DDL;
+- secret scan e bundle scan;
+- Preview e Production sem P0/P1;
+- commit, URLs, checks, screenshots e limitações em `STATUS.md`.
+
 ## Como desbloquear
 
 Ao concluir uma tarefa, atualizar para `DONE` e trocar dependentes de `BLOCKED` para `READY` quando todas as dependências estiverem concluídas e nenhuma decisão externa faltar.
 
-T013 permanece bloqueada até a rotação da secret exposta no working tree e a autenticação da Vercel. O remoto GitHub foi confirmado e a implementação está publicada na PR `#1`.
+T013 está em andamento: Vercel e Supabase estão acessíveis, o domínio público foi
+identificado e a falha de origem do login foi reproduzida e corrigida
+localmente. Falta publicar e reverificar antes de liberar T014/C202.

@@ -48,7 +48,7 @@ export function readDemoConfig(
 
   if (
     !sessionSecret ||
-    sessionSecret === "replace-with-a-long-random-value" ||
+    sessionSecret.startsWith("replace-with-") ||
     Buffer.byteLength(sessionSecret, "utf8") < MINIMUM_SECRET_BYTES
   ) {
     throw new DemoConfigurationError(
@@ -200,6 +200,8 @@ type TrustedOriginInput = {
   forwardedProto?: string | null;
   host?: string | null;
   origin?: string | null;
+  vercelProductionUrl?: string;
+  vercelUrl?: string;
 };
 
 function normalizeForwardedValue(value: string | null | undefined) {
@@ -212,6 +214,8 @@ export function isTrustedMutationOrigin({
   forwardedProto,
   host,
   origin,
+  vercelProductionUrl,
+  vercelUrl,
 }: TrustedOriginInput): boolean {
   if (!origin) {
     return false;
@@ -232,15 +236,18 @@ export function isTrustedMutationOrigin({
     return false;
   }
 
-  const requestHost =
-    normalizeForwardedValue(forwardedHost) ?? normalizeForwardedValue(host);
   const allowedOrigins = new Set<string>();
+  const requestProtocol =
+    normalizeForwardedValue(forwardedProto) ?? originUrl.protocol.slice(0, -1);
 
-  if (requestHost) {
-    const requestProtocol =
-      normalizeForwardedValue(forwardedProto) ?? originUrl.protocol.slice(0, -1);
-    if (requestProtocol === "http" || requestProtocol === "https") {
-      allowedOrigins.add(`${requestProtocol}://${requestHost}`);
+  if (requestProtocol === "http" || requestProtocol === "https") {
+    for (const requestHost of [
+      normalizeForwardedValue(forwardedHost),
+      normalizeForwardedValue(host),
+    ]) {
+      if (requestHost) {
+        allowedOrigins.add(`${requestProtocol}://${requestHost}`);
+      }
     }
   }
 
@@ -249,6 +256,13 @@ export function isTrustedMutationOrigin({
       allowedOrigins.add(new URL(appUrl).origin.toLowerCase());
     } catch {
       return false;
+    }
+  }
+
+  for (const vercelHost of [vercelProductionUrl, vercelUrl]) {
+    const normalizedHost = normalizeForwardedValue(vercelHost);
+    if (normalizedHost) {
+      allowedOrigins.add(`https://${normalizedHost}`);
     }
   }
 

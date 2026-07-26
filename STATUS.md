@@ -1,6 +1,6 @@
 # Status do MVP-0
 
-Atualizado em: 25/07/2026.
+Atualizado em: 26/07/2026.
 
 ## Estado
 
@@ -8,10 +8,12 @@ Atualizado em: 25/07/2026.
 - recorte MVP-0: concluído;
 - auditoria independente da documentação: aprovada, sem bloqueios P0/P1;
 - aplicação: scaffold, estrutura visual e gate ADM aprovados;
-- Git: repositório local limpo; implementação commitada e sincronizada com a branch remota;
+- Git: branch `agent/mvp0-specification` acompanhada no remoto; este arquivo registra evidências por commit e deploy;
 - GitHub: implementação publicada em `rafastos-io/Portaldenoticias`, branch `agent/mvp0-specification`, PR draft `#1` aberta para `main`;
 - Supabase: projeto definitivo `Portaldenoticias` (`yhatwpxsxntlorfgxpdl`), `us-east-2`, Postgres 17, ativo e saudável;
-- Vercel: conector não disponível; CLI instalada, mas sessão/token inválido;
+- Vercel: projeto `portaldenoticias` conectado e acessível por conector/CLI;
+- domínio público vigente: `https://portaldenoticias-five.vercel.app`;
+- domínio `https://portaldenoticias.vercel.app`: projeto antigo, fora do MVP atual;
 - tarefa concluída: `T001`;
 - tarefa concluída: `T002`;
 - tarefa concluída: `T003`;
@@ -24,12 +26,74 @@ Atualizado em: 25/07/2026.
 - tarefa concluída: `T010`;
 - tarefa concluída: `T011`;
 - tarefa concluída: `T012`;
-- tarefas `T013` e `T014` bloqueadas por credenciais e confirmação de destinos externos.
+- tarefa `T013`: em andamento para corrigir/republicar o login;
+- tarefa `T014`: bloqueada até a reverificação publicada;
+- Ciclo 2: documentação `docs/17` a `docs/21` e prompt operacional criados.
 
 ## Bloqueios externos
 
-1. Autenticar novamente a Vercel antes do deploy.
-2. Rotacionar a `SUPABASE_SECRET_KEY` no Supabase antes do deploy e configurar a nova chave na Vercel; o valor atual apareceu temporariamente em `.env.example` no working tree, mas a varredura confirmou zero ocorrências em arquivos rastreados e no histórico Git.
+Nenhum bloqueio de acesso ativo. Antes de fechar `T013`, ainda é obrigatório
+publicar a correção em Preview, executar o smoke e promover/reverificar
+Production.
+
+O incidente histórico da secret exposta apenas no working tree continua
+registrado. A varredura anterior confirmou zero ocorrências rastreadas; qualquer
+deploy novo deve repetir a verificação do bundle.
+
+## Auditoria de produção — 26/07/2026
+
+### URLs e proteção
+
+- deployment auditado:
+  `portaldenoticias-dnh46i58q-raafastosgmailcoms-projects.vercel.app`;
+- o URL gerado possui Vercel Authentication/Standard Protection e não serve
+  como link público de pitch;
+- aliases do projeto incluem `portaldenoticias-five.vercel.app`;
+- o alias público retorna o MVP atual sem exigir login da Vercel.
+
+### Falha reproduzida
+
+- `/admin/login` carregou com o formulário e `USER / User123`;
+- a submissão retornou
+  `Não foi possível validar a origem da solicitação`;
+- a falha ocorre antes da validação de credenciais;
+- causa: `x-forwarded-host` era priorizado e o `host`/alias público ficava fora
+  da lista de origens exatas.
+
+### Correção local
+
+- a origem agora é comparada com `host` e `x-forwarded-host`;
+- aliases exatos de `VERCEL_PROJECT_PRODUCTION_URL` e `VERCEL_URL` são aceitos;
+- origem externa continua recusada;
+- placeholders que começam com `replace-with-` são recusados como segredo;
+- Next Server Actions recebem aliases exatos adicionais, sem wildcard;
+- teste focado: 10 casos aprovados;
+- lint e typecheck aprovados;
+- browser local: login redirecionou para `/admin`;
+- `/api/admin/session` retornou ator `demo-operator` e `demo=true`;
+- logout retornou para `/admin/login`.
+
+### Evidências visuais
+
+Pasta: `artifacts/audit-2026-07-26/`.
+
+- produção antiga incorreta;
+- deployment protegido pela Vercel;
+- home do MVP;
+- login desktop/mobile;
+- falha de origem publicada.
+
+### Supabase
+
+- advisor de segurança: zero alertas;
+- advisor de performance: apenas avisos informativos de índices ainda não
+  usados;
+- nenhuma migration foi criada nesta correção.
+
+### Próximo passo
+
+Publicar Preview, repetir o smoke, promover Production e acionar o verificador
+independente de `T014`. O `pnpm check` final já passou com 53 testes.
 
 ## Evidências de implementação
 
@@ -231,4 +295,5 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Desbloquear `T013`: rotacionar a secret Supabase e autenticar a Vercel. Depois, configurar as variáveis no destino, executar o deploy e validar o preview.
+Concluir `T013`: publicar a correção em Preview, executar login/sessão/logout,
+promover Production e registrar URL, deployment, commit e evidências.

@@ -63,9 +63,15 @@ O MVP será uma plataforma multi-tenant com conteúdo canônico compartilhado e 
 | [Plano de discovery](docs/14-plano-de-discovery.md) | Reuniões e saídas para fechar o briefing |
 | [Decisões confirmadas do MVP-0](docs/15-mvp0-decisoes-confirmadas.md) | Recorte rápido para Vercel + Supabase |
 | [Catálogo fictício de seed](docs/16-catalogo-ficticio-seed.md) | Marcas, autores, editorias e 24 matérias |
+| [Plano do Ciclo 2](docs/17-plano-ciclo-de-melhoria.md) | Estabilização, ondas e métricas do ciclo |
+| [Maleabilidade de marcas](docs/18-maleabilidade-de-marcas-e-personalizacao.md) | Cadastro de demos, tokens, presets e variantes |
+| [Variantes editoriais](docs/19-variantes-de-cadastro-e-operacao-editorial.md) | Templates, distribuição e contexto do ADM |
+| [Matriz de QA](docs/20-matriz-qa-ciclo-de-melhoria.md) | Smoke, viewports, segurança e evidências |
+| [Sistema de agentes](docs/21-sistema-de-agentes-e-governanca.md) | Papéis, posse, verificação e auditoria adversarial |
 | [Fila executável](TASKS.md) | Próximas tarefas e critérios de conclusão |
 | [Loop de entrega](DELIVERY_LOOP.md) | Ciclo executor + auditor para o Codex |
 | [Prompt inicial](PROMPT-INICIAL-CODEX.md) | Prompt pronto para iniciar a construção |
+| [Prompt do Ciclo 2](PROMPT-CICLO-MELHORIA-CODEX.md) | Prompt pronto para iniciar a rodada de melhorias |
 
 ## Fontes consideradas
 
@@ -80,6 +86,12 @@ As referências externas servem para alinhamento de posicionamento. Elas não au
 
 ## Estado atual
 
-Fase: especificação concluída e preparação para implementação do MVP-0.
+Fase: MVP-0 implementado e publicado; estabilização do login e abertura do
+Ciclo 2 em andamento.
 
-Próximo marco: colar `PROMPT-INICIAL-CODEX.md` no Codex, executar a fatia vertical inicial e conectar o repositório à Vercel e a um projeto Supabase.
+Domínio público atual:
+`https://portaldenoticias-five.vercel.app`.
+
+O domínio `portaldenoticias.vercel.app` pertence a um projeto anterior e não
+representa este MVP. Para continuar a evolução, use
+`PROMPT-CICLO-MELHORIA-CODEX.md`.

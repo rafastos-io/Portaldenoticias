@@ -24,6 +24,12 @@ Leia primeiro:
 - `docs/06-central-de-identidade-visual.md`
 - `docs/10-roadmap-e-backlog.md`
 - `docs/11-decisoes-em-aberto.md`
+- `docs/17-plano-ciclo-de-melhoria.md`
+- `docs/18-maleabilidade-de-marcas-e-personalizacao.md`
+- `docs/19-variantes-de-cadastro-e-operacao-editorial.md`
+- `docs/20-matriz-qa-ciclo-de-melhoria.md`
+- `docs/21-sistema-de-agentes-e-governanca.md`
+- `PROMPT-CICLO-MELHORIA-CODEX.md`
 
 ## Estado decidido do MVP-0
 
@@ -63,6 +69,11 @@ Leia primeiro:
 O escopo fechado está em `docs/01-escopo-mvp.md`. Itens marcados como pós-MVP não devem ser implementados silenciosamente. Se forem necessários para uma decisão técnica, registre a proposta em `docs/11-decisoes-em-aberto.md`.
 
 O agente executor deve seguir `DELIVERY_LOOP.md`, atualizar `TASKS.md` e só encerrar quando não houver tarefa P0 pronta ou existir bloqueio externo real.
+
+No Ciclo 2, `docs/17-plano-ciclo-de-melhoria.md` define o recorte promovido.
+Os documentos `18` a `21` detalham marcas, cadastro, QA e operação dos
+agentes. Eles não autorizam implementar os itens que continuam explicitamente
+fora do escopo.
 
 ## Qualidade esperada
 

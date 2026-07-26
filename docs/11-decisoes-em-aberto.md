@@ -197,3 +197,7 @@ Escolher solução e base legal antes de inserir scripts.
 | D08 | A definir | Editorial/SEO/Jurídico | - | Aberta |
 | D09 | Apenas ADM demo com USER/User123 | Produto/Comercial | 24/07/2026 | Decidida MVP-0 |
 | D10 | Vercel + Supabase; projeto ainda a escolher | Tecnologia/Segurança | 24/07/2026 | Parcial |
+| D21 | Criar e duplicar tenants apenas demonstrativos por preset no Ciclo 2 | Produto/Comercial | 26/07/2026 | Decidida Ciclo 2 |
+| D22 | Logo e mídia fictícia no Storage isolado por tenant no Ciclo 2 | Produto/Tecnologia | 26/07/2026 | Decidida Ciclo 2 |
+| D23 | Templates editoriais demonstrativos padrão, explicador/análise, patrocinado, correção e sem mídia no Ciclo 2 | Editorial/Produto | 26/07/2026 | Decidida Ciclo 2 |
+| D24 | Edição de distribuição e overrides apenas para canal portal demo no Ciclo 2 | Editorial/Produto | 26/07/2026 | Decidida Ciclo 2 |

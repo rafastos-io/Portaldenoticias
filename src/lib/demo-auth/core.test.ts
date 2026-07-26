@@ -30,6 +30,12 @@ describe("demo configuration", () => {
         DEMO_SESSION_SECRET: "replace-with-a-long-random-value",
       }),
     ).toThrow();
+    expect(() =>
+      readDemoConfig({
+        DEMO_SESSION_SECRET:
+          "replace-with-at-least-32-random-characters",
+      }),
+    ).toThrow();
   });
 });
 
@@ -91,6 +97,38 @@ describe("mutation origin", () => {
         origin: "https://demo.example",
       }),
     ).toBe(true);
+  });
+
+  it("accepts public and generated Vercel aliases without trusting a foreign origin", () => {
+    expect(
+      isTrustedMutationOrigin({
+        forwardedHost:
+          "portaldenoticias-raafastosgmailcoms-projects.vercel.app",
+        forwardedProto: "https",
+        host: "portaldenoticias-five.vercel.app",
+        origin: "https://portaldenoticias-five.vercel.app",
+      }),
+    ).toBe(true);
+    expect(
+      isTrustedMutationOrigin({
+        forwardedHost: "internal.example",
+        forwardedProto: "https",
+        host: "internal.example",
+        origin: "https://portaldenoticias-five.vercel.app",
+        vercelProductionUrl: "portaldenoticias-five.vercel.app",
+        vercelUrl:
+          "portaldenoticias-dnh46i58q-raafastosgmailcoms-projects.vercel.app",
+      }),
+    ).toBe(true);
+    expect(
+      isTrustedMutationOrigin({
+        forwardedHost: "internal.example",
+        forwardedProto: "https",
+        host: "internal.example",
+        origin: "https://attacker.example",
+        vercelProductionUrl: "portaldenoticias-five.vercel.app",
+      }),
+    ).toBe(false);
   });
 
   it("rejects absent, malformed and cross-site origins", () => {

@@ -90,6 +90,8 @@ export async function assertTrustedMutationOrigin() {
     forwardedProto: requestHeaders.get("x-forwarded-proto"),
     host: requestHeaders.get("host"),
     origin: requestHeaders.get("origin"),
+    vercelProductionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    vercelUrl: process.env.VERCEL_URL,
   });
 
   if (!trusted) {
