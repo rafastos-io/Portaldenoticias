@@ -29,7 +29,10 @@ Atualizado em: 26/07/2026.
 - tarefa concluída: `T013`;
 - tarefa concluída: `T014`;
 - Ciclo 2: documentação `docs/17` a `docs/21` e prompt operacional criados.
-- tarefa em verificação: `C202`.
+- tarefa concluída: `C202`;
+- tarefa concluída: `C203`;
+- próxima tarefa executável: `C210` (`P1`, `READY`);
+- nenhuma tarefa `P0` permanece pronta ou aberta.
 
 ## Bloqueios externos
 
@@ -118,13 +121,12 @@ Pasta: `artifacts/audit-2026-07-26/`.
 
 ### Próximo passo
 
-Publicar o commit aprovado de `C202` em Preview, executar o smoke automatizado
-na URL imutável do deployment e promover o mesmo artefato somente após a
-aprovação independente publicada.
+A publicação foi automatizada em `C202` e a linha de base foi aprovada em
+`C203`. Não há P0 pronta; `C210` é a próxima tarefa executável.
 
 ## C202 — smoke automatizado publicado
 
-Estado: `VERIFY`.
+Estado: `DONE`.
 
 - runner Playwright cobre aviso demo, login inválido e válido, sessão 401/200,
   Conteúdo, Identidades, Auditoria, logout e novo 401;
@@ -138,12 +140,50 @@ Estado: `VERIFY`.
 - bypass da Vercel é enviado apenas à origin exata do Preview e usa
   `maxRedirects=0`; teste integrado A → 302 → B confirmou zero header no
   destino externo;
+- commit promovido: `eb050280f593a1a33e68d9f6a2cd75d77304374a`;
+- Preview aprovado: `dpl_FJtzXUrCQMiUPa1qRnEThdqCruLU`,
+  `https://portaldenoticias-dhjm7cc6y-raafastosgmailcoms-projects.vercel.app`;
+- Production promovida: `dpl_67pSeiwLcm2bEFR1Zsxd1HmqNpzH`,
+  `https://portaldenoticias-five.vercel.app`;
 - `pnpm check`: lint, tipos, 75 testes e build aprovados;
-- smoke local e Production atual: 15 etapas aprovadas;
-- verificador independente e auditor adversarial: implementação local aprovada
-  sem P0/P1 após dois ciclos de correção;
-- pendente: commit, Preview exato, smoke publicado, promoção e reverificação de
-  Production.
+- smoke do gate: 14 etapas aprovadas em Preview e 14 em Production, sem dados
+  sensíveis nos relatórios;
+- verificador independente e auditor adversarial aprovaram implementação,
+  Preview e Production sem P0/P1;
+- os únicos HTTP 500 observados no runtime foram os negativos deliberados de
+  Origin externa; zero erro inesperado;
+- relatórios finais:
+  `artifacts/smoke-admin/2026-07-26T16-14-41-240Z-portaldenoticias-dhjm7cc6y-raafastosgmailcoms-projects.vercel.app/report.json`
+  e
+  `artifacts/smoke-admin/2026-07-26T16-14-56-531Z-portaldenoticias-five.vercel.app/report.json`.
+
+## C203 — baseline visual e funcional
+
+Estado: `DONE`.
+
+- ambiente: commit `eb050280f593a1a33e68d9f6a2cd75d77304374a`,
+  deployment Production `dpl_67pSeiwLcm2bEFR1Zsxd1HmqNpzH` e
+  `https://portaldenoticias-five.vercel.app`;
+- smoke C202 repetido em Production: 14 etapas aprovadas, zero falha;
+- oito capturas aprovadas de Home, Login, Conteúdo e Identidades em
+  `390 x 844` e `1440 x 900`, com HTTP 200, um H1, aviso demo,
+  `noindex, nofollow` e zero overflow global;
+- a primeira captura da Home congelou a animação de entrada e produziu um falso
+  P1 de contraste; as duas Homes foram recapturadas em estado settled com
+  reduced motion, conteúdo integralmente visível e contraste de `12,36:1`;
+- P0: zero;
+- P1: previews salvos de Identidades permanecem no skeleton por incompatibilidade
+  entre o sandbox seguro e a hidratação; dono: executor de `C211`;
+- P2: tabela administrativa móvel e navegação editorial sem affordance clara;
+  dono: executor de `C230`;
+- P2: tenant inexistente renderiza 404 visual com HTTP 200, sem fallback ou
+  vazamento entre tenants; dono: executor de `C240`;
+- três tenants revalidados sem conteúdo cruzado; catálogos da API isolados em
+  `10 / 10 / 9`; sessão ausente e cookie adulterado retornaram 401;
+- `pnpm check`: lint, tipos, 75 testes e build aprovados;
+- verificador independente e auditor adversarial aprovaram `C203` para `DONE`
+  e `C210` para `READY`, sem P0;
+- evidências: `artifacts/c203-baseline-2026-07-26/`.
 
 ## Evidências de implementação
 
@@ -346,5 +386,5 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Executar `C202`: transformar o smoke manual aprovado em verificação automatizada
-de Preview e Production, mantendo a promoção bloqueada quando o fluxo falhar.
+Não há P0 pronta. A próxima tarefa executável é `C210` (`P1`, `READY`):
+implementar o contexto global de tenant no ADM em uma fatia separada.

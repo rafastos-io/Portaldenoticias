@@ -29,9 +29,9 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | ID | Pri. | Estado | Dependências | Entrega |
 |---|---|---|---|---|
 | C201 | P0 | DONE | - | Especificar escopo, variantes, QA e sistema de agentes |
-| C202 | P0 | VERIFY | T013 | Smoke automatizado Preview/Production |
-| C203 | P0 | BLOCKED | T014,C202 | Baseline visual/funcional aprovado para o Ciclo 2 |
-| C210 | P1 | BLOCKED | C203 | Contexto global de tenant no ADM |
+| C202 | P0 | DONE | T013 | Smoke automatizado Preview/Production |
+| C203 | P0 | DONE | T014,C202 | Baseline visual/funcional aprovado para o Ciclo 2 |
+| C210 | P1 | READY | C203 | Contexto global de tenant no ADM |
 | C211 | P1 | BLOCKED | C210 | Workbench de identidade com preview vivo |
 | C212 | P1 | BLOCKED | C211 | Variantes estruturais reais de header, hero e cards |
 | C213 | P1 | BLOCKED | C210,C211 | Criar/duplicar tenant demo por preset |
