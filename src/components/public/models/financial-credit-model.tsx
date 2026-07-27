@@ -33,8 +33,8 @@ export function FinancialCreditHome({
     <>
       <section className="page-container py-7 sm:py-10">
         <div className="grid gap-7 lg:grid-cols-[minmax(0,1.28fr)_minmax(18rem,0.72fr)]">
-          <article className="group grid min-w-0 gap-5 border-b-4 border-brand-primary pb-7 sm:grid-cols-[1.05fr_0.95fr]">
-            <div className="hero-copy self-end">
+          <article className="group grid min-w-0 gap-5 border-b-4 border-brand-primary pb-7 sm:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+            <div className="hero-copy min-w-0 self-end">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-primary">
                 {heroEyebrow ?? "Decisões financeiras"}
               </p>
@@ -52,9 +52,13 @@ export function FinancialCreditHome({
                 Entenda o tema <span aria-hidden="true">→</span>
               </StoryTitleLink>
             </div>
-            <StoryTitleLink story={hero} tenant={tenant}>
+            <StoryTitleLink
+              className="block min-w-0"
+              story={hero}
+              tenant={tenant}
+            >
               <StoryImage
-                className="hero-media aspect-[4/3] min-h-64"
+                className="hero-media aspect-[4/3] min-h-64 w-full"
                 priority
                 sizes="(max-width: 1024px) 100vw, 34vw"
                 story={hero}
@@ -62,7 +66,7 @@ export function FinancialCreditHome({
             </StoryTitleLink>
           </article>
 
-          <aside className="bg-surface-raised p-5 ring-1 ring-border-subtle sm:p-6">
+          <aside className="min-w-0 bg-surface-raised p-5 ring-1 ring-border-subtle sm:p-6">
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-primary">
               Comece por uma necessidade
             </p>
