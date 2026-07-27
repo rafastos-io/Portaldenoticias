@@ -20,6 +20,7 @@ const actionLabels: Record<AuditAction, string> = {
   "content.paused": "Publicação pausada",
   "content.published": "Matéria publicada",
   "content.resumed": "Publicação retomada",
+  "portal.default_changed": "Portal padrão alterado",
   "theme.updated": "Identidade atualizada",
 };
 

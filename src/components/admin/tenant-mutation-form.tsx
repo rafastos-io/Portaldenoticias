@@ -10,7 +10,7 @@ export type TenantMutationState =
       tenantId: string;
       tenantName: string;
     }
-  | { message: string; status: "error" };
+  | { message: string; status: "error" | "success" };
 
 export const INITIAL_TENANT_MUTATION_STATE: TenantMutationState = {
   status: "idle",
@@ -67,6 +67,14 @@ export function TenantMutationForm({
         <p
           className="rounded-md border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-950"
           role="alert"
+        >
+          {state.message}
+        </p>
+      ) : null}
+      {state.status === "success" ? (
+        <p
+          className="rounded-md border border-emerald-300 bg-emerald-50 p-3 text-sm font-semibold text-emerald-950"
+          role="status"
         >
           {state.message}
         </p>

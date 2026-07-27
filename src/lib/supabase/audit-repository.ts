@@ -10,6 +10,7 @@ export const AUDIT_ACTIONS = [
   "content.paused",
   "content.resumed",
   "content.media_selected",
+  "portal.default_changed",
   "theme.updated",
 ] as const;
 

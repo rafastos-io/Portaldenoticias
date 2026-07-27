@@ -3,10 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   cookieTenantId: "",
   createAdminContent: vi.fn(),
+  DefaultDemoPortalConflictError: class extends Error {},
   destroyDemoSession: vi.fn(),
   revalidatePath: vi.fn(),
   requireDemoSession: vi.fn(),
   saveAdminTheme: vi.fn(),
+  setDefaultDemoPortal: vi.fn(),
   setAdminContentStatus: vi.fn(),
   updateAdminContent: vi.fn(),
 }));
@@ -59,7 +61,16 @@ vi.mock("@/lib/supabase/theme-repository", () => ({
   saveAdminTheme: mocks.saveAdminTheme,
 }));
 
-import { pauseContentAction } from "./actions";
+vi.mock("@/lib/supabase/demo-settings-repository", () => ({
+  DefaultDemoPortalConflictError:
+    mocks.DefaultDemoPortalConflictError,
+  setDefaultDemoPortal: mocks.setDefaultDemoPortal,
+}));
+
+import {
+  pauseContentAction,
+  setDefaultDemoPortalAction,
+} from "./actions";
 
 const TENANT_A = "00000000-0000-4000-8000-000000000002";
 const TENANT_B = "00000000-0000-4000-8000-000000000003";
@@ -83,9 +94,27 @@ function pauseForm(input: {
   return formData;
 }
 
+function defaultPortalForm(input: {
+  confirmed?: boolean;
+  contextTenantId?: string;
+  expectedRevision?: string;
+  tenantId?: string;
+}) {
+  const tenantId = input.tenantId ?? TENANT_A;
+  const formData = new FormData();
+  formData.set("tenantId", tenantId);
+  formData.set("contextTenantId", input.contextTenantId ?? tenantId);
+  formData.set("expectedRevision", input.expectedRevision ?? "4");
+  if (input.confirmed) {
+    formData.set("confirmGlobalDefault", "yes");
+  }
+  return formData;
+}
+
 describe("tenant-scoped admin actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.setDefaultDemoPortal.mockReset();
     mocks.cookieTenantId = TENANT_B;
   });
 
@@ -144,5 +173,97 @@ describe("tenant-scoped admin actions", () => {
       status: "paused",
       tenantId: TENANT_A,
     });
+  });
+
+  it("does not change the public default without global confirmation", async () => {
+    mocks.cookieTenantId = TENANT_A;
+
+    await expect(
+      setDefaultDemoPortalAction(
+        initialState,
+        defaultPortalForm({ confirmed: false }),
+      ),
+    ).resolves.toMatchObject({ status: "error" });
+    expect(mocks.setDefaultDemoPortal).not.toHaveBeenCalled();
+  });
+
+  it("does not change the public default without a valid session", async () => {
+    mocks.cookieTenantId = TENANT_A;
+    mocks.requireDemoSession.mockRejectedValueOnce(
+      new Error("unauthorized"),
+    );
+
+    await expect(
+      setDefaultDemoPortalAction(
+        initialState,
+        defaultPortalForm({ confirmed: true }),
+      ),
+    ).rejects.toThrow("unauthorized");
+    expect(mocks.setDefaultDemoPortal).not.toHaveBeenCalled();
+    expect(mocks.revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("denies a tampered tenant context before changing the public default", async () => {
+    mocks.cookieTenantId = TENANT_A;
+
+    await expect(
+      setDefaultDemoPortalAction(
+        initialState,
+        defaultPortalForm({
+          confirmed: true,
+          contextTenantId: TENANT_A,
+          tenantId: TENANT_B,
+        }),
+      ),
+    ).resolves.toMatchObject({ status: "error" });
+    expect(mocks.setDefaultDemoPortal).not.toHaveBeenCalled();
+    expect(mocks.revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("changes the public default once and invalidates public and admin routes", async () => {
+    mocks.cookieTenantId = TENANT_A;
+    mocks.setDefaultDemoPortal.mockResolvedValue(5);
+
+    await expect(
+      setDefaultDemoPortalAction(
+        initialState,
+        defaultPortalForm({ confirmed: true }),
+      ),
+    ).resolves.toEqual({
+      message: "Este tenant agora é a demonstração pública padrão.",
+      status: "success",
+    });
+
+    expect(mocks.setDefaultDemoPortal).toHaveBeenCalledWith({
+      expectedRevision: 4,
+      tenantId: TENANT_A,
+    });
+    expect(mocks.setDefaultDemoPortal).toHaveBeenCalledTimes(1);
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/");
+    expect(mocks.revalidatePath).toHaveBeenCalledWith(
+      "/admin",
+      "layout",
+    );
+  });
+
+  it("returns a safe conflict and never retries a stale revision", async () => {
+    mocks.cookieTenantId = TENANT_A;
+    mocks.setDefaultDemoPortal.mockRejectedValue(
+      new mocks.DefaultDemoPortalConflictError(
+        "stale",
+      ),
+    );
+
+    await expect(
+      setDefaultDemoPortalAction(
+        initialState,
+        defaultPortalForm({ confirmed: true }),
+      ),
+    ).resolves.toEqual({
+      message: "stale",
+      status: "error",
+    });
+    expect(mocks.setDefaultDemoPortal).toHaveBeenCalledTimes(1);
+    expect(mocks.revalidatePath).not.toHaveBeenCalled();
   });
 });

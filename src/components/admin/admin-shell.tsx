@@ -5,21 +5,32 @@ import {
   AdminBrandLink,
   AdminTenantControls,
 } from "@/components/admin/admin-tenant-controls";
+import type { TenantMutationState } from "@/components/admin/tenant-mutation-form";
 import { DemoNotice } from "@/components/demo-notice";
 import type { AdminTenant } from "@/lib/admin/tenant-context";
 
 type AdminShellProps = {
   children: ReactNode;
+  defaultPortalSetting: {
+    defaultTenantId: string;
+    revision: number;
+  } | null;
   fallbackTenantId?: string;
   logoutAction: () => Promise<void>;
+  setDefaultDemoPortalAction: (
+    state: TenantMutationState,
+    formData: FormData,
+  ) => Promise<TenantMutationState>;
   switchTenantAction: (formData: FormData) => Promise<void>;
   tenants: AdminTenant[];
 };
 
 export function AdminShell({
   children,
+  defaultPortalSetting,
   fallbackTenantId,
   logoutAction,
+  setDefaultDemoPortalAction,
   switchTenantAction,
   tenants,
 }: AdminShellProps) {
@@ -46,7 +57,9 @@ export function AdminShell({
           <header className="border-b border-slate-200 bg-white px-5 py-4 lg:px-8">
             <div className="flex flex-col gap-4 2xl:flex-row 2xl:items-end">
               <AdminTenantControls
+                defaultPortalSetting={defaultPortalSetting}
                 fallbackTenantId={fallbackTenantId}
+                setDefaultDemoPortalAction={setDefaultDemoPortalAction}
                 switchTenantAction={switchTenantAction}
                 tenants={tenants}
               />

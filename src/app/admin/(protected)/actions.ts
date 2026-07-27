@@ -27,6 +27,10 @@ import {
   setAdminContentStatus,
   updateAdminContent,
 } from "@/lib/supabase/content-repository";
+import {
+  DefaultDemoPortalConflictError,
+  setDefaultDemoPortal,
+} from "@/lib/supabase/demo-settings-repository";
 import { saveAdminTheme } from "@/lib/supabase/theme-repository";
 
 function adminLocation(
@@ -126,6 +130,55 @@ export async function switchTenantAction(formData: FormData) {
   const url = new URL(returnPath, "https://broadcast.local");
   url.searchParams.set("tenant", selected.id);
   redirect(`${url.pathname}?${url.searchParams.toString()}`);
+}
+
+export async function setDefaultDemoPortalAction(
+  _state: TenantMutationState,
+  formData: FormData,
+): Promise<TenantMutationState> {
+  const authorization = await authorizeMutation(formData);
+  if (authorization) return authorization;
+
+  if (formData.get("confirmGlobalDefault") !== "yes") {
+    return {
+      message:
+        "Confirme que a página pública sem tenant mudará para todas as pessoas.",
+      status: "error",
+    };
+  }
+
+  const expectedRevision = Number(formData.get("expectedRevision"));
+  const tenantId = String(formData.get("tenantId") ?? "");
+
+  if (
+    !Number.isSafeInteger(expectedRevision) ||
+    expectedRevision < 1
+  ) {
+    return {
+      message:
+        "A versão da configuração pública é inválida. Recarregue a página.",
+      status: "error",
+    };
+  }
+
+  try {
+    await setDefaultDemoPortal({ expectedRevision, tenantId });
+  } catch (error) {
+    return {
+      message:
+        error instanceof DefaultDemoPortalConflictError
+          ? error.message
+          : "Não foi possível alterar o portal padrão. Recarregue a página e tente novamente.",
+      status: "error",
+    };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/admin", "layout");
+  return {
+    message: "Este tenant agora é a demonstração pública padrão.",
+    status: "success",
+  };
 }
 
 export async function createContentAction(

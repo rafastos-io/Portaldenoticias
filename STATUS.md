@@ -32,7 +32,8 @@ Atualizado em: 26/07/2026.
 - tarefa concluída: `C202`;
 - tarefa concluída: `C203`;
 - tarefa concluída: `C210`;
-- próxima tarefa executável: `C211` (`P1`, `READY`);
+- tarefa em andamento: `C204` (`P1`, validação local concluída);
+- `C211` aguarda `C204` por priorização explícita da demonstração pública;
 - nenhuma tarefa `P0` permanece pronta ou aberta.
 
 ## Bloqueios externos
@@ -229,7 +230,49 @@ Estado: `DONE`.
 - o P2 de rolagem interna pouco evidente na tabela móvel permanece atribuído
   à `C230`, sem regressão da `C210`;
 - nenhuma migration, dependência, criação ou duplicação de tenant;
-- `C211` liberada para `READY`.
+- dependência técnica da `C211` satisfeita; a fila foi repriorizada para `C204`
+  antes do workbench de identidade.
+
+## C204 — tenant padrão reutilizável na URL pública
+
+Estado: `IN_PROGRESS`.
+
+- `/` agora resolve um singleton persistido e dinâmico; `?tenant=<slug>`
+  continua sendo preview explícito sem alterar o padrão;
+- trocar o tenant ativo do ADM permanece uma ação pessoal e separada da nova
+  ação confirmada `Definir como portal padrão`;
+- a Server Action revalida sessão, allowlist, contexto, confirmação global e
+  revisão otimista antes de chamar a RPC;
+- a RPC `cms_set_default_demo_tenant` bloqueia a linha, rejeita revisão
+  obsoleta e tenant fora da demonstração, e grava `portal.default_changed` na
+  mesma transação;
+- migrations remotas alinhadas:
+  `20260727012034_add_default_demo_portal` e
+  `20260727012319_index_default_demo_portal_tenant`;
+- tabela com RLS habilitada e forçada; `anon` e `authenticated` não possuem
+  leitura nem execução; `service_role` possui apenas `SELECT`, `UPDATE` e a
+  execução da RPC;
+- ensaio transacional com rollback aprovou mudança, incremento de revisão,
+  auditoria exata, no-op sem evento, conflito `40001` e recusa do tenant de
+  plataforma;
+- advisor de segurança do Supabase: zero alertas; o alerta de FK sem índice foi
+  eliminado;
+- `pnpm check`: lint, tipos, 103 testes e build aprovados; `/` gerada como rota
+  dinâmica;
+- navegador local: selecionar Lúmen não alterou `/`; publicar Lúmen alterou a
+  home sem query e preservou o preview explícito do Banco; Auditoria exibiu
+  Banco → Lúmen;
+- 390 px e 1440 px aprovados, sem overflow global e sem erro de console da
+  aplicação;
+- o teste restaurou o Banco pela própria interface; estado final remoto:
+  `banco-demo-horizonte`, revisão `3`, com os dois eventos de ida e volta;
+- auditoria adversarial local aprovada sem P0/P1/P2; o P3 de cobertura foi
+  fechado com regressões para sessão ausente e contexto adulterado na nova
+  Server Action;
+- verificação independente local em andamento;
+- Preview, smoke publicado e promoção para Production ainda pendentes;
+- fora de escopo preservado: criação de tenant e aprofundamento do workbench de
+  identidade.
 
 ## Evidências de implementação
 
@@ -432,5 +475,4 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Não há P0 pronta. A próxima tarefa executável é `C211` (`P1`, `READY`):
-workbench de identidade com preview vivo.
+Não há P0 pronta. Executar `C204` e só então liberar `C211`.

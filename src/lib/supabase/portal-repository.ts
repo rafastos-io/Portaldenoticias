@@ -3,6 +3,7 @@ import "server-only";
 import type { ThemeValues } from "@/lib/admin/theme-form";
 
 import type { Json } from "./database.types";
+import { getDefaultDemoPortalSetting } from "./demo-settings-repository";
 import { createServerSupabaseClient } from "./server";
 import { toTenantId } from "./tenant-scope";
 
@@ -166,6 +167,43 @@ export async function resolvePublicTenant(
       getDemoTenantIdentity(data.slug)?.slogan ??
       "Conteúdo para vidas mais longas",
   };
+}
+
+export async function resolvePublicTenantById(
+  tenantIdInput: string,
+): Promise<PublicTenant | null> {
+  const tenantId = toTenantId(tenantIdInput);
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("tenants")
+    .select("id, slug, display_name")
+    .eq("id", tenantId)
+    .eq("kind", "demo")
+    .eq("status", "demo")
+    .eq("is_demo", true)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error("Falha ao resolver o tenant público padrão.", {
+      cause: error,
+    });
+  }
+  if (!data) return null;
+
+  return {
+    displayName: data.display_name,
+    id: data.id,
+    slug: data.slug,
+    slogan:
+      getDemoTenantIdentity(data.slug)?.slogan ??
+      "Conteúdo para vidas mais longas",
+  };
+}
+
+export async function resolveDefaultPublicTenant() {
+  const setting = await getDefaultDemoPortalSetting();
+  if (!setting) return null;
+  return resolvePublicTenantById(setting.defaultTenantId);
 }
 
 export async function listPublicStories(

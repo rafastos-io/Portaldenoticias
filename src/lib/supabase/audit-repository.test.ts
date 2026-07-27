@@ -26,6 +26,7 @@ describe("escopo da auditoria demonstrativa", () => {
         "content.published",
         "content.paused",
         "content.resumed",
+        "portal.default_changed",
       ]),
     );
   });

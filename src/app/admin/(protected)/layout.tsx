@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import {
   logoutAction,
+  setDefaultDemoPortalAction,
   switchTenantAction,
 } from "@/app/admin/(protected)/actions";
 import { AdminShell } from "@/components/admin/admin-shell";
@@ -13,6 +14,10 @@ import {
 } from "@/lib/admin/tenant-context";
 import { requireDemoSession } from "@/lib/demo-auth/server";
 import { listAdminTenants } from "@/lib/supabase/content-repository";
+import {
+  getDefaultDemoPortalSetting,
+  type DefaultDemoPortalSetting,
+} from "@/lib/supabase/demo-settings-repository";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +31,7 @@ export default async function ProtectedAdminLayout({
   await requireDemoSession();
   let tenants: AdminTenant[] = [];
   let fallbackTenantId: string | undefined;
+  let defaultPortalSetting: DefaultDemoPortalSetting | null = null;
 
   try {
     tenants = await listAdminTenants();
@@ -40,10 +46,23 @@ export default async function ProtectedAdminLayout({
     tenants = [];
   }
 
+  try {
+    const setting = await getDefaultDemoPortalSetting();
+    defaultPortalSetting =
+      setting &&
+      tenants.some((tenant) => tenant.id === setting.defaultTenantId)
+        ? setting
+        : null;
+  } catch {
+    defaultPortalSetting = null;
+  }
+
   return (
     <AdminShell
+      defaultPortalSetting={defaultPortalSetting}
       fallbackTenantId={fallbackTenantId}
       logoutAction={logoutAction}
+      setDefaultDemoPortalAction={setDefaultDemoPortalAction}
       switchTenantAction={switchTenantAction}
       tenants={tenants}
     >

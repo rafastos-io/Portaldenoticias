@@ -51,6 +51,22 @@ on conflict (id) do update set
   updated_at = now(),
   archived_at = null;
 
+insert into public.demo_portal_settings (
+  setting_key,
+  default_tenant_id,
+  revision,
+  updated_by,
+  is_demo
+)
+values (
+  'public-home',
+  '00000000-0000-4000-8000-000000000002',
+  1,
+  'demo-operator',
+  true
+)
+on conflict (setting_key) do nothing;
+
 insert into public.authors (
   id, owner_tenant_id, slug, display_name, bio, specialties, is_demo
 )

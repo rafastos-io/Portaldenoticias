@@ -434,6 +434,41 @@ export type Database = {
           },
         ]
       }
+      demo_portal_settings: {
+        Row: {
+          default_tenant_id: string
+          is_demo: boolean
+          revision: number
+          setting_key: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          default_tenant_id: string
+          is_demo?: boolean
+          revision?: number
+          setting_key?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Update: {
+          default_tenant_id?: string
+          is_demo?: boolean
+          revision?: number
+          setting_key?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_portal_settings_default_tenant_id_fkey"
+            columns: ["default_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       distributions: {
         Row: {
           allow_full_body: boolean
@@ -934,6 +969,13 @@ export type Database = {
           p_text_color: string
         }
         Returns: string
+      }
+      cms_set_default_demo_tenant: {
+        Args: {
+          p_expected_revision: number
+          p_tenant_id: string
+        }
+        Returns: number
       }
       cms_update_content: {
         Args: {

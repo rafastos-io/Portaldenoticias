@@ -31,8 +31,9 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C201 | P0 | DONE | - | Especificar escopo, variantes, QA e sistema de agentes |
 | C202 | P0 | DONE | T013 | Smoke automatizado Preview/Production |
 | C203 | P0 | DONE | T014,C202 | Baseline visual/funcional aprovado para o Ciclo 2 |
+| C204 | P1 | IN_PROGRESS | C210 | Tenant padrão reutilizável na URL pública |
 | C210 | P1 | DONE | C203 | Contexto global de tenant no ADM |
-| C211 | P1 | READY | C210 | Workbench de identidade com preview vivo |
+| C211 | P1 | BLOCKED | C204 | Workbench de identidade com preview vivo |
 | C212 | P1 | BLOCKED | C211 | Variantes estruturais reais de header, hero e cards |
 | C213 | P1 | BLOCKED | C210,C211 | Criar/duplicar tenant demo por preset |
 | C214 | P1 | BLOCKED | C213 | Logo e mídia fictícia com Storage isolado |
@@ -210,6 +211,19 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 - zero P0 aberto;
 - P1 recebe tarefa/dono antes de liberar C210;
 - não implementar melhoria visual nesta tarefa.
+
+### C204
+
+- `/` sem query usa o tenant demonstrativo publicado como padrão global;
+- `?tenant=<slug>` continua sendo um preview direto e não altera o padrão;
+- trocar o contexto do ADM não publica silenciosamente a marca;
+- ação explícita confirma que a URL pública mudará para todos;
+- configuração singleton persistida com FK, RLS forçada e acesso server-only;
+- gravação valida tenant demo, revisão concorrente e sessão no servidor;
+- mudança e valor anterior ficam na trilha de auditoria;
+- configuração ausente ou inválida falha fechado, sem fallback cruzado;
+- invalidar a home após a mudança e validar 390 px e 1440 px;
+- não criar tenant nem aprofundar o workbench de identidade nesta tarefa.
 
 ### C210
 
