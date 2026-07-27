@@ -31,9 +31,9 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C201 | P0 | DONE | - | Especificar escopo, variantes, QA e sistema de agentes |
 | C202 | P0 | DONE | T013 | Smoke automatizado Preview/Production |
 | C203 | P0 | DONE | T014,C202 | Baseline visual/funcional aprovado para o Ciclo 2 |
-| C204 | P1 | IN_PROGRESS | C210 | Tenant padrão reutilizável na URL pública |
+| C204 | P1 | DONE | C210 | Tenant padrão reutilizável na URL pública |
 | C210 | P1 | DONE | C203 | Contexto global de tenant no ADM |
-| C211 | P1 | BLOCKED | C204 | Workbench de identidade com preview vivo |
+| C211 | P1 | READY | C204 | Workbench de identidade com preview vivo |
 | C212 | P1 | BLOCKED | C211 | Variantes estruturais reais de header, hero e cards |
 | C213 | P1 | BLOCKED | C210,C211 | Criar/duplicar tenant demo por preset |
 | C214 | P1 | BLOCKED | C213 | Logo e mídia fictícia com Storage isolado |

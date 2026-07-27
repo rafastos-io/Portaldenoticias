@@ -32,8 +32,8 @@ Atualizado em: 26/07/2026.
 - tarefa concluída: `C202`;
 - tarefa concluída: `C203`;
 - tarefa concluída: `C210`;
-- tarefa em andamento: `C204` (`P1`, validação local concluída);
-- `C211` aguarda `C204` por priorização explícita da demonstração pública;
+- tarefa concluída: `C204`;
+- próxima tarefa executável: `C211` (`P1`, `READY`);
 - nenhuma tarefa `P0` permanece pronta ou aberta.
 
 ## Bloqueios externos
@@ -235,7 +235,7 @@ Estado: `DONE`.
 
 ## C204 — tenant padrão reutilizável na URL pública
 
-Estado: `IN_PROGRESS`.
+Estado: `DONE`.
 
 - `/` agora resolve um singleton persistido e dinâmico; `?tenant=<slug>`
   continua sendo preview explícito sem alterar o padrão;
@@ -264,13 +264,51 @@ Estado: `IN_PROGRESS`.
   Banco → Lúmen;
 - 390 px e 1440 px aprovados, sem overflow global e sem erro de console da
   aplicação;
-- o teste restaurou o Banco pela própria interface; estado final remoto:
-  `banco-demo-horizonte`, revisão `3`, com os dois eventos de ida e volta;
+- o teste local restaurou o Banco pela própria interface; ao fim dessa fase o
+  estado remoto era `banco-demo-horizonte`, revisão `3`, com os dois eventos de
+  ida e volta;
 - auditoria adversarial local aprovada sem P0/P1/P2; o P3 de cobertura foi
   fechado com regressões para sessão ausente e contexto adulterado na nova
   Server Action;
-- verificação independente local em andamento;
-- Preview, smoke publicado e promoção para Production ainda pendentes;
+- commit funcional: `bab3f202c9d3a4423f73ea9b9f1f298d0f3892b9`;
+- Preview imutável `dpl_4CKpds2GzPPf7o5kFqj6hPwxAygW`, `READY`, no SHA
+  funcional exato;
+- smoke Preview dry-run aprovado em 14/14 etapas, incluindo Origin externa,
+  sessão 401/200, Conteúdo, Identidades, Auditoria e logout:
+  `artifacts/smoke-admin/2026-07-27T01-51-03-073Z-portaldenoticias-1bbkbaa7p-raafastosgmailcoms-projects.vercel.app/report.json`;
+- a primeira tentativa foi bloqueada antes do login por uma Access URL obsoleta;
+  uma URL temporária da origin imutável corrigiu apenas o acesso à proteção e
+  o gate passou sem promover;
+- navegador no Preview exato: selecionar Lúmen manteve Banco em `/`; publicar
+  mudou `/` sem query para Lúmen; `?tenant=banco-demo-horizonte` preservou o
+  preview direto; Auditoria exibiu Banco → Lúmen; Banco foi restaurado;
+- estado final compartilhado após a restauração: `banco-demo-horizonte`,
+  revisão `7`, último evento Lúmen → Banco;
+- capturas sanitizadas:
+  `artifacts/c204-preview-bab3f20/home-lumen-root-1440.png` e
+  `artifacts/c204-preview-bab3f20/home-banco-restaurada-1440.png`;
+- verificador independente e auditor adversarial aprovaram o Preview exato
+  sem P0/P1/P2 e autorizaram a promoção;
+- P3 documental aceito: capturas durante a animação não servem como baseline
+  visual e o relatório do smoke não embute deployment/SHA; URL, timestamp e
+  metadados Vercel preservam a cadeia de custódia nesta entrega;
+- Production `dpl_FZGsy6tFnZ1xcBaMTXSJfXCcPjsa`, `READY`, promovida do
+  Preview aprovado, no SHA funcional exato e publicada em
+  `https://portaldenoticias-five.vercel.app`;
+- metadados Vercel confirmam `action=promote` e
+  `originalDeploymentId=dpl_4CKpds2GzPPf7o5kFqj6hPwxAygW`;
+- smoke pós-Production aprovado em 14/14 etapas, incluindo política completa do
+  cookie, login inválido/válido, sessão 401/200, Conteúdo, Identidades,
+  Auditoria e logout:
+  `artifacts/smoke-admin/2026-07-27T02-06-01-815Z-portaldenoticias-five.vercel.app/report.json`;
+- navegador em Production confirmou Banco em `/` sem query e Lúmen em
+  `/?tenant=healthtech-demo-lumen`, sem erro de console;
+- runtime do deployment Production sem `error` ou `fatal`;
+- verificador independente e auditor adversarial aprovaram Production e o
+  fechamento da C204, sem P0/P1/P2;
+- P3 futuro: embutir SHA/deployment ID no relatório, capturar evidência visual
+  settled em 390 px e fixar a major do Node em vez de `>=22`;
+- `C211` liberada para `READY`; nenhuma tarefa P0 permanece pronta.
 - fora de escopo preservado: criação de tenant e aprofundamento do workbench de
   identidade.
 
@@ -475,4 +513,5 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Não há P0 pronta. Executar `C204` e só então liberar `C211`.
+Não há P0 pronta. A próxima tarefa executável é `C211` (`P1`, `READY`):
+workbench de identidade com preview vivo.
