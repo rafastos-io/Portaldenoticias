@@ -1,35 +1,34 @@
 import { describe, expect, it } from "vitest";
 
-import { parseFrankfurterRate } from "./exchange-rates";
+import { parseFrankfurterRates } from "./exchange-rates";
 
 describe("cotações de referência", () => {
-  it("aceita somente o contrato esperado da fonte", () => {
+  it("calcula preço em reais e variação entre duas referências", () => {
     expect(
-      parseFrankfurterRate(
-        {
-          base: "USD",
-          date: "2026-07-27",
-          quote: "BRL",
-          rate: 5.1234,
-        },
-        "Dólar comercial",
-      ),
-    ).toEqual({
-      base: "USD",
-      date: "2026-07-27",
-      label: "Dólar comercial",
-      quote: "BRL",
-      rate: 5.1234,
-    });
+      parseFrankfurterRates([
+        { base: "BRL", date: "2026-07-24", quote: "USD", rate: 0.2 },
+        { base: "BRL", date: "2026-07-25", quote: "USD", rate: 0.196 },
+      ]),
+    ).toEqual([
+      {
+        changePercent: expect.closeTo(2.0408, 3),
+        kind: "currency",
+        label: "Dólar",
+        price: expect.closeTo(5.102, 3),
+        referenceAt: "2026-07-25",
+        source: "Frankfurter",
+        symbol: "USD",
+      },
+    ]);
   });
 
-  it("recusa resposta inválida ou par não aprovado", () => {
+  it("ignora linhas inválidas ou moedas não aprovadas", () => {
     expect(
-      parseFrankfurterRate(
-        { base: "BTC", date: "2026-07-27", quote: "BRL", rate: 1 },
-        "Bitcoin",
-      ),
-    ).toBeNull();
-    expect(parseFrankfurterRate({ rate: "5.1" }, "Dólar")).toBeNull();
+      parseFrankfurterRates([
+        { base: "BRL", date: "2026-07-27", quote: "BTC", rate: 1 },
+        { base: "USD", date: "2026-07-27", quote: "BRL", rate: 5.1 },
+        { rate: "5.1" },
+      ]),
+    ).toEqual([]);
   });
 });

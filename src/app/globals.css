@@ -145,6 +145,26 @@ textarea {
   transform: translateX(0.25rem);
 }
 
+.market-ticker-track {
+  animation: market-ticker-scroll 52s linear infinite;
+  will-change: transform;
+}
+
+.market-ticker:hover .market-ticker-track,
+.market-ticker:focus-within .market-ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes market-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes hero-rise {
   from {
     opacity: 0;
@@ -187,5 +207,17 @@ textarea {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .market-ticker-viewport {
+    overflow-x: auto;
+  }
+
+  .market-ticker-track {
+    animation: none !important;
+  }
+
+  .market-ticker-copy[aria-hidden="true"] {
+    display: none;
   }
 }

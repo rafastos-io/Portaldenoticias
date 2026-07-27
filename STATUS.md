@@ -87,6 +87,39 @@ Atualizado em: 27/07/2026.
   continua servindo a versão anterior até Preview, smoke, auditoria independente
   e promoção autorizada.
 
+## Refino rápido da home — mercados, editorias e rodapé — 27/07/2026
+
+### Resultado implementado
+
+- o ticker passou a combinar quatro ações brasileiras de referência e seis
+  moedas em BRL, com cache server-side, data e fontes visíveis;
+- a faixa replica os itens para movimento contínuo, pausa em hover/foco e
+  desativa a animação para `prefers-reduced-motion`;
+- a home ganhou uma seção própria de editorias em três colunas, com matéria
+  dominante, chamadas compactas e continuidade “Mais de…”;
+- o rodapé agora reúne posicionamento editorial, slogan, navegação, editorias e
+  fechamento institucional, com composição responsiva;
+- nenhum token, segredo ou chamada de mercado foi exposto ao navegador.
+
+### Evidências
+
+- 22 arquivos de teste e 111 testes aprovados; o primeiro ciclo registrou um
+  timeout intermitente no teste Playwright preexistente e a repetição passou;
+- lint, tipos e build de produção aprovados;
+- browser em 1440 × 1000 e 390 × 844: zero overflow horizontal, zero imagem
+  quebrada e zero erro de console;
+- o ticker estava em execução e mudou para `paused` ao receber foco;
+- comparação visual e capturas em
+  `artifacts/c230-market-categories-footer-2026-07-27/`;
+- `design-qa.md`: `passed`, sem achado P0/P1/P2 pendente.
+
+### Limite de escopo
+
+- a brapi sem token expõe somente a lista gratuita de teste; ampliar o universo
+  de ações exige token configurado exclusivamente no servidor e uma decisão
+  explícita de produto;
+- nenhuma publicação Vercel foi feita nesta sessão.
+
 ## Bloqueios externos
 
 Nenhum bloqueio externo ativo.

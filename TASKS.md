@@ -302,6 +302,10 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 - sem overflow e com foco/zoom 200%;
 - comparação das quatro marcas em 390/1440;
 - não alterar workflow ou schema editorial.
+- progresso antecipado em 27/07/2026: ticker contínuo com ações/moedas, seção
+  editorial por categorias e rodapé robusto entregues e validados em
+  390/1440; `C230` permanece `BLOCKED` até `C212` e `C214` serem concluídas e a
+  matriz completa das quatro marcas poder ser executada.
 
 ### C240
 

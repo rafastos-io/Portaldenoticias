@@ -203,3 +203,4 @@ Escolher solução e base legal antes de inserir scripts.
 | D24 | Edição de distribuição e overrides apenas para canal portal demo no Ciclo 2 | Editorial/Produto | 26/07/2026 | Decidida Ciclo 2 |
 | D25 | Cotações de referência podem aparecer no portal com API pública sem chave, cache server-side, fonte/data explícitas e fallback; não são tempo real nem recomendação financeira | Produto/Editorial/Tecnologia | 27/07/2026 | Decidida Ciclo 2 |
 | D26 | O aviso público em faixa foi removido do portal a pedido do responsável; `noindex`, dados demo, rótulos editoriais e o aviso permanente do ADM continuam preservados | Produto/Comercial | 27/07/2026 | Decidida Ciclo 2 |
+| D27 | A faixa pode usar no MVP-0 as ações PETR4, VALE3, ITUB4 e MGLU3 disponíveis no modo público de teste da brapi; qualquer ampliação exige token server-only, cache e nova decisão explícita | Produto/Editorial/Tecnologia | 27/07/2026 | Decidida Ciclo 2 |

@@ -2,10 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { CategorySpotlights } from "@/components/public/category-spotlights";
 import { PublicShell } from "@/components/public/public-shell";
 import { MarketTicker } from "@/components/public/market-ticker";
 import { StoryList } from "@/components/public/story-list";
-import { getExchangeRates } from "@/lib/market/exchange-rates";
+import { getMarketQuotes } from "@/lib/market/market-data";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
 import {
   getDemoTenantIdentity,
@@ -31,11 +32,11 @@ async function loadHome(request: ReturnType<typeof parsePublicTenantRequest>) {
         ? await resolvePublicTenant(request.slug)
         : await resolveDefaultPublicTenant();
     if (!tenant) return { found: false as const, ok: true as const };
-    const [stories, placements, theme, exchangeRates] = await Promise.all([
+    const [stories, placements, theme, marketQuotes] = await Promise.all([
       listPublicStories(tenant.id),
       listHomePlacementIds(tenant.id),
       getTenantTheme(tenant.id),
-      getExchangeRates(),
+      getMarketQuotes(),
     ]);
     if (!theme) return { found: false as const, ok: true as const };
     return {
@@ -45,7 +46,7 @@ async function loadHome(request: ReturnType<typeof parsePublicTenantRequest>) {
       stories,
       tenant,
       theme,
-      exchangeRates,
+      marketQuotes,
     };
   } catch {
     return { ok: false as const };
@@ -103,7 +104,7 @@ export default async function HomePage({
     }
     notFound();
   }
-  const { exchangeRates, placements, stories, tenant, theme } = loaded;
+  const { marketQuotes, placements, stories, tenant, theme } = loaded;
   const categories = [
     ...new Map(
       stories.map((story) => [
@@ -133,7 +134,7 @@ export default async function HomePage({
   return (
     <PublicShell categories={categories} tenant={tenant} theme={theme}>
       <main id="conteudo-principal">
-        <MarketTicker rates={exchangeRates} />
+        <MarketTicker quotes={marketQuotes} />
         {hero ? (
           <section
             className="page-container border-b border-border-subtle py-7 sm:py-10"
@@ -209,13 +210,14 @@ export default async function HomePage({
                 </p>
               </div>
               <StoryList
-                stories={ordered.slice(1)}
+                stories={ordered.slice(1, 6)}
                 tenant={tenant}
                 theme={theme}
               />
             </div>
           </section>
         ) : null}
+        <CategorySpotlights stories={ordered.slice(1)} tenant={tenant} />
       </main>
     </PublicShell>
   );
