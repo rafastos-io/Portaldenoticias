@@ -19,6 +19,9 @@ import {
   writeSmokeReport,
 } from "./lib/smoke-admin-core.mjs";
 
+const LOGIN_BUTTON = "Acessar ambiente editorial";
+const LOGIN_HEADING = "Studio editorial";
+
 const HELP = `
 Uso:
   pnpm smoke:admin -- --base-url https://preview.example
@@ -166,13 +169,13 @@ async function main() {
         })
         .getByText(DEMO_NOTICE, { exact: true })
         .waitFor();
-      await page.getByRole("heading", { name: "Entrar no ADM" }).waitFor();
+      await page.getByRole("heading", { name: LOGIN_HEADING }).waitFor();
     });
 
     await runRecordedStep(report, "recusar login inválido", async () => {
       await page.locator("#user").fill("__smoke_invalid_user__");
       await page.locator("#password").fill("__smoke_invalid_password__");
-      await page.getByRole("button", { name: "Entrar no ADM" }).click();
+      await page.getByRole("button", { name: LOGIN_BUTTON }).click();
       const loginAlert = page.locator("form [role='alert']");
       await loginAlert.waitFor();
       assert(
@@ -212,7 +215,7 @@ async function main() {
                   "/admin/login",
                 ),
             ),
-            page.getByRole("button", { name: "Entrar no ADM" }).click(),
+            page.getByRole("button", { name: LOGIN_BUTTON }).click(),
           ]).then(([response]) => response);
         } finally {
           externalOriginAttempt = false;
@@ -247,7 +250,7 @@ async function main() {
         page.waitForURL((url) =>
           isExpectedLocation(url.toString(), options.baseUrl, "/admin"),
         ),
-        page.getByRole("button", { name: "Entrar no ADM" }).click(),
+        page.getByRole("button", { name: LOGIN_BUTTON }).click(),
       ]);
       await page.getByText("demo-operator", { exact: true }).waitFor();
       return { redirectedTo: "/admin" };
@@ -358,7 +361,7 @@ async function main() {
         page.waitForURL((url) =>
           isExpectedLocation(url.toString(), options.baseUrl, "/admin"),
         ),
-        page.getByRole("button", { name: "Entrar no ADM" }).click(),
+        page.getByRole("button", { name: LOGIN_BUTTON }).click(),
       ]);
       const session = await apiSession(page);
       assert(

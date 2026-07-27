@@ -38,6 +38,24 @@ Atualizado em: 27/07/2026.
 - tarefa pronta: `C213` (`P1`, `READY`);
 - nenhuma tarefa `P0` permanece pronta ou aberta.
 
+## Ajustes visuais rápidos dos modelos — 27/07/2026
+
+- Banco Horizonte: itens da faixa de cotações centralizados verticalmente;
+- Crédito Demo Órbita: grid e escala da manchete ajustados, com zero
+  interseção entre texto e imagem;
+- Healthtech Lúmen: manchete reduzida e hero completo encerrando em 740 px num
+  viewport de 900 px;
+- desktop 1920 × 900 e mobile 390 × 844: HTTP 200, uma `h1`, zero overflow,
+  overlay, imagem sem `alt` ou erro de página;
+- `pnpm check`: lint, tipos, 24 arquivos/120 testes e build aprovados;
+- commit funcional `c314acc`; Preview
+  `dpl_5Gf8xwBuLHnu5hxn6EX5hw25PvTh` aprovado e promovido;
+- Production `dpl_D8EiktTg1f4LWjSt1ERZbvNqHA52`, `READY`, no domínio
+  `https://portaldenoticias-five.vercel.app`;
+- smoke atualizado para os rótulos vigentes do login: 14 etapas aprovadas em
+  Preview e 14 em Production; o único erro de log observado foi a recusa
+  intencional do teste negativo de Origin externa.
+
 ## Planejamento do sprint visual por segmento — 27/07/2026
 
 ### Resultado
