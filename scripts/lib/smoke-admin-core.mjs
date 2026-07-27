@@ -34,6 +34,9 @@ export function parseSmokeArguments(argv, environment = process.env) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const option = argv[index];
+    if (option === "--") {
+      continue;
+    }
     if (option === "--headed") {
       options.headed = true;
       continue;
@@ -198,6 +201,9 @@ export function parsePromotionArguments(argv, environment = process.env) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const option = argv[index];
+    if (option === "--") {
+      continue;
+    }
     if (option === "--dry-run") {
       options.dryRun = true;
       continue;

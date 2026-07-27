@@ -383,3 +383,35 @@ describe("gate de promoção", () => {
     ).rejects.toThrow("production reprovada");
   });
 });
+
+describe("compatibilidade com pnpm", () => {
+  it("aceita o separador de argumentos no smoke", () => {
+    expect(
+      parseSmokeArguments([
+        "--",
+        "--base-url",
+        "https://preview.example",
+        "--environment",
+        "preview",
+      ]).baseUrl,
+    ).toBe("https://preview.example");
+  });
+
+  it("aceita o separador de argumentos no gate de promocao", () => {
+    expect(
+      parsePromotionArguments([
+        "--",
+        "--preview-url",
+        "https://preview.example",
+        "--production-url",
+        PRODUCTION_BASE_URL,
+        "--deployment",
+        "https://preview.example",
+        "--dry-run",
+      ]),
+    ).toMatchObject({
+      dryRun: true,
+      previewUrl: "https://preview.example",
+    });
+  });
+});

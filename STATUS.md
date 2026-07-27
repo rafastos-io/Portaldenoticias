@@ -31,7 +31,8 @@ Atualizado em: 26/07/2026.
 - Ciclo 2: documentação `docs/17` a `docs/21` e prompt operacional criados.
 - tarefa concluída: `C202`;
 - tarefa concluída: `C203`;
-- tarefa em verificação: `C210` (`P1`);
+- tarefa concluída: `C210`;
+- próxima tarefa executável: `C211` (`P1`, `READY`);
 - nenhuma tarefa `P0` permanece pronta ou aberta.
 
 ## Bloqueios externos
@@ -187,7 +188,7 @@ Estado: `DONE`.
 
 ## C210 — contexto global de tenant no ADM
 
-Estado: `VERIFY`.
+Estado: `DONE`.
 
 - cabeçalho administrativo concentra um único seletor de tenant ativo e link
   para o portal correspondente;
@@ -205,12 +206,30 @@ Estado: `VERIFY`.
   overflow global;
 - ensaio A → B exibiu a confirmação acessível e consulta remota confirmou a
   matéria ainda `published` antes do segundo passo;
-- `pnpm check`: lint, tipos, 83 testes e build aprovados;
+- commit funcional `64297973c801538bb62a8ac42a8f328bce862c40`;
+- Preview imutável `dpl_5PBsdEyjgXhbr7NfF7zNKt52SkJo`, `READY`, com
+  smoke dry-run 14/14 aprovado em
+  `artifacts/smoke-admin/2026-07-26T18-14-19-562Z-portaldenoticias-8o51cdlig-raafastosgmailcoms-projects.vercel.app/report.json`;
+- Production `dpl_4o5u2ssyF21LNxqr1rDX7DcEuxPX`, `READY`, promovida do
+  mesmo Preview e no mesmo SHA;
+- smoke pós-Production 14/14 aprovado, incluindo login inválido/válido,
+  sessão 401/200, política do cookie, Conteúdo, Identidades, Auditoria e
+  logout, em
+  `artifacts/smoke-admin/2026-07-26T23-57-34-337Z-portaldenoticias-five.vercel.app/report.json`;
+- evidência visual publicada em 390 px e 1440 px confirmou Lúmen, persistência
+  em navegação/marca, slug público e zero overflow global em
+  `artifacts/smoke-admin/c210-production-visual-evidence/`;
+- runtime do deployment mostrou somente os dois 500 deliberados do teste de
+  Origin externa; demais respostas observadas: 211×200, 10×303 e 8×401;
+- o parser do smoke e da promoção passou a aceitar o separador literal `--`
+  repassado pelo pnpm, com dois testes de regressão;
+- `pnpm check`: lint, tipos, 85 testes e build aprovados;
 - verificador independente e auditor adversarial aprovaram o diff corrigido
-  sem P0/P1/P2;
+  e Production sem P0/P1/P2 novo;
+- o P2 de rolagem interna pouco evidente na tabela móvel permanece atribuído
+  à `C230`, sem regressão da `C210`;
 - nenhuma migration, dependência, criação ou duplicação de tenant;
-- pendente: commit, Preview imutável, smoke publicado, promoção do mesmo
-  artefato e reverificação de Production.
+- `C211` liberada para `READY`.
 
 ## Evidências de implementação
 
@@ -413,5 +432,5 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Não há P0 pronta. Publicar `C210` em Preview, executar o smoke e promover o
-mesmo artefato apenas após a aprovação independente do ambiente.
+Não há P0 pronta. A próxima tarefa executável é `C211` (`P1`, `READY`):
+workbench de identidade com preview vivo.
