@@ -98,8 +98,14 @@ export default async function StoryPage({
               ))}
             </div>
             <aside className="border-t border-border-subtle pt-5 text-sm leading-6 text-text-muted">
-              Ambiente demonstrativo. Esta matéria, autoria e eventuais situações
-              mencionadas são inteiramente fictícias.
+              Publicado em{" "}
+              {story.publishedAt
+                ? new Intl.DateTimeFormat("pt-BR", {
+                    dateStyle: "long",
+                    timeZone: "America/Sao_Paulo",
+                  }).format(new Date(story.publishedAt))
+                : "data editorial não informada"}
+              .
             </aside>
           </div>
         </article>

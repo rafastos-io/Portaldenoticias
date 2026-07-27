@@ -2,9 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { DemoNotice } from "@/components/demo-notice";
 import { PublicShell } from "@/components/public/public-shell";
+import { MarketTicker } from "@/components/public/market-ticker";
 import { StoryList } from "@/components/public/story-list";
+import { getExchangeRates } from "@/lib/market/exchange-rates";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
 import {
   getDemoTenantIdentity,
@@ -30,10 +31,11 @@ async function loadHome(request: ReturnType<typeof parsePublicTenantRequest>) {
         ? await resolvePublicTenant(request.slug)
         : await resolveDefaultPublicTenant();
     if (!tenant) return { found: false as const, ok: true as const };
-    const [stories, placements, theme] = await Promise.all([
+    const [stories, placements, theme, exchangeRates] = await Promise.all([
       listPublicStories(tenant.id),
       listHomePlacementIds(tenant.id),
       getTenantTheme(tenant.id),
+      getExchangeRates(),
     ]);
     if (!theme) return { found: false as const, ok: true as const };
     return {
@@ -43,6 +45,7 @@ async function loadHome(request: ReturnType<typeof parsePublicTenantRequest>) {
       stories,
       tenant,
       theme,
+      exchangeRates,
     };
   } catch {
     return { ok: false as const };
@@ -100,7 +103,7 @@ export default async function HomePage({
     }
     notFound();
   }
-  const { placements, stories, tenant, theme } = loaded;
+  const { exchangeRates, placements, stories, tenant, theme } = loaded;
   const categories = [
     ...new Map(
       stories.map((story) => [
@@ -130,56 +133,53 @@ export default async function HomePage({
   return (
     <PublicShell categories={categories} tenant={tenant} theme={theme}>
       <main id="conteudo-principal">
+        <MarketTicker rates={exchangeRates} />
         {hero ? (
           <section
-            className={`relative isolate overflow-hidden ${
-              theme.hero === "science-feature"
-                ? "min-h-[36rem] md:min-h-[42rem]"
-                : "min-h-[42rem] md:min-h-[calc(100svh-9.75rem)]"
-            }`}
+            className="page-container border-b border-border-subtle py-7 sm:py-10"
           >
-            {hero.imagePath ? (
-              <div className="hero-media absolute inset-0 -z-20">
-                <Image
-                  alt={hero.imageAlt ?? ""}
-                  className="object-cover object-[63%_center] md:object-center"
-                  fill
-                  priority
-                  sizes="100vw"
-                  src={hero.imagePath}
-                />
-              </div>
-            ) : null}
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 -z-10 bg-surface-page/90 md:bg-[linear-gradient(90deg,var(--surface-page)_0%,color-mix(in_srgb,var(--surface-page)_88%,transparent)_55%,transparent_100%)]"
-            />
-            <div className="page-container flex min-h-[42rem] items-end py-12 md:min-h-[calc(100svh-9.75rem)] md:items-center md:py-16">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
               <div
-                className={`hero-copy max-w-3xl ${
+                className={`hero-copy flex flex-col justify-end ${
                   theme.hero === "featured-grid"
-                    ? "border-l-8 border-brand-secondary bg-surface-raised/95 p-6 sm:p-10"
+                    ? "border-l-8 border-brand-secondary pl-5 sm:pl-8"
                     : theme.hero === "science-feature"
-                      ? "border-t-4 border-accent pt-6"
+                      ? "border-t-4 border-accent pt-5"
                       : ""
                 }`}
               >
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
                   {heroPlacement?.eyebrow_override ?? hero.categoryName}
                 </p>
-                <h1 className="mt-4 font-heading text-[clamp(2.7rem,6.4vw,5.4rem)] leading-[0.96] font-bold tracking-[-0.055em] text-brand-primary">
+                <h1 className="mt-3 font-heading text-[clamp(2.6rem,5.5vw,5rem)] leading-[0.96] font-bold tracking-[-0.055em] text-brand-primary">
                   {hero.title}
                 </h1>
-                <p className="mt-6 max-w-xl text-base leading-7 sm:text-lg sm:leading-8">
+                <p className="mt-5 max-w-2xl text-base leading-7 text-text-muted sm:text-lg sm:leading-8">
                   {hero.subtitle}
                 </p>
                 <Link
-                  className="story-link mt-8 inline-flex min-h-12 items-center gap-3 rounded-full bg-brand-primary px-5 py-3 text-sm font-bold text-text-on-brand no-underline hover:bg-surface-inverse"
+                  className="story-link mt-6 inline-flex min-h-11 w-fit items-center gap-3 border-b-2 border-brand-primary py-2 text-sm font-bold text-brand-primary no-underline"
                   href={`/materia/${hero.canonicalSlug}?tenant=${encodeURIComponent(tenant.slug)}`}
                 >
                   Ler matéria <span aria-hidden="true">→</span>
                 </Link>
               </div>
+              {hero.imagePath ? (
+                <Link
+                  aria-label={`Ler ${hero.title}`}
+                  className="hero-media relative aspect-[4/3] w-full overflow-hidden bg-surface-muted sm:min-h-72 lg:order-last"
+                  href={`/materia/${hero.canonicalSlug}?tenant=${encodeURIComponent(tenant.slug)}`}
+                >
+                  <Image
+                    alt={hero.imageAlt ?? ""}
+                    className="object-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 38vw"
+                    src={hero.imagePath}
+                  />
+                </Link>
+              ) : null}
             </div>
           </section>
         ) : (
@@ -189,22 +189,23 @@ export default async function HomePage({
         {ordered.length > 1 ? (
           <section
             aria-labelledby="destaques-title"
-            className="page-container py-16 sm:py-20"
+            className="page-container py-10 sm:py-14"
             id="destaques"
           >
-            <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+            <div className="grid gap-10 lg:grid-cols-[0.58fr_1.42fr]">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-primary">
-                  Curadoria demonstrativa
+                  Agora
                 </p>
                 <h2
                   className="mt-3 max-w-sm font-heading text-4xl leading-tight font-bold tracking-tight text-brand-primary sm:text-5xl"
                   id="destaques-title"
                 >
-                  Pautas para decisões de longo prazo.
+                  As notícias que conectam saúde e economia.
                 </h2>
                 <p className="mt-5 max-w-md leading-7 text-text-muted">
-                  Conteúdo fictício publicado e licenciado para este tenant.
+                  Análises, explicadores e tendências para acompanhar uma
+                  sociedade que vive mais.
                 </p>
               </div>
               <StoryList
@@ -226,7 +227,6 @@ function DefaultPortalUnavailable() {
       <a className="skip-link" href="#conteudo-principal">
         Pular para o conteúdo
       </a>
-      <DemoNotice />
       <main
         className="grid min-h-[70vh] place-items-center px-5"
         id="conteudo-principal"

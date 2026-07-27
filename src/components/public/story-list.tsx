@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import type { ThemeValues } from "@/lib/admin/theme-form";
@@ -18,19 +19,40 @@ export function StoryList({
   const tenantQuery = `?tenant=${encodeURIComponent(tenant.slug)}`;
 
   return (
-    <div className="border-t border-border-subtle">
+    <div className="border-t-2 border-text-primary">
       {stories.map((story, index) => (
         <article
-          className={`grid gap-4 border-b border-border-subtle py-7 sm:items-start ${
+          className={`group grid gap-5 border-b border-border-subtle py-6 sm:items-start ${
             theme.card === "compact-horizontal"
-              ? "sm:grid-cols-[1.25rem_1fr_auto] sm:py-5"
-              : "sm:grid-cols-[2rem_1fr_auto]"
+              ? "sm:grid-cols-[10rem_1fr] sm:py-5"
+              : theme.card === "image-top"
+                ? "sm:grid-cols-[13rem_1fr]"
+                : "sm:grid-cols-[2rem_1fr]"
           }`}
           key={story.id}
         >
-          <span aria-hidden="true" className="pt-1 font-mono text-xs text-text-muted">
-            {String(index + 1).padStart(2, "0")}
-          </span>
+          {theme.card !== "data-led" && story.imagePath ? (
+            <Link
+              aria-label={`Ler ${story.title}`}
+              className="relative aspect-[16/10] overflow-hidden bg-surface-muted"
+              href={`/materia/${story.canonicalSlug}${tenantQuery}`}
+            >
+              <Image
+                alt={story.imageAlt ?? ""}
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                fill
+                sizes="(max-width: 640px) 100vw, 208px"
+                src={story.imagePath}
+              />
+            </Link>
+          ) : (
+            <span
+              aria-hidden="true"
+              className="pt-1 font-mono text-xs text-text-muted"
+            >
+              {String(index + 1).padStart(2, "0")}
+            </span>
+          )}
           <div>
             <Link
               className="text-xs font-bold uppercase tracking-[0.14em] text-brand-primary"
@@ -43,7 +65,7 @@ export function StoryList({
                 {story.sponsorshipLabel}
               </p>
             ) : null}
-            <h3 className="mt-2 max-w-2xl text-xl leading-7 font-bold tracking-tight sm:text-2xl">
+            <h3 className="mt-2 max-w-2xl font-heading text-xl leading-7 font-bold tracking-[-0.02em] sm:text-2xl">
               <Link
                 className="no-underline hover:underline"
                 href={`/materia/${story.canonicalSlug}${tenantQuery}`}
@@ -51,7 +73,7 @@ export function StoryList({
                 {story.title}
               </Link>
             </h3>
-            <p className="mt-3 max-w-2xl leading-7 text-text-muted">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-text-muted sm:text-base">
               {story.subtitle}
             </p>
             {theme.card === "data-led" ? (
@@ -60,13 +82,6 @@ export function StoryList({
               </p>
             ) : null}
           </div>
-          <Link
-            aria-label={`Ler ${story.title}`}
-            className="hidden size-10 place-items-center rounded-full border border-border-subtle text-link no-underline transition-transform hover:translate-x-1 sm:grid"
-            href={`/materia/${story.canonicalSlug}${tenantQuery}`}
-          >
-            →
-          </Link>
         </article>
       ))}
     </div>

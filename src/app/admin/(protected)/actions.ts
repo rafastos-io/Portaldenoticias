@@ -16,7 +16,11 @@ import {
   assessTenantMutationContext,
   safeAdminReturnPath,
 } from "@/lib/admin/tenant-context";
-import { parseThemeForm } from "@/lib/admin/theme-form";
+import {
+  parseCreateIdentityForm,
+  parseLogoUploadForm,
+  parseThemeForm,
+} from "@/lib/admin/theme-form";
 import {
   destroyDemoSession,
   requireDemoSession,
@@ -31,7 +35,11 @@ import {
   DefaultDemoPortalConflictError,
   setDefaultDemoPortal,
 } from "@/lib/supabase/demo-settings-repository";
-import { saveAdminTheme } from "@/lib/supabase/theme-repository";
+import {
+  createDemoTenantFromPreset,
+  saveAdminTheme,
+  uploadAdminThemeLogo,
+} from "@/lib/supabase/theme-repository";
 
 function adminLocation(
   tenantId: string,
@@ -307,5 +315,53 @@ export async function saveThemeAction(
   revalidatePath("/");
   redirect(
     `/admin/identidade?tenant=${encodeURIComponent(tenantId)}&success=${encodeURIComponent("Identidade salva.")}#identidade`,
+  );
+}
+
+export async function createIdentityAction(
+  _state: TenantMutationState,
+  formData: FormData,
+): Promise<TenantMutationState> {
+  const authorization = await authorizeMutation(formData);
+  if (authorization) return authorization;
+  let createdTenantId = "";
+
+  try {
+    const input = parseCreateIdentityForm(formData);
+    createdTenantId = await createDemoTenantFromPreset(input);
+  } catch (error) {
+    redirect(
+      `/admin/identidade?tenant=${encodeURIComponent(String(formData.get("tenantId") ?? ""))}&error=${encodeURIComponent(mutationFailure(error))}#nova-identidade`,
+    );
+  }
+
+  revalidatePath("/admin", "layout");
+  revalidatePath("/");
+  redirect(
+    `/admin/identidade?tenant=${encodeURIComponent(createdTenantId)}&success=${encodeURIComponent("Nova identidade criada a partir do preset.")}#identidade`,
+  );
+}
+
+export async function uploadThemeLogoAction(
+  _state: TenantMutationState,
+  formData: FormData,
+): Promise<TenantMutationState> {
+  const authorization = await authorizeMutation(formData);
+  if (authorization) return authorization;
+  const tenantId = String(formData.get("tenantId") ?? "");
+
+  try {
+    const input = await parseLogoUploadForm(formData);
+    await uploadAdminThemeLogo(input);
+  } catch (error) {
+    redirect(
+      `/admin/identidade?tenant=${encodeURIComponent(tenantId)}&error=${encodeURIComponent(mutationFailure(error))}#logo`,
+    );
+  }
+
+  revalidatePath("/admin/identidade");
+  revalidatePath("/");
+  redirect(
+    `/admin/identidade?tenant=${encodeURIComponent(tenantId)}&success=${encodeURIComponent("Logo salvo na identidade.")}#logo`,
   );
 }

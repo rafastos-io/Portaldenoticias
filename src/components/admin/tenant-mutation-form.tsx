@@ -23,6 +23,7 @@ type TenantMutationFormProps = {
   ) => Promise<TenantMutationState>;
   children: ReactNode;
   className?: string;
+  encType?: "multipart/form-data";
   tenantId: string;
 };
 
@@ -30,6 +31,7 @@ export function TenantMutationForm({
   action,
   children,
   className,
+  encType,
   tenantId,
 }: TenantMutationFormProps) {
   const [state, formAction, pending] = useActionState(
@@ -42,6 +44,7 @@ export function TenantMutationForm({
       action={formAction}
       aria-busy={pending}
       className={className}
+      encType={encType}
     >
       <input name="contextTenantId" type="hidden" value={tenantId} />
       {state.status === "confirmation" ? (

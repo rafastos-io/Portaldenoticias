@@ -60,6 +60,8 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     font: "sans-editorial",
     header: "masthead-clean",
     hero: "split-editorial",
+    logoAlt: "",
+    logoUrl: null,
     primary: "#12324A",
     secondary: "#2F80A3",
     slogan: "Planejamento para vidas mais longas",
@@ -73,6 +75,8 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     font: "sans-humana",
     header: "brand-centered",
     hero: "featured-grid",
+    logoAlt: "",
+    logoUrl: null,
     primary: "#174A47",
     secondary: "#C9B99A",
     slogan: "Proteção que acompanha cada fase",
@@ -86,6 +90,8 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     font: "sans-geometrica",
     header: "masthead-minimal",
     hero: "science-feature",
+    logoAlt: "",
+    logoUrl: null,
     primary: "#4A2E78",
     secondary: "#20A4B8",
     slogan: "Ciência para ampliar futuros",
@@ -142,6 +148,50 @@ function readMedia(bodyJson: Json) {
     };
   }
   return { imageAlt: null, imagePath: null };
+}
+
+const CATEGORY_IMAGES: Record<string, { alt: string; path: string }> = {
+  biotecnologia: {
+    alt: "Equipe de pesquisa analisa amostras em um laboratório contemporâneo.",
+    path: "/images/editorial-biotecnologia-laboratorio.png",
+  },
+  "inovacao-medica": {
+    alt: "Equipe de pesquisa analisa amostras em um laboratório contemporâneo.",
+    path: "/images/editorial-biotecnologia-laboratorio.png",
+  },
+  "longevidade-e-economia": {
+    alt: "Mulher madura analisa documentos de planejamento em casa.",
+    path: "/images/editorial-longevidade-planejamento.png",
+  },
+  "previdencia-e-seguros": {
+    alt: "Mulher madura analisa documentos de planejamento em casa.",
+    path: "/images/editorial-longevidade-planejamento.png",
+  },
+  "saude-e-regulacao": {
+    alt: "Grupo de adultos maduros caminha em um parque urbano.",
+    path: "/images/editorial-prevencao-ativa.png",
+  },
+  "trabalho-e-geracoes": {
+    alt: "Profissionais de diferentes gerações colaboram em um projeto.",
+    path: "/images/editorial-trabalho-geracoes.png",
+  },
+};
+
+function resolveEditorialMedia(
+  media: ReturnType<typeof readMedia>,
+  categorySlug: string,
+) {
+  if (
+    media.imagePath &&
+    media.imagePath !== "/images/editorial-hero-demo.png"
+  ) {
+    return media;
+  }
+
+  const categoryImage = CATEGORY_IMAGES[categorySlug];
+  return categoryImage
+    ? { imageAlt: categoryImage.alt, imagePath: categoryImage.path }
+    : media;
 }
 
 export async function resolvePublicTenant(
@@ -326,7 +376,11 @@ export async function listPublicStories(
     const category = categoryId ? categories.get(categoryId) : null;
     const authorId = authorLinks.get(revision.id);
     const author = authorId ? authors.get(authorId) : null;
-    const media = readMedia(revision.body_json);
+    const categorySlug = category?.slug ?? "destaques";
+    const media = resolveEditorialMedia(
+      readMedia(revision.body_json),
+      categorySlug,
+    );
 
     return [
       {
@@ -334,7 +388,7 @@ export async function listPublicStories(
         body: readBody(revision.body_json, revision.body_text),
         canonicalSlug: distribution.slug_override ?? item.canonical_slug,
         categoryName: category?.name ?? "Destaques",
-        categorySlug: category?.slug ?? "destaques",
+        categorySlug,
         correctionNote: revision.correction_note,
         id: item.id,
         ...media,

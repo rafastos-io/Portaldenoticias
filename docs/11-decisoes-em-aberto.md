@@ -201,3 +201,5 @@ Escolher solução e base legal antes de inserir scripts.
 | D22 | Logo e mídia fictícia no Storage isolado por tenant no Ciclo 2 | Produto/Tecnologia | 26/07/2026 | Decidida Ciclo 2 |
 | D23 | Templates editoriais demonstrativos padrão, explicador/análise, patrocinado, correção e sem mídia no Ciclo 2 | Editorial/Produto | 26/07/2026 | Decidida Ciclo 2 |
 | D24 | Edição de distribuição e overrides apenas para canal portal demo no Ciclo 2 | Editorial/Produto | 26/07/2026 | Decidida Ciclo 2 |
+| D25 | Cotações de referência podem aparecer no portal com API pública sem chave, cache server-side, fonte/data explícitas e fallback; não são tempo real nem recomendação financeira | Produto/Editorial/Tecnologia | 27/07/2026 | Decidida Ciclo 2 |
+| D26 | O aviso público em faixa foi removido do portal a pedido do responsável; `noindex`, dados demo, rótulos editoriais e o aviso permanente do ADM continuam preservados | Produto/Comercial | 27/07/2026 | Decidida Ciclo 2 |

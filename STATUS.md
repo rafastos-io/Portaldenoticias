@@ -1,6 +1,6 @@
 # Status do MVP-0
 
-Atualizado em: 26/07/2026.
+Atualizado em: 27/07/2026.
 
 ## Estado
 
@@ -33,8 +33,59 @@ Atualizado em: 26/07/2026.
 - tarefa concluída: `C203`;
 - tarefa concluída: `C210`;
 - tarefa concluída: `C204`;
-- próxima tarefa executável: `C211` (`P1`, `READY`);
+- tarefa em verificação: `C211` (`P1`, `VERIFY`);
 - nenhuma tarefa `P0` permanece pronta ou aberta.
+
+## Entrega rápida de portal e identidade — 27/07/2026
+
+### Resultado implementado
+
+- a tarja demonstrativa foi removida somente do portal público; o aviso
+  obrigatório permanece no ADM;
+- todos os acessos públicos ao ADM foram removidos do header e do footer; o
+  gate continua disponível apenas por URL direta;
+- o login não preenche mais as credenciais na tela e oferece exibir/ocultar
+  senha; token de login, sessão assinada, cookie `HttpOnly`, rate limit e
+  revalidação no servidor foram preservados;
+- a home recebeu hero mais compacto, hierarquia de jornal, lista editorial
+  densa, quatro imagens fictícias variadas e ticker diário de USD/EUR/GBP em
+  BRL por API pública sem chave, com cache e atribuição;
+- a matéria recebeu hierarquia editorial, imagem destacada e metadados mais
+  claros;
+- a central de identidade agora tem preview local vivo, cores sincronizadas,
+  contraste, desfazer, páginas e larguras 390/768/1440;
+- o ADM permite criar uma nova identidade demo por preset sem duplicar o corpo
+  canônico e permite associar logo PNG/JPEG de até 2 MB no Storage privado,
+  prefixado e validado por tenant;
+- resíduos antigos de UTF-8 no corpo das matérias demonstrativas foram
+  corrigidos no banco.
+
+### Evidências
+
+- `pnpm check`: lint, tipos, 21 arquivos de teste, 109 testes e build aprovados;
+- browser no build de produção local: home, matéria, login e central de
+  identidade aprovados em desktop e 390 px, sem overflow e sem overlay;
+- login direto `USER / User123` redirecionou para `/admin`; os campos iniciaram
+  vazios e o controle exibir/ocultar senha funcionou;
+- preview da identidade refletiu nome não salvo, alternou página/largura e
+  desfez a alteração sem persistir o teste;
+- teste transacional do Supabase criou uma identidade temporária, copiou 10
+  distribuições e 3 placements, associou logo e registrou 2 eventos; rollback
+  aplicado;
+- teste negativo recusou logo de outro tenant;
+- advisor de segurança do Supabase: zero alertas;
+- advisor de performance: somente avisos informativos preexistentes de índices
+  ainda sem uso;
+- migrations remotas reconciliadas com
+  `20260727142807_create_demo_identity_and_logo.sql` e
+  `20260727144320_repair_residual_demo_utf8.sql`;
+- screenshots em `artifacts/c211-quick-sprint-2026-07-27/`.
+
+### Limitação de entrega
+
+- nenhuma publicação Vercel foi feita nesta sessão; o domínio público vigente
+  continua servindo a versão anterior até Preview, smoke, auditoria independente
+  e promoção autorizada.
 
 ## Bloqueios externos
 

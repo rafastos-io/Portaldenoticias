@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
-import { DemoNotice } from "@/components/demo-notice";
 import { PublicHeader } from "@/components/public/public-header";
 import type { ThemeValues } from "@/lib/admin/theme-form";
 import type { PublicTenant } from "@/lib/supabase/portal-repository";
@@ -45,7 +44,6 @@ export function PublicShell({
       <a className="skip-link" href="#conteudo-principal">
         Pular para o conteúdo
       </a>
-      <DemoNotice />
       <PublicHeader categories={categories} tenant={tenant} theme={theme} />
       {children}
       <footer className="bg-surface-inverse text-text-on-brand">
@@ -55,13 +53,12 @@ export function PublicShell({
               {theme.brandName}
             </p>
             <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">
-              Portal fictício criado exclusivamente para demonstrar a plataforma
-              editorial Broadcast Saúde &amp; Longevidade.
+              Jornalismo sobre saúde, longevidade, inovação e seus impactos
+              econômicos.
             </p>
           </div>
           <nav aria-label="Navegação do rodapé" className="flex gap-6 text-sm">
             <Link href={`/${tenantQuery}`}>Início</Link>
-            <Link href="/admin">ADM demo</Link>
           </nav>
         </div>
       </footer>

@@ -944,11 +944,27 @@ export type Database = {
         }
         Returns: string
       }
+      cms_create_demo_tenant: {
+        Args: {
+          p_display_name: string
+          p_slug: string
+          p_slogan: string
+          p_source_tenant_id: string
+        }
+        Returns: string
+      }
       cms_set_content_status: {
         Args: {
           p_content_id: string
           p_reason: string
           p_status: string
+          p_tenant_id: string
+        }
+        Returns: string
+      }
+      cms_set_theme_logo: {
+        Args: {
+          p_media_asset_id: string
           p_tenant_id: string
         }
         Returns: string

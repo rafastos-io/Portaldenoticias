@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import type { ThemeValues } from "@/lib/admin/theme-form";
@@ -27,16 +28,32 @@ export function PublicHeader({
           className="group inline-flex min-w-0 items-center gap-3 no-underline"
           href={`/${tenantQuery}`}
         >
-          <span
-            aria-hidden="true"
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-primary text-sm font-bold text-text-on-brand transition-transform group-hover:-rotate-3"
-          >
-            {theme.brandName.charAt(0)}
-          </span>
-          <span className="min-w-0">
-            <span className="block font-heading text-sm leading-4 font-bold text-brand-primary sm:text-lg sm:leading-normal">
-              {theme.brandName}
+          {theme.logoUrl ? (
+            <span className="relative block h-12 w-44 shrink-0 sm:w-56">
+              <Image
+                alt={theme.logoAlt || theme.brandName}
+                className="object-contain object-left"
+                fill
+                priority
+                sizes="(max-width: 640px) 176px, 224px"
+                src={theme.logoUrl}
+                unoptimized
+              />
             </span>
+          ) : (
+            <span
+              aria-hidden="true"
+              className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-primary text-sm font-bold text-text-on-brand transition-transform group-hover:-rotate-3"
+            >
+              {theme.brandName.charAt(0)}
+            </span>
+          )}
+          <span className="min-w-0">
+            {!theme.logoUrl ? (
+              <span className="block font-heading text-sm leading-4 font-bold text-brand-primary sm:text-lg sm:leading-normal">
+                {theme.brandName}
+              </span>
+            ) : null}
             {!minimal ? (
               <span className="hidden text-xs text-text-muted sm:block">
                 {theme.slogan}
@@ -45,13 +62,9 @@ export function PublicHeader({
           </span>
         </Link>
         {!centered ? (
-          <Link
-            className="shrink-0 rounded-full bg-brand-primary px-4 py-2.5 text-sm font-bold text-text-on-brand no-underline opacity-95 hover:opacity-80"
-            href="/admin"
-          >
-            <span className="sm:hidden">ADM</span>
-            <span className="hidden sm:inline">Acessar ADM</span>
-          </Link>
+          <p className="hidden shrink-0 text-xs font-bold uppercase tracking-[0.16em] text-text-muted sm:block">
+            Saúde · Economia · Longevidade
+          </p>
         ) : null}
       </div>
       <nav

@@ -27,6 +27,15 @@ const nextConfig: NextConfig = {
       allowedOrigins: serverActionAllowedOrigins,
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        hostname: "**.supabase.co",
+        pathname: "/storage/v1/object/sign/**",
+        protocol: "https",
+      },
+    ],
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   turbopack: {

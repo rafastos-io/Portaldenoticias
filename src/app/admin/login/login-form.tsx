@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import {
@@ -22,12 +22,13 @@ function SubmitButton() {
       disabled={pending}
       type="submit"
     >
-      {pending ? "Validando…" : "Entrar no ADM"}
+      {pending ? "Validando acesso…" : "Acessar ambiente editorial"}
     </button>
   );
 }
 
 export function LoginForm({ loginToken }: { loginToken: string }) {
+  const [showPassword, setShowPassword] = useState(false);
   const [state, formAction] = useActionState(
     loginAction,
     initialLoginState,
@@ -44,7 +45,6 @@ export function LoginForm({ loginToken }: { loginToken: string }) {
           autoCapitalize="none"
           autoComplete="username"
           className="mt-2 min-h-12 w-full rounded-md border border-slate-400 bg-white px-3 py-2 text-base text-slate-950"
-          defaultValue="USER"
           id="user"
           maxLength={256}
           name="user"
@@ -57,16 +57,25 @@ export function LoginForm({ loginToken }: { loginToken: string }) {
         <label className="text-sm font-bold text-slate-800" htmlFor="password">
           Senha
         </label>
-        <input
-          autoComplete="current-password"
-          className="mt-2 min-h-12 w-full rounded-md border border-slate-400 bg-white px-3 py-2 text-base text-slate-950"
-          defaultValue="User123"
-          id="password"
-          maxLength={256}
-          name="password"
-          required
-          type="password"
-        />
+        <div className="mt-2 grid grid-cols-[1fr_auto] border border-slate-400 bg-white">
+          <input
+            autoComplete="current-password"
+            className="min-h-12 min-w-0 border-0 bg-transparent px-3 py-2 text-base text-slate-950 outline-none"
+            id="password"
+            maxLength={256}
+            name="password"
+            required
+            type={showPassword ? "text" : "password"}
+          />
+          <button
+            aria-pressed={showPassword}
+            className="min-h-12 border-l border-slate-300 px-3 text-xs font-bold text-slate-700"
+            onClick={() => setShowPassword((visible) => !visible)}
+            type="button"
+          >
+            {showPassword ? "Ocultar" : "Mostrar"}
+          </button>
+        </div>
       </div>
       {state.status === "error" && state.message ? (
         <p

@@ -71,16 +71,16 @@ export default function AdminLoginPage() {
               </span>
             </Link>
             <p className="mt-12 text-xs font-bold uppercase tracking-[0.16em] text-[#246a87]">
-              Acesso demonstrativo
+              Acesso restrito
             </p>
             <h1
               className="mt-2 text-3xl font-bold tracking-tight text-slate-950"
               id="login-title"
             >
-              Entrar no ADM
+              Studio editorial
             </h1>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Use as credenciais fictícias fornecidas para explorar o MVP-0.
+              Informe suas credenciais de acesso para continuar.
             </p>
             <LoginForm loginToken={loginToken} />
             <p className="mt-7 border-t border-slate-300 pt-5 text-xs leading-5 text-slate-500">

@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { ContentFormError } from "./content-form";
 import {
   contrastRatio,
+  parseCreateIdentityForm,
+  parseLogoUploadForm,
   parseStoredTheme,
   parseThemeForm,
 } from "./theme-form";
@@ -92,5 +94,65 @@ describe("validação da identidade no servidor", () => {
         },
       }),
     ).toThrow("Identidade persistida inválida");
+  });
+
+  it("valida o cadastro de uma nova identidade por preset", () => {
+    const formData = new FormData();
+    formData.set("tenantId", TENANT_ID);
+    formData.set("brandName", "Vértice Longevidade");
+    formData.set("slug", "vertice-longevidade");
+    formData.set("slogan", "Informação para escolhas de longo prazo");
+
+    expect(parseCreateIdentityForm(formData)).toEqual({
+      brandName: "Vértice Longevidade",
+      presetTenantId: TENANT_ID,
+      slug: "vertice-longevidade",
+      slogan: "Informação para escolhas de longo prazo",
+    });
+  });
+
+  it("recusa slug fora do contrato", () => {
+    const formData = new FormData();
+    formData.set("tenantId", TENANT_ID);
+    formData.set("brandName", "Vértice Longevidade");
+    formData.set("slug", "../outra-marca");
+    formData.set("slogan", "Informação para escolhas de longo prazo");
+    expect(() => parseCreateIdentityForm(formData)).toThrow("Slug inválido");
+  });
+
+  it("valida assinatura e dimensões de um logo PNG", async () => {
+    const bytes = new Uint8Array(24);
+    bytes.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    const view = new DataView(bytes.buffer);
+    view.setUint32(16, 320);
+    view.setUint32(20, 120);
+    const formData = new FormData();
+    formData.set("tenantId", TENANT_ID);
+    formData.set("logoAlt", "Logo da Vértice Longevidade");
+    formData.set("logoCredit", "Asset original de demonstração");
+    formData.set("logo", new File([bytes], "logo.png", { type: "image/png" }));
+
+    await expect(parseLogoUploadForm(formData)).resolves.toMatchObject({
+      contentType: "image/png",
+      extension: "png",
+      height: 120,
+      tenantId: TENANT_ID,
+      width: 320,
+    });
+  });
+
+  it("recusa arquivo que apenas declara ser imagem", async () => {
+    const formData = new FormData();
+    formData.set("tenantId", TENANT_ID);
+    formData.set("logoAlt", "Logo inválido");
+    formData.set("logoCredit", "Teste");
+    formData.set(
+      "logo",
+      new File(["not-an-image"], "logo.png", { type: "image/png" }),
+    );
+
+    await expect(parseLogoUploadForm(formData)).rejects.toThrow(
+      "PNG ou JPEG válido",
+    );
   });
 });

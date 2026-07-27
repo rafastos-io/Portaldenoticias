@@ -31,6 +31,8 @@ export type ThemeValues = {
   font: (typeof APPROVED_FONTS)[number];
   header: (typeof APPROVED_HEADERS)[number];
   hero: (typeof APPROVED_HEROES)[number];
+  logoAlt: string;
+  logoUrl: string | null;
   primary: string;
   secondary: string;
   slogan: string;
@@ -146,10 +148,121 @@ export function parseStoredTheme(input: {
     font: storedOption(tokens.font, APPROVED_FONTS),
     header: storedOption(components.header, APPROVED_HEADERS),
     hero: storedOption(components.hero, APPROVED_HEROES),
+    logoAlt:
+      typeof brand.logo_alt === "string" ? brand.logo_alt.trim().slice(0, 180) : "",
+    logoUrl: null,
     primary,
     secondary: storedColor(tokens.secondary),
     slogan: storedText(brand.slogan, 2, 160),
     textColor,
+  };
+}
+
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export function parseCreateIdentityForm(formData: FormData) {
+  const slugValue = formData.get("slug");
+  const slug = typeof slugValue === "string" ? slugValue.trim() : "";
+  if (!SLUG.test(slug) || slug.length > 80) {
+    throw new ContentFormError(
+      "Slug inválido. Use letras minúsculas, números e hífens.",
+    );
+  }
+
+  return {
+    brandName: text(formData, "brandName", "Nome da marca", 120),
+    presetTenantId: readUuid(formData, "tenantId", "Preset"),
+    slug,
+    slogan: text(formData, "slogan", "Slogan", 160),
+  };
+}
+
+function readJpegDimensions(bytes: Uint8Array) {
+  let offset = 2;
+  while (offset + 9 < bytes.length) {
+    if (bytes[offset] !== 0xff) return null;
+    const marker = bytes[offset + 1]!;
+    const blockLength = (bytes[offset + 2]! << 8) + bytes[offset + 3]!;
+    if (
+      [
+        0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd,
+        0xce, 0xcf,
+      ].includes(marker)
+    ) {
+      return {
+        height: (bytes[offset + 5]! << 8) + bytes[offset + 6]!,
+        width: (bytes[offset + 7]! << 8) + bytes[offset + 8]!,
+      };
+    }
+    if (blockLength < 2) return null;
+    offset += 2 + blockLength;
+  }
+  return null;
+}
+
+export async function parseLogoUploadForm(formData: FormData) {
+  const file = formData.get("logo");
+  if (!(file instanceof File) || file.size === 0) {
+    throw new ContentFormError("Selecione um arquivo de logo.");
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    throw new ContentFormError("O logo deve ter no máximo 2 MB.");
+  }
+
+  const buffer = new Uint8Array(await file.arrayBuffer());
+  const png =
+    buffer.length >= 24 &&
+    [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a].every(
+      (value, index) => buffer[index] === value,
+    );
+  const jpeg =
+    buffer.length >= 10 && buffer[0] === 0xff && buffer[1] === 0xd8;
+
+  let dimensions: { height: number; width: number } | null = null;
+  let contentType: "image/jpeg" | "image/png";
+  let extension: "jpg" | "png";
+  if (png) {
+    const view = new DataView(
+      buffer.buffer,
+      buffer.byteOffset,
+      buffer.byteLength,
+    );
+    dimensions = {
+      height: view.getUint32(20),
+      width: view.getUint32(16),
+    };
+    contentType = "image/png";
+    extension = "png";
+  } else if (jpeg) {
+    dimensions = readJpegDimensions(buffer);
+    contentType = "image/jpeg";
+    extension = "jpg";
+  } else {
+    throw new ContentFormError("Envie um logo PNG ou JPEG válido.");
+  }
+
+  if (
+    !dimensions ||
+    dimensions.width < 96 ||
+    dimensions.height < 48 ||
+    dimensions.width > 2400 ||
+    dimensions.height > 2400 ||
+    dimensions.width / dimensions.height > 8
+  ) {
+    throw new ContentFormError(
+      "O logo deve ter entre 96 × 48 e 2400 × 2400 px, sem proporção extrema.",
+    );
+  }
+
+  return {
+    altText: text(formData, "logoAlt", "Texto alternativo", 180),
+    body: buffer,
+    contentType,
+    credit: text(formData, "logoCredit", "Crédito", 160),
+    extension,
+    height: dimensions.height,
+    tenantId: readUuid(formData, "tenantId", "Tenant"),
+    width: dimensions.width,
   };
 }
 
