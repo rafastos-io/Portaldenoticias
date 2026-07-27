@@ -34,7 +34,8 @@ Atualizado em: 27/07/2026.
 - tarefa concluída: `C210`;
 - tarefa concluída: `C204`;
 - tarefa concluída: `C211`;
-- tarefa em verificação: `C212` (`P1`, `VERIFY`);
+- tarefa concluída: `C212`;
+- tarefa pronta: `C213` (`P1`, `READY`);
 - nenhuma tarefa `P0` permanece pronta ou aberta.
 
 ## Planejamento do sprint visual por segmento — 27/07/2026
@@ -126,9 +127,19 @@ entrega de planejamento.
   `anon`/`authenticated` e permitem apenas `service_role`;
 - advisor de segurança: zero alertas; advisor de performance: somente índices
   ainda não utilizados, informativos e anteriores ao sprint;
-- nenhuma publicação Vercel/Production foi feita até este registro;
-- `C212` permanece em `VERIFY` somente até a reverificação da quarta home em
-  Preview.
+- commit funcional final: `a4e7a0b` na branch
+  `agent/mvp0-specification`;
+- Preview imutável `dpl_AchEtC61KeeyAHsWSDrfHtV8PDiJ`, `READY`, em
+  `portaldenoticias-qpi8gojfv-raafastosgmailcoms-projects.vercel.app`;
+- o primeiro Preview revelou sobreposição da mídia no hero de crédito; o grid
+  foi contido com tracks `minmax(0, ...)`, reverificado localmente e republicado;
+- quatro homes no Preview: HTTP 200, modelo correto, uma `h1`, zero overflow,
+  overlay, imagem sem `alt` ou erro de runtime;
+- Crédito Demo Órbita preservou tenant e modelo na home, editoria e matéria; o
+  menu mobile abriu, manteve links do tenant e reduced motion foi respeitado;
+- logs do deployment e agregação de runtime da última hora: zero erro;
+- nenhuma promoção para Production foi feita;
+- `C212` concluída e `C213` liberada para `READY`.
 
 ## Entrega rápida de portal e identidade — 27/07/2026
 
@@ -216,8 +227,7 @@ entrega de planejamento.
 
 ## Bloqueios externos
 
-Nenhum bloqueio externo permanece para `C212`; falta apenas o gate de Preview
-do commit desta entrega.
+Nenhum bloqueio externo permanece para `C212`.
 
 O incidente histórico da secret exposta apenas no working tree continua
 registrado. A varredura anterior confirmou zero ocorrências rastreadas; qualquer
@@ -692,6 +702,6 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Não há P0 pronta nem outra tarefa local desbloqueada. `C212` (`P1`, `VERIFY`)
-aguarda autorização explícita para aplicar a migration no Supabase
-demonstrativo; depois, executar advisors e reverificar a quarta home pública.
+Não há P0 pronta. A próxima tarefa executável é `C213` (`P1`, `READY`):
+completar o fluxo de criação/duplicação de tenant demo usando o modelo já
+persistido e reverificado.

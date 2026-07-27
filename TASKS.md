@@ -34,8 +34,8 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C204 | P1 | DONE | C210 | Tenant padrão reutilizável na URL pública |
 | C210 | P1 | DONE | C203 | Contexto global de tenant no ADM |
 | C211 | P1 | DONE | C204 | Workbench de identidade com preview vivo |
-| C212 | P1 | VERIFY | C211 | Quatro modelos estruturais de site por segmento |
-| C213 | P1 | BLOCKED | C210,C211,C212 | Criar/duplicar tenant demo escolhendo o modelo |
+| C212 | P1 | DONE | C211 | Quatro modelos estruturais de site por segmento |
+| C213 | P1 | READY | C210,C211,C212 | Criar/duplicar tenant demo escolhendo o modelo |
 | C214 | P1 | BLOCKED | C213 | Logo e mídia fictícia com Storage isolado |
 | C220 | P1 | BLOCKED | C210 | Templates e variantes de cadastro editorial |
 | C221 | P1 | BLOCKED | C220 | Distribuição e overrides por tenant |
@@ -259,10 +259,9 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 - modelo inválido falha fechado, sem fallback de outro tenant;
 - não criar matéria, editoria ou taxonomia;
 - não criar tenant ou mídia.
-- implementação local em 27/07/2026: registro tipado, parser fechado,
-  persistência versionada, composições de home/editoria/matéria e matriz local
-  concluídos; permanece em `VERIFY` até a migration pendente ser explicitamente
-  autorizada no Supabase demonstrativo e a quarta home pública ser reverificada.
+- concluída em 27/07/2026: registro tipado, parser fechado, persistência
+  versionada, migration remota, quatro composições de home/editoria/matéria,
+  advisors e matriz de Preview aprovados; P0/P1 pendentes: zero.
 
 ### C213
 
@@ -276,8 +275,8 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 - auditoria e teste negativo;
 - não implementar upload de logo nesta tarefa.
 - progresso visual em 27/07/2026: seleção fechada dos quatro modelos no
-  cadastro/edição e RPC versionado implementados; a criação persistida da quarta
-  marca depende da aplicação autorizada da migration de `C212`.
+  cadastro/edição, RPC versionada e quarta marca persistida; tarefa liberada
+  para completar e validar o fluxo operacional de criação/duplicação.
 
 ### C214
 
@@ -338,6 +337,5 @@ Ao concluir uma tarefa, atualizar para `DONE` e trocar dependentes de `BLOCKED` 
 
 T013 e T014 estão concluídas: login, sessão, páginas protegidas e logout foram
 reverificados em Preview e Production, e o auditor independente aprovou o commit
-final sem achados P0/P1. No estado atual, não há nova tarefa local
-desbloqueada: `C212` permanece em `VERIFY` até a aplicação autorizada da
-migration e a reverificação da quarta home pública.
+final sem achados P0/P1. No estado atual, `C212` está concluída e `C213` é a
+próxima tarefa executável.
