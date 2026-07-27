@@ -33,10 +33,40 @@ Atualizado em: 27/07/2026.
 - tarefa concluída: `C203`;
 - tarefa concluída: `C210`;
 - tarefa concluída: `C204`;
+- tarefa concluída: `C205`;
 - tarefa concluída: `C211`;
 - tarefa concluída: `C212`;
 - tarefa pronta: `C213` (`P1`, `READY`);
 - nenhuma tarefa `P0` permanece pronta ou aberta.
+
+## Expansão editorial do MVP — 27/07/2026
+
+### Catálogo e mídia
+
+- adicionadas 40 matérias canônicas inéditas, dez por vertical: crédito,
+  investimentos, seguros e saúde;
+- cada matéria tem título, linha fina, quatro parágrafos próprios, autor,
+  categoria, tags, texto alternativo e imagem WebP exclusiva;
+- adicionadas oito assinaturas editoriais fictícias;
+- 40 caminhos de imagem e 40 arquivos distintos em
+  `public/images/editorial/2026-07/`, totalizando aproximadamente 4 MB;
+- composição visual distribuída entre adultos jovens, meia-idade e 50+, com
+  cenas de serviço, trabalho, laboratório, prevenção, tecnologia e planejamento;
+- o seed original permanece disponível para validar draft, pausa, correção e
+  conteúdo patrocinado.
+
+### Persistência e distribuição
+
+- migrations `20260727224132_expand_editorial_catalog.sql` e
+  `20260727230600_fix_editorial_home_placements.sql` aplicadas no Supabase
+  `yhatwpxsxntlorfgxpdl`;
+- resultado remoto: 40 novas matérias, 40 imagens exclusivas, dez matérias por
+  vertical, 76 distribuições ativas e 36 crossovers planejados;
+- 12 placements novos ocupam hero e destaques dos quatro portais;
+- quatro eventos de auditoria registram a expansão;
+- advisor de segurança: zero alertas;
+- advisor de performance: somente avisos informativos de índices ainda não
+  utilizados, sem regressão criada pela carga editorial.
 
 ## Ajustes visuais rápidos dos modelos — 27/07/2026
 

@@ -312,7 +312,8 @@ export async function listPublicStories(
       "id, canonical_slug, current_published_revision_id, last_published_at",
     )
     .in("id", itemIds)
-    .eq("workflow_status", "published");
+    .eq("workflow_status", "published")
+    .order("last_published_at", { ascending: false });
 
   if (itemError) throw new Error("Falha ao consultar conteúdo público.", { cause: itemError });
   const revisionIds = items.flatMap((item) =>

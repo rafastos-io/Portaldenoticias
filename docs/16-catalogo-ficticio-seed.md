@@ -160,3 +160,35 @@ Além do tenant principal:
 Texto sugerido:
 
 > Ambiente demonstrativo. Marcas, autores, dados e matérias desta página são fictícios e existem apenas para apresentação do produto.
+
+## Expansão editorial do MVP — julho de 2026
+
+O catálogo publicado foi ampliado sem substituir os casos de estado do seed
+original. A expansão acrescenta 40 matérias canônicas, dez para cada vertical:
+
+- serviços financeiros e crédito;
+- investimentos e gestão de patrimônio;
+- seguros e previdência;
+- saúde, farma e biotecnologia.
+
+Cada matéria possui título, linha fina, quatro parágrafos próprios, autor
+fictício, editoria, tags, texto alternativo e uma imagem editorial exclusiva em
+WebP. As imagens foram geradas especificamente para a demonstração e cobrem
+adultos jovens, pessoas de meia-idade e pessoas 50+, evitando concentrar a
+representação visual apenas no envelhecimento.
+
+Os crossovers são feitos por `distributions`: a mesma matéria canônica pode
+aparecer em mais de um portal, sem duplicação de revisão. A matriz contém 36
+distribuições cruzadas planejadas, além das 40 distribuições para os tenants
+proprietários.
+
+### Evidência e identificação
+
+- matriz: `matriz-editorial-portais-v1`;
+- códigos: `MVP-CR-001` a `MVP-CR-010`, `MVP-IN-001` a `MVP-IN-010`,
+  `MVP-SE-001` a `MVP-SE-010` e `MVP-SA-001` a `MVP-SA-010`;
+- imagens: `public/images/editorial/2026-07/`;
+- migration principal:
+  `20260727224132_expand_editorial_catalog.sql`;
+- correção idempotente da curadoria:
+  `20260727230600_fix_editorial_home_placements.sql`.

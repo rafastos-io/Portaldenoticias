@@ -32,6 +32,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C202 | P0 | DONE | T013 | Smoke automatizado Preview/Production |
 | C203 | P0 | DONE | T014,C202 | Baseline visual/funcional aprovado para o Ciclo 2 |
 | C204 | P1 | DONE | C210 | Tenant padrão reutilizável na URL pública |
+| C205 | P1 | DONE | C212 | Expandir catálogo para 40 matérias, 10 por vertical, com imagens exclusivas e crossovers |
 | C210 | P1 | DONE | C203 | Contexto global de tenant no ADM |
 | C211 | P1 | DONE | C204 | Workbench de identidade com preview vivo |
 | C212 | P1 | DONE | C211 | Quatro modelos estruturais de site por segmento |
@@ -41,6 +42,10 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C221 | P1 | BLOCKED | C220 | Distribuição e overrides por tenant |
 | C230 | P1 | BLOCKED | C212,C214 | Densidade editorial e navegação mobile |
 | C240 | P1 | BLOCKED | C213,C214,C221,C230 | Matriz final de QA e auditoria adversarial |
+
+`C205` é uma entrega editorial independente: melhora a densidade e a variedade
+do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
+`C221`, `C230` ou `C240`.
 
 ## Critérios por tarefa
 
