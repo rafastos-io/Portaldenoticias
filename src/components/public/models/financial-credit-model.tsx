@@ -32,13 +32,13 @@ export function FinancialCreditHome({
   return (
     <>
       <section className="page-container py-7 sm:py-10">
-        <div className="grid gap-7 lg:grid-cols-[minmax(0,1.28fr)_minmax(18rem,0.72fr)]">
-          <article className="group grid min-w-0 gap-5 border-b-4 border-brand-primary pb-7 sm:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+        <div className="grid gap-7 lg:grid-cols-[minmax(0,1.38fr)_minmax(18rem,0.62fr)] lg:gap-9">
+          <article className="group grid min-w-0 gap-7 border-b-4 border-brand-primary pb-7 sm:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)]">
             <div className="hero-copy min-w-0 self-end">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-primary">
                 {heroEyebrow ?? "Decisões financeiras"}
               </p>
-              <h1 className="mt-3 font-heading text-[clamp(2.5rem,5.4vw,4.9rem)] leading-[0.95] font-bold tracking-[-0.05em] text-brand-primary">
+              <h1 className="mt-3 font-heading text-[clamp(2.5rem,4.6vw,4.35rem)] leading-[0.95] font-bold tracking-[-0.05em] text-brand-primary">
                 {hero.title}
               </h1>
               <p className="mt-5 max-w-xl leading-7 text-text-muted">
@@ -53,12 +53,12 @@ export function FinancialCreditHome({
               </StoryTitleLink>
             </div>
             <StoryTitleLink
-              className="block min-w-0"
+              className="block min-w-0 self-start"
               story={hero}
               tenant={tenant}
             >
               <StoryImage
-                className="hero-media aspect-[4/3] min-h-64 w-full"
+                className="hero-media aspect-[4/3] w-full"
                 priority
                 sizes="(max-width: 1024px) 100vw, 34vw"
                 story={hero}

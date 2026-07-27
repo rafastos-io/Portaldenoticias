@@ -22,8 +22,8 @@ export function HealthPharmaHome({
   const updates = stories.slice(5, 9);
   return (
     <>
-      <section className="page-container py-8 sm:py-12">
-        <article className="group grid gap-7 border-t-4 border-brand-primary pt-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      <section className="page-container py-7 sm:py-8">
+        <article className="group grid gap-7 border-t-4 border-brand-primary pt-5 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
           <div className="hero-copy order-2 self-end lg:order-1">
             <div className="flex flex-wrap items-center gap-3">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
@@ -33,13 +33,13 @@ export function HealthPharmaHome({
                 Contexto demonstrativo
               </span>
             </div>
-            <h1 className="mt-5 font-heading text-[clamp(2.7rem,5.6vw,5.4rem)] leading-[0.94] font-bold tracking-[-0.05em] text-brand-primary">
+            <h1 className="mt-4 font-heading text-[clamp(2.5rem,4.35vw,4.25rem)] leading-[0.96] font-bold tracking-[-0.045em] text-brand-primary">
               {hero.title}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-text-muted">
+            <p className="mt-4 max-w-2xl text-base leading-7 text-text-muted">
               {hero.subtitle}
             </p>
-            <div className="mt-7 flex items-center gap-4 border-t border-border-subtle pt-4 text-xs text-text-muted">
+            <div className="mt-5 flex items-center gap-4 border-t border-border-subtle pt-3 text-xs text-text-muted">
               <span>{hero.categoryName}</span>
               <span aria-hidden="true">/</span>
               <span>{hero.author}</span>

@@ -44,10 +44,10 @@ export function MarketTicker({ quotes }: { quotes: MarketQuote[] }) {
         <div
           aria-describedby="market-source"
           aria-label="Faixa de cotações em movimento"
-          className="market-ticker-viewport min-w-0 flex-1 overflow-hidden"
+          className="market-ticker-viewport flex min-h-11 min-w-0 flex-1 overflow-hidden"
           tabIndex={0}
         >
-          <div className="market-ticker-track flex w-max">
+          <div className="market-ticker-track flex min-h-11 w-max items-stretch">
             <TickerCopy quotes={quotes} />
             <TickerCopy ariaHidden quotes={quotes} />
           </div>
@@ -77,7 +77,7 @@ function TickerCopy({
   return (
     <div
       aria-hidden={ariaHidden || undefined}
-      className="market-ticker-copy flex shrink-0 items-stretch"
+      className="market-ticker-copy flex min-h-11 shrink-0 items-stretch"
     >
       {quotes.map((quote) => {
         const isPositive =
@@ -86,7 +86,7 @@ function TickerCopy({
           quote.changePercent !== null && quote.changePercent < 0;
         return (
           <p
-            className="flex shrink-0 items-center gap-2 border-r border-white/15 px-5 text-xs sm:px-6"
+            className="flex min-h-11 shrink-0 items-center gap-2 border-r border-white/15 px-5 text-xs sm:px-6"
             key={`${ariaHidden ? "copy-" : ""}${quote.kind}-${quote.symbol}`}
             title={`${quote.label} · fonte ${quote.source}`}
           >
