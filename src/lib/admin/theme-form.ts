@@ -1,3 +1,10 @@
+import {
+  getSiteModelDefinition,
+  parseSiteModel,
+  SITE_MODEL_IDS,
+  type SiteModelId,
+} from "@/lib/presentation/site-models";
+
 import { ContentFormError, readUuid } from "./content-form";
 
 export const APPROVED_FONTS = [
@@ -35,6 +42,7 @@ export type ThemeValues = {
   logoUrl: string | null;
   primary: string;
   secondary: string;
+  siteModel: SiteModelId;
   slogan: string;
   textColor: string;
 };
@@ -123,6 +131,7 @@ function storedOption<T extends readonly string[]>(
 export function parseStoredTheme(input: {
   brand: unknown;
   components: unknown;
+  legacySiteModel?: SiteModelId | null;
   tokens: unknown;
 }): ThemeValues {
   const tokens = record(input.tokens);
@@ -131,6 +140,30 @@ export function parseStoredTheme(input: {
   const primary = storedColor(tokens.primary);
   const background = storedColor(tokens.background);
   const textColor = storedColor(tokens.text);
+  const hasStoredSiteModel = Object.prototype.hasOwnProperty.call(
+    components,
+    "site_model",
+  );
+  const storedSiteModel = parseSiteModel(components.site_model);
+  if (hasStoredSiteModel && !storedSiteModel) {
+    throw new ContentFormError("Modelo de site persistido inválido.");
+  }
+  const siteModel = storedSiteModel ?? input.legacySiteModel ?? null;
+  if (!siteModel) {
+    throw new ContentFormError("Modelo de site persistido inválido.");
+  }
+  const storedCard = storedOption(components.card, APPROVED_CARDS);
+  const storedHeader = storedOption(components.header, APPROVED_HEADERS);
+  const storedHero = storedOption(components.hero, APPROVED_HEROES);
+  const composition = getSiteModelDefinition(siteModel).composition;
+  if (
+    storedSiteModel &&
+    (storedCard !== composition.card ||
+      storedHeader !== composition.header ||
+      storedHero !== composition.hero)
+  ) {
+    throw new ContentFormError("Composição do modelo persistido inválida.");
+  }
 
   if (
     contrastRatio(primary, "#FFFFFF") < 4.5 ||
@@ -144,15 +177,16 @@ export function parseStoredTheme(input: {
     accent: storedColor(tokens.accent),
     background,
     brandName: storedText(brand.display_name, 2, 120),
-    card: storedOption(components.card, APPROVED_CARDS),
+    card: storedSiteModel ? storedCard : composition.card,
     font: storedOption(tokens.font, APPROVED_FONTS),
-    header: storedOption(components.header, APPROVED_HEADERS),
-    hero: storedOption(components.hero, APPROVED_HEROES),
+    header: storedSiteModel ? storedHeader : composition.header,
+    hero: storedSiteModel ? storedHero : composition.hero,
     logoAlt:
       typeof brand.logo_alt === "string" ? brand.logo_alt.trim().slice(0, 180) : "",
     logoUrl: null,
     primary,
     secondary: storedColor(tokens.secondary),
+    siteModel,
     slogan: storedText(brand.slogan, 2, 160),
     textColor,
   };
@@ -172,6 +206,7 @@ export function parseCreateIdentityForm(formData: FormData) {
   return {
     brandName: text(formData, "brandName", "Nome da marca", 120),
     presetTenantId: readUuid(formData, "tenantId", "Preset"),
+    siteModel: option(formData, "siteModel", SITE_MODEL_IDS),
     slug,
     slogan: text(formData, "slogan", "Slogan", 160),
   };
@@ -287,16 +322,20 @@ export function parseThemeForm(formData: FormData) {
     );
   }
 
+  const siteModel = option(formData, "siteModel", SITE_MODEL_IDS);
+  const composition = getSiteModelDefinition(siteModel).composition;
+
   return {
     accent: color(formData, "accent"),
     background,
     brandName: text(formData, "brandName", "Nome da marca", 120),
-    card: option(formData, "card", APPROVED_CARDS),
+    card: composition.card,
     font: option(formData, "font", APPROVED_FONTS),
-    header: option(formData, "header", APPROVED_HEADERS),
-    hero: option(formData, "hero", APPROVED_HEROES),
+    header: composition.header,
+    hero: composition.hero,
     primary,
     secondary: color(formData, "secondary"),
+    siteModel,
     slogan: text(formData, "slogan", "Slogan", 160),
     tenantId: readUuid(formData, "tenantId", "Tenant"),
     textColor,

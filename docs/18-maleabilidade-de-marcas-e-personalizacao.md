@@ -19,6 +19,10 @@ Cada experiência resulta de cinco camadas:
 Conteúdo canônico não pertence ao tema. Tema não altera autoria, corpo,
 correção ou licenciamento.
 
+O preset de segmento passa a ser um modelo de site estrutural com ID próprio,
+acima da marca. Os quatro contratos aprovados estão em
+`docs/22-arquitetura-visual-modelos-de-segmento.md`.
+
 ## Cadastro de marca demo
 
 ### Criar do zero controlado
@@ -27,12 +31,12 @@ Campos:
 
 - nome da marca;
 - slug sugerido e validado;
-- segmento demonstrativo;
+- modelo de segmento aprovado;
 - slogan;
 - wordmark textual ou logo em Storage;
 - paleta semântica;
 - tipografia aprovada;
-- preset de componentes;
+- composição estrutural derivada do modelo;
 - módulos habilitados;
 - co-branding obrigatório;
 - coleção editorial inicial.
@@ -43,7 +47,7 @@ O operador escolhe uma marca de origem e informa:
 
 - novo nome;
 - novo slug;
-- preset mantido ou trocado;
+- modelo de segmento mantido ou trocado;
 - copiar tema;
 - copiar placements;
 - copiar apenas referências de distribuição;
@@ -114,6 +118,10 @@ continuam fora do escopo.
 - largura da coluna de leitura.
 
 ## Variantes aprovadas
+
+As variantes abaixo passam a ser primitives internas dos modelos. Na interface
+principal, o operador escolhe um modelo coerente; não combina livremente header,
+hero e card de segmentos diferentes.
 
 | Área | Variante | Diferença estrutural obrigatória |
 |---|---|---|

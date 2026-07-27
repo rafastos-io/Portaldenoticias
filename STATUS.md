@@ -33,8 +33,102 @@ Atualizado em: 27/07/2026.
 - tarefa concluída: `C203`;
 - tarefa concluída: `C210`;
 - tarefa concluída: `C204`;
-- tarefa em verificação: `C211` (`P1`, `VERIFY`);
+- tarefa concluída: `C211`;
+- tarefa em verificação: `C212` (`P1`, `VERIFY`);
 - nenhuma tarefa `P0` permanece pronta ou aberta.
+
+## Planejamento do sprint visual por segmento — 27/07/2026
+
+### Resultado
+
+- formalizada a camada `design system -> modelo de segmento -> marca/tenant ->
+  conteúdo/placements`;
+- definidos quatro modelos: serviços financeiros/crédito,
+  investimentos/gestão, seguros/previdência e saúde/farma;
+- registrado que a diferença deve ser estrutural em home, editoria e matéria,
+  não apenas cor, fonte ou alinhamento;
+- definido o ID do modelo como allowlist persistida no tema, sem nova aplicação
+  ou duplicação de conteúdo;
+- replanejadas `C212` e `C213` para implementar a camada e permitir que a marca
+  escolha o modelo;
+- conteúdos, categorias e pautas permanecem fora deste sprint.
+
+### Arquivos de execução
+
+- `docs/22-arquitetura-visual-modelos-de-segmento.md`;
+- `docs/23-plano-sprint-modelos-visuais.md`;
+- `PROMPT-SPRINT-MODELOS-VISUAIS-CODEX.md`.
+
+### Estratégia de custo
+
+- um executor por padrão;
+- testes focados durante contratos;
+- check completo e revisão visual no gate final;
+- um único verificador independente ao final;
+- auditoria adversarial limitada a allowlist, tenant, persistência e fallback.
+
+Nenhuma implementação, migration, publicação ou mudança externa foi feita nesta
+entrega de planejamento.
+
+## Implementação local dos quatro modelos de segmento — 27/07/2026
+
+### Resultado implementado
+
+- criada a allowlist tipada `SiteModelId` com os quatro IDs aprovados e
+  compatibilidade explícita para os três tenants legados;
+- `theme_versions.components_json.site_model` passou a ser validado no servidor;
+  modelo persistido incoerente falha fechado;
+- home, editoria e matéria agora despacham para composições nomeadas em
+  `src/components/public/models/`, preservando uma única árvore de rotas e o
+  mesmo conteúdo canônico;
+- implementados: central de serviços para crédito, publicação densa para
+  investimentos, guia humano para seguros e briefing científico para
+  saúde/farma;
+- menu mobile explícito, foco visível, `noindex`, links com tenant, reduced
+  motion e estados sem imagem foram preservados;
+- o workbench e o cadastro de identidade agora escolhem um modelo coerente,
+  sem combinação livre de header/hero/card;
+- migration `20260727184629_add_site_models.sql` e seed da quarta marca
+  `Crédito Demo Órbita` foram preparados sem criar matéria, editoria ou
+  taxonomia e sem duplicar corpo canônico.
+
+### Evidências locais
+
+- lint e typecheck aprovados;
+- 24 arquivos de teste e 120 testes aprovados;
+- build Next.js 16.2.11 aprovado;
+- browser no build de produção local: três homes persistidas em 390/1440,
+  editoria e matéria alternadas em 390/1440, uma `h1`, `noindex, nofollow`,
+  zero overflow, zero overlay e zero erro de runtime;
+- menu mobile abriu por teclado, foco exibiu outline de 3 px e reflow equivalente
+  a zoom de 200% passou em 720 px;
+- tenant inválido exibiu estado 404 sem conteúdo de outro tenant;
+- o quarto modelo foi selecionado no preview vivo sem salvar, habilitou a ação
+  de persistência e permaneceu visualmente distinto;
+- P1 encontrado no hero de seguros (mídia comprimindo a coluna de texto) foi
+  corrigido e reverificado;
+- o verificador também confirmou o backfill coerente das composições e o
+  fail-closed de `site_model` presente e inválido; parecer final `P0=0`,
+  `P1=0`;
+- três pranchas compactas em
+  `artifacts/c212-site-models-2026-07-27/`.
+
+### Estado remoto
+
+- a migration `add_site_models` foi aplicada no projeto
+  `yhatwpxsxntlorfgxpdl` após autorização explícita;
+- o constraint de `schema_version` foi versionado de forma fechada para aceitar
+  apenas `1` ou `2`;
+- as quatro marcas persistem composições coerentes; Crédito Demo Órbita possui
+  10 distribuições e 3 placements por referência, enquanto o total canônico
+  permanece em 24 matérias;
+- as RPCs v2 usam `security invoker`, `search_path` vazio, recusam execução de
+  `anon`/`authenticated` e permitem apenas `service_role`;
+- advisor de segurança: zero alertas; advisor de performance: somente índices
+  ainda não utilizados, informativos e anteriores ao sprint;
+- nenhuma publicação Vercel/Production foi feita até este registro;
+- `C212` permanece em `VERIFY` somente até a reverificação da quarta home em
+  Preview.
 
 ## Entrega rápida de portal e identidade — 27/07/2026
 
@@ -122,7 +216,8 @@ Atualizado em: 27/07/2026.
 
 ## Bloqueios externos
 
-Nenhum bloqueio externo ativo.
+Nenhum bloqueio externo permanece para `C212`; falta apenas o gate de Preview
+do commit desta entrega.
 
 O incidente histórico da secret exposta apenas no working tree continua
 registrado. A varredura anterior confirmou zero ocorrências rastreadas; qualquer
@@ -597,5 +692,6 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Não há P0 pronta. A próxima tarefa executável é `C211` (`P1`, `READY`):
-workbench de identidade com preview vivo.
+Não há P0 pronta nem outra tarefa local desbloqueada. `C212` (`P1`, `VERIFY`)
+aguarda autorização explícita para aplicar a migration no Supabase
+demonstrativo; depois, executar advisors e reverificar a quarta home pública.

@@ -24,6 +24,7 @@ describe("identidade pública de tenant", () => {
     ["banco-demo-horizonte", "Banco Demo Horizonte"],
     ["seguros-demo-atlas", "Seguros Demo Atlas"],
     ["healthtech-demo-lumen", "Healthtech Demo Lúmen"],
+    ["credito-demo-orbita", "Crédito Demo Órbita"],
   ])("resolve %s sem fallback entre clientes", (slug, displayName) => {
     expect(getDemoTenantIdentity(slug)).toMatchObject({
       displayName,
@@ -36,18 +37,16 @@ describe("identidade pública de tenant", () => {
     expect(getDemoTenantThemeFallback("tenant-inexistente")).toBeNull();
   });
 
-  it("mantém os três temas visualmente distintos no fallback seguro", () => {
+  it("mantém os quatro modelos explícitos no fallback seguro", () => {
     const themes = [
       getDemoTenantThemeFallback("banco-demo-horizonte"),
       getDemoTenantThemeFallback("seguros-demo-atlas"),
       getDemoTenantThemeFallback("healthtech-demo-lumen"),
+      getDemoTenantThemeFallback("credito-demo-orbita"),
     ];
 
-    expect(new Set(themes.map((theme) => theme?.primary)).size).toBe(3);
-    expect(new Set(themes.map((theme) => theme?.font)).size).toBe(3);
-    expect(new Set(themes.map((theme) => theme?.header)).size).toBe(3);
-    expect(new Set(themes.map((theme) => theme?.hero)).size).toBe(3);
-    expect(new Set(themes.map((theme) => theme?.card)).size).toBe(3);
+    expect(new Set(themes.map((theme) => theme?.primary)).size).toBe(4);
+    expect(new Set(themes.map((theme) => theme?.siteModel)).size).toBe(4);
   });
 
   it("resolves the persisted public default through a validated demo tenant", async () => {

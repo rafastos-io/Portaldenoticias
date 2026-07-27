@@ -41,13 +41,17 @@ export function PublicShell({
   } as CSSProperties;
 
   return (
-    <div className="min-h-screen bg-surface-page text-text-primary" style={themeStyle}>
+    <div
+      className="site-model min-h-screen bg-surface-page text-text-primary"
+      data-site-model={theme.siteModel}
+      style={themeStyle}
+    >
       <a className="skip-link" href="#conteudo-principal">
         Pular para o conteúdo
       </a>
       <PublicHeader categories={categories} tenant={tenant} theme={theme} />
       {children}
-      <footer className="border-t-4 border-accent bg-surface-inverse text-text-on-brand">
+      <footer className="model-footer border-t-4 border-accent bg-surface-inverse text-text-on-brand">
         <div className="page-container py-12 sm:py-16">
           <div className="grid gap-12 border-b border-white/20 pb-12 lg:grid-cols-[1.3fr_0.7fr_0.9fr]">
             <div>

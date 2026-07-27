@@ -49,6 +49,12 @@ const DEMO_TENANTS: Record<string, PublicTenant> = {
     slug: "healthtech-demo-lumen",
     slogan: "Ciência para ampliar futuros",
   },
+  "credito-demo-orbita": {
+    displayName: "Crédito Demo Órbita",
+    id: "00000000-0000-4000-8000-000000000005",
+    slug: "credito-demo-orbita",
+    slogan: "Clareza para decidir o próximo passo",
+  },
 };
 
 const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
@@ -56,7 +62,7 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     accent: "#C7A35A",
     background: "#F5F7F8",
     brandName: "Banco Demo Horizonte",
-    card: "image-top",
+    card: "data-led",
     font: "sans-editorial",
     header: "masthead-clean",
     hero: "split-editorial",
@@ -64,6 +70,7 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     logoUrl: null,
     primary: "#12324A",
     secondary: "#2F80A3",
+    siteModel: "investments-asset-management",
     slogan: "Planejamento para vidas mais longas",
     textColor: "#14232D",
   },
@@ -79,6 +86,7 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     logoUrl: null,
     primary: "#174A47",
     secondary: "#C9B99A",
+    siteModel: "insurance-pension",
     slogan: "Proteção que acompanha cada fase",
     textColor: "#18302F",
   },
@@ -94,8 +102,25 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     logoUrl: null,
     primary: "#4A2E78",
     secondary: "#20A4B8",
+    siteModel: "health-pharma",
     slogan: "Ciência para ampliar futuros",
     textColor: "#222033",
+  },
+  "credito-demo-orbita": {
+    accent: "#E6A23C",
+    background: "#F5F7F4",
+    brandName: "Crédito Demo Órbita",
+    card: "image-top",
+    font: "sans-geometrica",
+    header: "masthead-clean",
+    hero: "featured-grid",
+    logoAlt: "",
+    logoUrl: null,
+    primary: "#173F5F",
+    secondary: "#2F76A5",
+    siteModel: "financial-services-credit",
+    slogan: "Clareza para decidir o próximo passo",
+    textColor: "#142633",
   },
 };
 

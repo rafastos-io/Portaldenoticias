@@ -40,6 +40,15 @@ values
     'demo',
     '{"slogan":"Ciência para ampliar futuros","segment":"healthtech/biotecnologia","fallback_image":"/images/editorial-hero-demo.png"}',
     true
+  ),
+  (
+    '00000000-0000-4000-8000-000000000005',
+    'credito-demo-orbita',
+    'Crédito Demo Órbita',
+    'demo',
+    'demo',
+    '{"slogan":"Clareza para decidir o próximo passo","segment":"serviços financeiros/crédito","fallback_image":"/images/editorial-hero-demo.png"}',
+    true
   )
 on conflict (id) do update set
   slug = excluded.slug,
@@ -175,7 +184,8 @@ insert into public.themes (
 values
   ('60000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000002', 'Horizonte editorial', 'published', true),
   ('60000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-000000000003', 'Atlas acolhedor', 'published', true),
-  ('60000000-0000-4000-8000-000000000004', '00000000-0000-4000-8000-000000000004', 'Lúmen ciência', 'published', true)
+  ('60000000-0000-4000-8000-000000000004', '00000000-0000-4000-8000-000000000004', 'Lúmen ciência', 'published', true),
+  ('60000000-0000-4000-8000-000000000005', '00000000-0000-4000-8000-000000000005', 'Órbita serviços', 'published', true)
 on conflict (id) do update set
   tenant_id = excluded.tenant_id,
   name = excluded.name,
@@ -193,9 +203,9 @@ values
     '61000000-0000-4000-8000-000000000002',
     '60000000-0000-4000-8000-000000000002',
     1,
-    1,
+    2,
     '{"primary":"#12324A","secondary":"#2F80A3","accent":"#C7A35A","background":"#F5F7F8","text":"#14232D","font":"sans-editorial"}',
-    '{"header":"masthead-clean","hero":"split-editorial","card":"image-top"}',
+    '{"header":"masthead-clean","hero":"split-editorial","card":"data-led","site_model":"investments-asset-management"}',
     '["Início","Longevidade & Economia","Previdência & Seguros","Trabalho & Gerações"]',
     '{"display_name":"Banco Demo Horizonte","slogan":"Planejamento para vidas mais longas","logo_mode":"wordmark"}',
     'demo-operator',
@@ -208,9 +218,9 @@ values
     '61000000-0000-4000-8000-000000000003',
     '60000000-0000-4000-8000-000000000003',
     1,
-    1,
+    2,
     '{"primary":"#174A47","secondary":"#C9B99A","accent":"#D66B5D","background":"#FAF8F3","text":"#18302F","font":"sans-humana"}',
-    '{"header":"brand-centered","hero":"featured-grid","card":"compact-horizontal"}',
+    '{"header":"brand-centered","hero":"featured-grid","card":"compact-horizontal","site_model":"insurance-pension"}',
     '["Início","Previdência & Seguros","Saúde & Regulação","Trabalho & Gerações"]',
     '{"display_name":"Seguros Demo Atlas","slogan":"Proteção que acompanha cada fase","logo_mode":"wordmark"}',
     'demo-operator',
@@ -223,15 +233,30 @@ values
     '61000000-0000-4000-8000-000000000004',
     '60000000-0000-4000-8000-000000000004',
     1,
-    1,
+    2,
     '{"primary":"#4A2E78","secondary":"#20A4B8","accent":"#8ED1C9","background":"#F6F5FA","text":"#222033","font":"sans-geometrica"}',
-    '{"header":"masthead-minimal","hero":"science-feature","card":"data-led"}',
+    '{"header":"masthead-minimal","hero":"science-feature","card":"data-led","site_model":"health-pharma"}',
     '["Início","Inovação Médica","Biotecnologia","Saúde & Regulação"]',
     '{"display_name":"Healthtech Demo Lúmen","slogan":"Ciência para ampliar futuros","logo_mode":"wordmark"}',
     'demo-operator',
     'demo-operator',
     '2026-07-01T12:00:00Z',
     'Tema fictício inicial da Healthtech Demo Lúmen.',
+    true
+  ),
+  (
+    '61000000-0000-4000-8000-000000000005',
+    '60000000-0000-4000-8000-000000000005',
+    1,
+    2,
+    '{"primary":"#173F5F","secondary":"#2F76A5","accent":"#E6A23C","background":"#F5F7F4","text":"#142633","font":"sans-geometrica"}',
+    '{"header":"masthead-clean","hero":"featured-grid","card":"image-top","site_model":"financial-services-credit"}',
+    '["Início","Crédito","Empresas","Moradia","Pagamentos","Segurança","Planejamento"]',
+    '{"display_name":"Crédito Demo Órbita","slogan":"Clareza para decidir o próximo passo","logo_mode":"wordmark"}',
+    'demo-operator',
+    'demo-operator',
+    '2026-07-27T12:00:00Z',
+    'Tema fictício inicial da Crédito Demo Órbita.',
     true
   )
 on conflict (id) do update set
@@ -253,13 +278,15 @@ set
     when '00000000-0000-4000-8000-000000000002' then '61000000-0000-4000-8000-000000000002'::uuid
     when '00000000-0000-4000-8000-000000000003' then '61000000-0000-4000-8000-000000000003'::uuid
     when '00000000-0000-4000-8000-000000000004' then '61000000-0000-4000-8000-000000000004'::uuid
+    when '00000000-0000-4000-8000-000000000005' then '61000000-0000-4000-8000-000000000005'::uuid
   end,
   draft_version_id = null,
   updated_at = now()
 where tenant_id in (
   '00000000-0000-4000-8000-000000000002',
   '00000000-0000-4000-8000-000000000003',
-  '00000000-0000-4000-8000-000000000004'
+  '00000000-0000-4000-8000-000000000004',
+  '00000000-0000-4000-8000-000000000005'
 );
 
 create temporary table seed_articles (
@@ -532,12 +559,57 @@ values
   ('81000000-0000-4000-8000-000000000005', '40000000-0000-4000-8000-000000000017', '00000000-0000-4000-8000-000000000002', 'active', '2026-07-01T12:00:00Z', array['portal'], 'IA em saúde: organização, limites e supervisão', 'demo-cross', 'DEMO-017-HORIZONTE', true, true, 'demo-operator', 'demo-operator', true),
   ('81000000-0000-4000-8000-000000000006', '40000000-0000-4000-8000-000000000020', '00000000-0000-4000-8000-000000000002', 'active', '2026-07-01T12:00:00Z', array['portal'], null, 'demo-cross', 'DEMO-020-HORIZONTE', true, true, 'demo-operator', 'demo-operator', true),
   ('81000000-0000-4000-8000-000000000007', '40000000-0000-4000-8000-000000000010', '00000000-0000-4000-8000-000000000004', 'active', '2026-07-01T12:00:00Z', array['portal'], null, 'demo-cross', 'DEMO-010-LUMEN', true, true, 'demo-operator', 'demo-operator', true),
-  ('81000000-0000-4000-8000-000000000008', '40000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-000000000004', 'active', '2026-07-01T12:00:00Z', array['portal'], null, 'demo-cross', 'DEMO-011-LUMEN', true, true, 'demo-operator', 'demo-operator', true)
+  ('81000000-0000-4000-8000-000000000008', '40000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-000000000004', 'active', '2026-07-01T12:00:00Z', array['portal'], null, 'demo-cross', 'DEMO-011-LUMEN', true, true, 'demo-operator', 'demo-operator', true),
+  ('81000000-0000-4000-8000-000000000009', '40000000-0000-4000-8000-000000000017', '00000000-0000-4000-8000-000000000005', 'active', '2026-07-01T12:00:00Z', array['portal'], 'Tecnologia e segurança em decisões financeiras', 'demo-reference', 'DEMO-017-ORBITA', true, true, 'demo-operator', 'demo-operator', true)
 on conflict (content_item_id, tenant_id) do update set
   status = excluded.status,
   starts_at = excluded.starts_at,
   channels = excluded.channels,
   headline_override = excluded.headline_override,
+  rights_code = excluded.rights_code,
+  contract_reference = excluded.contract_reference,
+  allow_full_body = excluded.allow_full_body,
+  allow_media = excluded.allow_media,
+  approved_by = excluded.approved_by,
+  is_demo = true,
+  updated_at = now();
+
+insert into public.distributions (
+  id, content_item_id, tenant_id, status, starts_at, ends_at, channels,
+  headline_override, subtitle_override, slug_override, category_override_id,
+  rights_code, contract_reference, allow_full_body, allow_media, created_by,
+  approved_by, is_demo
+)
+select
+  md5('credito-demo-orbita:distribution:' || source.content_item_id::text)::uuid,
+  source.content_item_id,
+  '00000000-0000-4000-8000-000000000005'::uuid,
+  source.status,
+  source.starts_at,
+  source.ends_at,
+  source.channels,
+  source.headline_override,
+  source.subtitle_override,
+  source.slug_override,
+  source.category_override_id,
+  'demo-reference',
+  'ORBITA-' || source.content_item_id::text,
+  source.allow_full_body,
+  source.allow_media,
+  'demo-operator',
+  source.approved_by,
+  true
+from public.distributions source
+where source.tenant_id = '00000000-0000-4000-8000-000000000002'
+on conflict (content_item_id, tenant_id) do update set
+  status = excluded.status,
+  starts_at = excluded.starts_at,
+  ends_at = excluded.ends_at,
+  channels = excluded.channels,
+  headline_override = excluded.headline_override,
+  subtitle_override = excluded.subtitle_override,
+  slug_override = excluded.slug_override,
+  category_override_id = excluded.category_override_id,
   rights_code = excluded.rights_code,
   contract_reference = excluded.contract_reference,
   allow_full_body = excluded.allow_full_body,
@@ -559,7 +631,10 @@ values
   ('90000000-0000-4000-8000-000000000006', '00000000-0000-4000-8000-000000000003', 'home.secondary', '40000000-0000-4000-8000-000000000001', '2026-07-01T12:00:00Z', 1, 'compact', 'Planejamento', 'active', true),
   ('90000000-0000-4000-8000-000000000007', '00000000-0000-4000-8000-000000000004', 'home.hero', '40000000-0000-4000-8000-000000000017', '2026-07-01T12:00:00Z', 0, 'hero', 'Ciência', 'active', true),
   ('90000000-0000-4000-8000-000000000008', '00000000-0000-4000-8000-000000000004', 'home.secondary', '40000000-0000-4000-8000-000000000018', '2026-07-01T12:00:00Z', 0, 'featured', null, 'active', true),
-  ('90000000-0000-4000-8000-000000000009', '00000000-0000-4000-8000-000000000004', 'home.secondary', '40000000-0000-4000-8000-000000000010', '2026-07-01T12:00:00Z', 1, 'standard', 'Prevenção', 'active', true)
+  ('90000000-0000-4000-8000-000000000009', '00000000-0000-4000-8000-000000000004', 'home.secondary', '40000000-0000-4000-8000-000000000010', '2026-07-01T12:00:00Z', 1, 'standard', 'Prevenção', 'active', true),
+  ('90000000-0000-4000-8000-000000000010', '00000000-0000-4000-8000-000000000005', 'home.hero', '40000000-0000-4000-8000-000000000001', '2026-07-01T12:00:00Z', 0, 'hero', 'Decisões', 'active', true),
+  ('90000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-000000000005', 'home.secondary', '40000000-0000-4000-8000-000000000002', '2026-07-01T12:00:00Z', 0, 'featured', 'Entenda antes', 'active', true),
+  ('90000000-0000-4000-8000-000000000012', '00000000-0000-4000-8000-000000000005', 'home.secondary', '40000000-0000-4000-8000-000000000017', '2026-07-01T12:00:00Z', 1, 'standard', 'Segurança', 'active', true)
 on conflict (tenant_id, slot_key, rank) do update set
   content_item_id = excluded.content_item_id,
   starts_at = excluded.starts_at,
@@ -577,7 +652,8 @@ with audit_tenants (
   values
     (2, '00000000-0000-4000-8000-000000000002'::uuid, '40000000-0000-4000-8000-000000000001'::uuid),
     (3, '00000000-0000-4000-8000-000000000003'::uuid, '40000000-0000-4000-8000-000000000009'::uuid),
-    (4, '00000000-0000-4000-8000-000000000004'::uuid, '40000000-0000-4000-8000-000000000017'::uuid)
+    (4, '00000000-0000-4000-8000-000000000004'::uuid, '40000000-0000-4000-8000-000000000017'::uuid),
+    (5, '00000000-0000-4000-8000-000000000005'::uuid, '40000000-0000-4000-8000-000000000001'::uuid)
 ),
 audit_actions (
   action_ordinal,

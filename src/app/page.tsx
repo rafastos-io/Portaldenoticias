@@ -1,11 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { CategorySpotlights } from "@/components/public/category-spotlights";
+import { SiteModelHome } from "@/components/public/models";
 import { PublicShell } from "@/components/public/public-shell";
-import { MarketTicker } from "@/components/public/market-ticker";
-import { StoryList } from "@/components/public/story-list";
 import { getMarketQuotes } from "@/lib/market/market-data";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
 import {
@@ -69,16 +65,13 @@ export default async function HomePage({
     request.kind === "explicit"
       ? getDemoTenantThemeFallback(request.slug)
       : null;
-  if (
-    request.kind === "explicit" &&
-    (!fallbackTenant || !fallbackTheme)
-  ) {
-    notFound();
-  }
-
   const loaded = await loadHome(request);
   if (!loaded.ok) {
-    if (request.kind === "default") {
+    if (
+      request.kind === "default" ||
+      !fallbackTenant ||
+      !fallbackTheme
+    ) {
       return <DefaultPortalUnavailable />;
     }
     return (
@@ -134,90 +127,18 @@ export default async function HomePage({
   return (
     <PublicShell categories={categories} tenant={tenant} theme={theme}>
       <main id="conteudo-principal">
-        <MarketTicker quotes={marketQuotes} />
         {hero ? (
-          <section
-            className="page-container border-b border-border-subtle py-7 sm:py-10"
-          >
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
-              <div
-                className={`hero-copy flex flex-col justify-end ${
-                  theme.hero === "featured-grid"
-                    ? "border-l-8 border-brand-secondary pl-5 sm:pl-8"
-                    : theme.hero === "science-feature"
-                      ? "border-t-4 border-accent pt-5"
-                      : ""
-                }`}
-              >
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
-                  {heroPlacement?.eyebrow_override ?? hero.categoryName}
-                </p>
-                <h1 className="mt-3 font-heading text-[clamp(2.6rem,5.5vw,5rem)] leading-[0.96] font-bold tracking-[-0.055em] text-brand-primary">
-                  {hero.title}
-                </h1>
-                <p className="mt-5 max-w-2xl text-base leading-7 text-text-muted sm:text-lg sm:leading-8">
-                  {hero.subtitle}
-                </p>
-                <Link
-                  className="story-link mt-6 inline-flex min-h-11 w-fit items-center gap-3 border-b-2 border-brand-primary py-2 text-sm font-bold text-brand-primary no-underline"
-                  href={`/materia/${hero.canonicalSlug}?tenant=${encodeURIComponent(tenant.slug)}`}
-                >
-                  Ler matéria <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-              {hero.imagePath ? (
-                <Link
-                  aria-label={`Ler ${hero.title}`}
-                  className="hero-media relative aspect-[4/3] w-full overflow-hidden bg-surface-muted sm:min-h-72 lg:order-last"
-                  href={`/materia/${hero.canonicalSlug}?tenant=${encodeURIComponent(tenant.slug)}`}
-                >
-                  <Image
-                    alt={hero.imageAlt ?? ""}
-                    className="object-cover"
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 38vw"
-                    src={hero.imagePath}
-                  />
-                </Link>
-              ) : null}
-            </div>
-          </section>
+          <SiteModelHome
+            hero={hero}
+            heroEyebrow={heroPlacement?.eyebrow_override}
+            marketQuotes={marketQuotes}
+            siteModel={theme.siteModel}
+            stories={ordered}
+            tenant={tenant}
+          />
         ) : (
           <PublicEmpty tenantName={tenant.displayName} />
         )}
-
-        {ordered.length > 1 ? (
-          <section
-            aria-labelledby="destaques-title"
-            className="page-container py-10 sm:py-14"
-            id="destaques"
-          >
-            <div className="grid gap-10 lg:grid-cols-[0.58fr_1.42fr]">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-primary">
-                  Agora
-                </p>
-                <h2
-                  className="mt-3 max-w-sm font-heading text-4xl leading-tight font-bold tracking-tight text-brand-primary sm:text-5xl"
-                  id="destaques-title"
-                >
-                  As notícias que conectam saúde e economia.
-                </h2>
-                <p className="mt-5 max-w-md leading-7 text-text-muted">
-                  Análises, explicadores e tendências para acompanhar uma
-                  sociedade que vive mais.
-                </p>
-              </div>
-              <StoryList
-                stories={ordered.slice(1, 6)}
-                tenant={tenant}
-                theme={theme}
-              />
-            </div>
-          </section>
-        ) : null}
-        <CategorySpotlights stories={ordered.slice(1)} tenant={tenant} />
       </main>
     </PublicShell>
   );

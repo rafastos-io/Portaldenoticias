@@ -33,9 +33,9 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C203 | P0 | DONE | T014,C202 | Baseline visual/funcional aprovado para o Ciclo 2 |
 | C204 | P1 | DONE | C210 | Tenant padrão reutilizável na URL pública |
 | C210 | P1 | DONE | C203 | Contexto global de tenant no ADM |
-| C211 | P1 | VERIFY | C204 | Workbench de identidade com preview vivo |
-| C212 | P1 | BLOCKED | C211 | Variantes estruturais reais de header, hero e cards |
-| C213 | P1 | BLOCKED | C210,C211 | Criar/duplicar tenant demo por preset |
+| C211 | P1 | DONE | C204 | Workbench de identidade com preview vivo |
+| C212 | P1 | VERIFY | C211 | Quatro modelos estruturais de site por segmento |
+| C213 | P1 | BLOCKED | C210,C211,C212 | Criar/duplicar tenant demo escolhendo o modelo |
 | C214 | P1 | BLOCKED | C213 | Logo e mídia fictícia com Storage isolado |
 | C220 | P1 | BLOCKED | C210 | Templates e variantes de cadastro editorial |
 | C221 | P1 | BLOCKED | C220 | Distribuição e overrides por tenant |
@@ -247,22 +247,37 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 
 ### C212
 
-- três headers, três heroes e três cards estruturalmente distintos;
+- quatro IDs de modelo aprovados e persistidos no tema;
+- serviços financeiros/crédito, investimentos/gestão, seguros/previdência e
+  saúde/farma com composições estruturalmente distintas;
 - mesma base segura de componentes;
-- todas as variantes em 390 e 1440;
+- home, editoria e matéria respeitam o modelo;
+- quatro homes em 390 e 1440;
+- modelos distinguíveis em escala de cinza e sem logo;
 - conteúdo essencial visível com movimento reduzido;
-- nenhuma variante muda apenas cor/alinhamento;
+- nenhuma diferença depende apenas de cor, fonte ou alinhamento;
+- modelo inválido falha fechado, sem fallback de outro tenant;
+- não criar matéria, editoria ou taxonomia;
 - não criar tenant ou mídia.
+- implementação local em 27/07/2026: registro tipado, parser fechado,
+  persistência versionada, composições de home/editoria/matéria e matriz local
+  concluídos; permanece em `VERIFY` até a migration pendente ser explicitamente
+  autorizada no Supabase demonstrativo e a quarta home pública ser reverificada.
 
 ### C213
 
-- criar quarta marca demo por preset sem editar código;
+- criar quarta marca demo de serviços financeiros/crédito sem editar código;
+- escolher um dos quatro modelos antes de personalizar a marca;
 - duplicar tema/placements/distribuições por referência;
 - nunca duplicar corpo canônico;
 - slug único, `kind/status=demo` e `is_demo=true`;
 - troca sem rebuild;
+- salvar/recarregar o modelo no preview e no portal;
 - auditoria e teste negativo;
 - não implementar upload de logo nesta tarefa.
+- progresso visual em 27/07/2026: seleção fechada dos quatro modelos no
+  cadastro/edição e RPC versionado implementados; a criação persistida da quarta
+  marca depende da aplicação autorizada da migration de `C212`.
 
 ### C214
 
@@ -300,7 +315,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 - navegação mobile com indicação clara de rolagem/menu;
 - imagens fictícias variadas do catálogo aprovado;
 - sem overflow e com foco/zoom 200%;
-- comparação das quatro marcas em 390/1440;
+- comparação dos quatro modelos em 390/1440;
 - não alterar workflow ou schema editorial.
 - progresso antecipado em 27/07/2026: ticker contínuo com ações/moedas, seção
   editorial por categorias e rodapé robusto entregues e validados em
@@ -323,4 +338,6 @@ Ao concluir uma tarefa, atualizar para `DONE` e trocar dependentes de `BLOCKED` 
 
 T013 e T014 estão concluídas: login, sessão, páginas protegidas e logout foram
 reverificados em Preview e Production, e o auditor independente aprovou o commit
-final sem achados P0/P1. A próxima tarefa executável é C202.
+final sem achados P0/P1. No estado atual, não há nova tarefa local
+desbloqueada: `C212` permanece em `VERIFY` até a aplicação autorizada da
+migration e a reverificação da quarta home pública.

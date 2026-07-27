@@ -68,10 +68,13 @@ O MVP será uma plataforma multi-tenant com conteúdo canônico compartilhado e 
 | [Variantes editoriais](docs/19-variantes-de-cadastro-e-operacao-editorial.md) | Templates, distribuição e contexto do ADM |
 | [Matriz de QA](docs/20-matriz-qa-ciclo-de-melhoria.md) | Smoke, viewports, segurança e evidências |
 | [Sistema de agentes](docs/21-sistema-de-agentes-e-governanca.md) | Papéis, posse, verificação e auditoria adversarial |
+| [Modelos visuais por segmento](docs/22-arquitetura-visual-modelos-de-segmento.md) | Contrato e direção dos quatro modelos de site |
+| [Plano do sprint visual](docs/23-plano-sprint-modelos-visuais.md) | Sequência produtiva e QA compacto do sprint visual |
 | [Fila executável](TASKS.md) | Próximas tarefas e critérios de conclusão |
 | [Loop de entrega](DELIVERY_LOOP.md) | Ciclo executor + auditor para o Codex |
 | [Prompt inicial](PROMPT-INICIAL-CODEX.md) | Prompt pronto para iniciar a construção |
 | [Prompt do Ciclo 2](PROMPT-CICLO-MELHORIA-CODEX.md) | Prompt pronto para iniciar a rodada de melhorias |
+| [Prompt dos modelos visuais](PROMPT-SPRINT-MODELOS-VISUAIS-CODEX.md) | Prompt de implementação dos quatro modelos de segmento |
 
 ## Fontes consideradas
 
@@ -94,4 +97,4 @@ Domínio público atual:
 
 O domínio `portaldenoticias.vercel.app` pertence a um projeto anterior e não
 representa este MVP. Para continuar a evolução, use
-`PROMPT-CICLO-MELHORIA-CODEX.md`.
+`PROMPT-SPRINT-MODELOS-VISUAIS-CODEX.md` para a rodada visual atual.

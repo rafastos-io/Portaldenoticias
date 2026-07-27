@@ -10,6 +10,7 @@ import {
 import { requireDemoSession } from "@/lib/demo-auth/server";
 import { listAdminTenants } from "@/lib/supabase/content-repository";
 import { getAdminTheme } from "@/lib/supabase/theme-repository";
+import { SITE_MODELS, SITE_MODEL_IDS } from "@/lib/presentation/site-models";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -187,6 +188,24 @@ export default async function IdentityPage({
                 placeholder="Informação para escolhas que atravessam gerações"
                 required
               />
+            </label>
+            <label className="grid gap-2 text-sm font-bold sm:col-span-2">
+              Modelo de site
+              <select
+                className="min-h-11 border border-slate-300 bg-white px-3"
+                defaultValue="financial-services-credit"
+                name="siteModel"
+                required
+              >
+                {SITE_MODEL_IDS.map((siteModel) => (
+                  <option key={siteModel} value={siteModel}>
+                    {SITE_MODELS[siteModel].label}
+                  </option>
+                ))}
+              </select>
+              <span className="font-normal leading-5 text-slate-500">
+                Escolha a estrutura do segmento antes de personalizar a marca.
+              </span>
             </label>
             <p className="text-xs leading-5 text-slate-500">
               Preset: {selectedTenant.display_name}. Há {tenants.length}{" "}

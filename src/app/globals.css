@@ -136,6 +136,69 @@ textarea {
   animation: hero-scale 900ms ease-out both;
 }
 
+.site-model main > section {
+  animation: section-enter 520ms ease-out both;
+}
+
+.site-model main > section:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.site-model main > section:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.model-mobile-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.model-mobile-menu[open] summary span {
+  transform: rotate(45deg);
+}
+
+.model-mobile-menu summary span {
+  transition: transform var(--motion-fast) ease;
+}
+
+[data-site-model="investments-asset-management"] {
+  --container: 82rem;
+}
+
+[data-site-model="investments-asset-management"] .model-header {
+  text-transform: none;
+}
+
+[data-site-model="investments-asset-management"] .model-footer {
+  border-top-color: var(--text-primary);
+}
+
+[data-site-model="insurance-pension"] {
+  --container: 75rem;
+  --radius-md: 1.5rem;
+}
+
+[data-site-model="insurance-pension"] .model-header {
+  padding-block: 0.35rem;
+}
+
+[data-site-model="insurance-pension"] .model-footer {
+  border-radius: 2.5rem 2.5rem 0 0;
+}
+
+[data-site-model="health-pharma"] {
+  --container: 80rem;
+}
+
+[data-site-model="health-pharma"] .model-footer {
+  border-top-width: 1px;
+}
+
+[data-site-model="financial-services-credit"] .model-header nav a {
+  min-height: 3rem;
+  display: inline-flex;
+  align-items: center;
+}
+
 .story-link svg {
   transition: transform var(--motion-fast) ease;
 }
@@ -186,6 +249,18 @@ textarea {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

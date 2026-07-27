@@ -22,6 +22,7 @@ function themeData() {
   formData.set("background", "#F5F7F8");
   formData.set("textColor", "#14232D");
   formData.set("font", "sans-editorial");
+  formData.set("siteModel", "investments-asset-management");
   formData.set("header", "masthead-clean");
   formData.set("hero", "split-editorial");
   formData.set("card", "image-top");
@@ -66,7 +67,7 @@ describe("validação da identidade no servidor", () => {
 
   it("rejeita variantes arbitrárias", () => {
     const formData = themeData();
-    formData.set("header", "<script>alert(1)</script>");
+    formData.set("siteModel", "<script>alert(1)</script>");
     expect(() => parseThemeForm(formData)).toThrow(
       "Variante visual não aprovada",
     );
@@ -80,9 +81,10 @@ describe("validação da identidade no servidor", () => {
           slogan: "Escolhas informadas para uma vida mais longa",
         },
         components: {
-          card: "image-top",
+          card: "data-led",
           header: "masthead-clean",
           hero: "split-editorial",
+          site_model: "investments-asset-management",
         },
         tokens: {
           accent: "#C7A35A",
@@ -96,16 +98,44 @@ describe("validação da identidade no servidor", () => {
     ).toThrow("Identidade persistida inválida");
   });
 
+  it("não usa compatibilidade legada quando site_model está presente e inválido", () => {
+    expect(() =>
+      parseStoredTheme({
+        brand: {
+          display_name: "Banco Demo Horizonte",
+          slogan: "Escolhas informadas para uma vida mais longa",
+        },
+        components: {
+          card: "data-led",
+          header: "masthead-clean",
+          hero: "split-editorial",
+          site_model: "bank-blue",
+        },
+        legacySiteModel: "investments-asset-management",
+        tokens: {
+          accent: "#C7A35A",
+          background: "#F5F7F8",
+          font: "sans-editorial",
+          primary: "#12324A",
+          secondary: "#2F80A3",
+          text: "#14232D",
+        },
+      }),
+    ).toThrow("Modelo de site persistido inválido");
+  });
+
   it("valida o cadastro de uma nova identidade por preset", () => {
     const formData = new FormData();
     formData.set("tenantId", TENANT_ID);
     formData.set("brandName", "Vértice Longevidade");
     formData.set("slug", "vertice-longevidade");
+    formData.set("siteModel", "financial-services-credit");
     formData.set("slogan", "Informação para escolhas de longo prazo");
 
     expect(parseCreateIdentityForm(formData)).toEqual({
       brandName: "Vértice Longevidade",
       presetTenantId: TENANT_ID,
+      siteModel: "financial-services-credit",
       slug: "vertice-longevidade",
       slogan: "Informação para escolhas de longo prazo",
     });
@@ -116,6 +146,7 @@ describe("validação da identidade no servidor", () => {
     formData.set("tenantId", TENANT_ID);
     formData.set("brandName", "Vértice Longevidade");
     formData.set("slug", "../outra-marca");
+    formData.set("siteModel", "financial-services-credit");
     formData.set("slogan", "Informação para escolhas de longo prazo");
     expect(() => parseCreateIdentityForm(formData)).toThrow("Slug inválido");
   });

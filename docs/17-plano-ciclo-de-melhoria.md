@@ -8,13 +8,14 @@ Evoluir o MVP-0 de uma demonstração funcional para uma demonstração comercia
 mais convincente, flexível e verificável, sem antecipar autenticação real, API
 comercial ou um page builder irrestrito.
 
-O ciclo precisa melhorar cinco capacidades:
+O ciclo precisa melhorar seis capacidades:
 
 1. estabilidade do ambiente publicado;
 2. qualidade editorial e densidade jornalística;
 3. cadastro e operação de conteúdo;
 4. criação e personalização de marcas;
-5. capacidade dos agentes de entregar e auditar fatias completas.
+5. modelos de site estruturalmente distintos por segmento;
+6. capacidade dos agentes de entregar e auditar fatias completas.
 
 ## Diagnóstico de partida
 
@@ -60,7 +61,7 @@ O ciclo precisa melhorar cinco capacidades:
 - criação e duplicação de tenant demo por preset;
 - workbench de identidade com preview antes de salvar;
 - logo, paleta, tipografia, densidade, variantes e módulos aprovados;
-- variantes visuais estruturalmente distintas;
+- quatro modelos visuais estruturalmente distintos, definidos em `docs/22`;
 - variantes de cadastro editorial demonstrativas;
 - distribuição por tenant e overrides de chamada;
 - melhoria da home, navegação mobile, estados e acessibilidade;
@@ -101,9 +102,9 @@ Qualquer tentativa de incluir esses itens deve virar proposta em
 ### Onda 2 — laboratório de marcas
 
 - criar ou duplicar tenant demo;
-- escolher preset de segmento;
+- escolher um dos quatro modelos de segmento;
 - editar marca e paleta com preview instantâneo;
-- escolher variantes realmente diferentes;
+- aplicar a composição estrutural coerente daquele modelo;
 - salvar apenas valores aprovados;
 - publicar a versão vigente sem histórico/rollback.
 
@@ -122,7 +123,7 @@ Qualquer tentativa de incluir esses itens deve virar proposta em
 - imagens fictícias variadas, com alt e crédito;
 - metadados editoriais visíveis;
 - navegação mobile explícita;
-- três marcas visualmente distintas em 390 px e 1440 px;
+- quatro modelos visualmente distintos em 390 px e 1440 px;
 - auditoria final adversarial.
 
 ## Métricas do ciclo
@@ -130,7 +131,7 @@ Qualquer tentativa de incluir esses itens deve virar proposta em
 - login publicado: 100% do smoke aprovado;
 - tempo para criar uma demo a partir de preset: até 5 minutos;
 - troca de tenant: sem reconstrução ou alteração de código;
-- variantes: diferença estrutural visível, não apenas cor/alinhamento;
+- modelos: diferença estrutural visível, não apenas cor/alinhamento;
 - vazamento entre tenants: zero;
 - contraste: todos os pares essenciais em WCAG AA;
 - erros P0/P1 abertos ao promover produção: zero;
@@ -143,10 +144,11 @@ O ciclo termina quando uma pessoa consegue:
 
 1. abrir o domínio correto e entrar no ADM;
 2. selecionar ou criar uma marca demo;
-3. personalizar a marca e visualizar antes de salvar;
-4. criar uma matéria por variante;
-5. distribuir a mesma matéria para mais de um tenant com chamadas distintas;
-6. verificar portal, editoria e matéria em desktop/mobile;
-7. pausar e retomar sem vazamento;
-8. repetir o fluxo por smoke automatizado;
-9. apresentar evidências e auditoria sem P0/P1.
+3. escolher um dos quatro modelos de segmento;
+4. personalizar a marca e visualizar antes de salvar;
+5. criar uma matéria por variante;
+6. distribuir a mesma matéria para mais de um tenant com chamadas distintas;
+7. verificar portal, editoria e matéria em desktop/mobile;
+8. pausar e retomar sem vazamento;
+9. repetir o fluxo por smoke automatizado;
+10. apresentar evidências e auditoria sem P0/P1.

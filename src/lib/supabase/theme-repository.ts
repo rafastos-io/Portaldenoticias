@@ -3,6 +3,7 @@ import "server-only";
 import { createHash, randomUUID } from "node:crypto";
 
 import { parseStoredTheme } from "@/lib/admin/theme-form";
+import { resolveLegacySiteModel } from "@/lib/presentation/site-models";
 
 import { createServerSupabaseClient } from "./server";
 import { createTenantMediaSignedUrl, uploadTenantMedia } from "./storage";
@@ -39,6 +40,7 @@ export async function getTenantTheme(tenantIdInput: string) {
   const parsed = parseStoredTheme({
     brand: version.brand_json,
     components: version.components_json,
+    legacySiteModel: resolveLegacySiteModel(tenantId),
     tokens: version.tokens_json,
   });
   const assetId = logoAssetId(version.brand_json);
@@ -89,12 +91,13 @@ export async function saveAdminTheme(input: {
   hero: string;
   primary: string;
   secondary: string;
+  siteModel: string;
   slogan: string;
   tenantId: string;
   textColor: string;
 }) {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("cms_save_theme", {
+  const { data, error } = await supabase.rpc("cms_save_theme_v2", {
     p_accent: input.accent,
     p_background: input.background,
     p_brand_name: input.brandName,
@@ -104,6 +107,7 @@ export async function saveAdminTheme(input: {
     p_hero: input.hero,
     p_primary: input.primary,
     p_secondary: input.secondary,
+    p_site_model: input.siteModel,
     p_slogan: input.slogan,
     p_tenant_id: toTenantId(input.tenantId),
     p_text_color: input.textColor,
@@ -116,12 +120,14 @@ export async function createDemoTenantFromPreset(input: {
   brandName: string;
   presetTenantId: string;
   slug: string;
+  siteModel: string;
   slogan: string;
 }) {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("cms_create_demo_tenant", {
+  const { data, error } = await supabase.rpc("cms_create_demo_tenant_v2", {
     p_display_name: input.brandName,
     p_slug: input.slug,
+    p_site_model: input.siteModel,
     p_slogan: input.slogan,
     p_source_tenant_id: toTenantId(input.presetTenantId),
   });

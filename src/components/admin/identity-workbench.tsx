@@ -10,37 +10,25 @@ import {
 } from "@/app/admin/(protected)/actions";
 import { TenantMutationForm } from "@/components/admin/tenant-mutation-form";
 import {
-  APPROVED_CARDS,
   APPROVED_FONTS,
-  APPROVED_HEADERS,
-  APPROVED_HEROES,
   contrastRatio,
   type ThemeValues,
 } from "@/lib/admin/theme-form";
+import {
+  getSiteModelDefinition,
+  SITE_MODELS,
+  SITE_MODEL_IDS,
+  type SiteModelId,
+} from "@/lib/presentation/site-models";
 
 const control =
   "min-h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950";
 
 const labels = {
-  card: {
-    "compact-horizontal": "Lista horizontal compacta",
-    "data-led": "Cartão orientado a contexto",
-    "image-top": "Imagem no topo",
-  },
   font: {
     "sans-editorial": "Editorial",
     "sans-geometrica": "Geométrica",
     "sans-humana": "Humana",
-  },
-  header: {
-    "brand-centered": "Marca centralizada",
-    "masthead-clean": "Masthead editorial",
-    "masthead-minimal": "Cabeçalho mínimo",
-  },
-  hero: {
-    "featured-grid": "Grade de destaques",
-    "science-feature": "Destaque científico",
-    "split-editorial": "Editorial dividido",
   },
 } as const;
 
@@ -88,6 +76,15 @@ export function IdentityWorkbench({
     value: ThemeValues[K],
   ) {
     setTheme((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateSiteModel(siteModel: SiteModelId) {
+    const composition = getSiteModelDefinition(siteModel).composition;
+    setTheme((current) => ({
+      ...current,
+      ...composition,
+      siteModel,
+    }));
   }
 
   return (
@@ -265,7 +262,55 @@ export function IdentityWorkbench({
           </fieldset>
 
           <fieldset>
-            <legend className="text-sm font-bold">Composição aprovada</legend>
+            <legend className="text-sm font-bold">
+              Modelo de site do segmento
+            </legend>
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              O modelo define a composição coerente de cabeçalho, destaque e
+              listas. A marca continua controlando nome, paleta e tipografia.
+            </p>
+            <div className="mt-4 grid gap-3">
+              {SITE_MODEL_IDS.map((siteModel) => {
+                const definition = SITE_MODELS[siteModel];
+                const selected = theme.siteModel === siteModel;
+                return (
+                  <label
+                    className={`grid cursor-pointer grid-cols-[1.25rem_1fr] gap-3 border p-4 transition-colors ${
+                      selected
+                        ? "border-slate-950 bg-slate-950 text-white"
+                        : "border-slate-300 bg-white text-slate-900 hover:border-slate-500"
+                    }`}
+                    key={siteModel}
+                  >
+                    <input
+                      checked={selected}
+                      className="mt-1"
+                      name="siteModel"
+                      onChange={() => updateSiteModel(siteModel)}
+                      required
+                      type="radio"
+                      value={siteModel}
+                    />
+                    <span>
+                      <strong className="block text-sm">
+                        {definition.label}
+                      </strong>
+                      <span
+                        className={`mt-1 block text-xs leading-5 ${
+                          selected ? "text-slate-300" : "text-slate-500"
+                        }`}
+                      >
+                        {definition.description}
+                      </span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend className="text-sm font-bold">Tipografia da marca</legend>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
               <SelectField
                 label="Tipografia"
@@ -274,30 +319,6 @@ export function IdentityWorkbench({
                 onChange={(value) => update("font", value)}
                 options={APPROVED_FONTS}
                 value={theme.font}
-              />
-              <SelectField
-                label="Cabeçalho"
-                labels={labels.header}
-                name="header"
-                onChange={(value) => update("header", value)}
-                options={APPROVED_HEADERS}
-                value={theme.header}
-              />
-              <SelectField
-                label="Destaque"
-                labels={labels.hero}
-                name="hero"
-                onChange={(value) => update("hero", value)}
-                options={APPROVED_HEROES}
-                value={theme.hero}
-              />
-              <SelectField
-                label="Lista"
-                labels={labels.card}
-                name="card"
-                onChange={(value) => update("card", value)}
-                options={APPROVED_CARDS}
-                value={theme.card}
               />
             </div>
           </fieldset>

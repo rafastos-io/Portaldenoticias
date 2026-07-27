@@ -953,6 +953,16 @@ export type Database = {
         }
         Returns: string
       }
+      cms_create_demo_tenant_v2: {
+        Args: {
+          p_display_name: string
+          p_site_model: string
+          p_slug: string
+          p_slogan: string
+          p_source_tenant_id: string
+        }
+        Returns: string
+      }
       cms_set_content_status: {
         Args: {
           p_content_id: string
@@ -980,6 +990,24 @@ export type Database = {
           p_hero: string
           p_primary: string
           p_secondary: string
+          p_slogan: string
+          p_tenant_id: string
+          p_text_color: string
+        }
+        Returns: string
+      }
+      cms_save_theme_v2: {
+        Args: {
+          p_accent: string
+          p_background: string
+          p_brand_name: string
+          p_card: string
+          p_font: string
+          p_header: string
+          p_hero: string
+          p_primary: string
+          p_secondary: string
+          p_site_model: string
           p_slogan: string
           p_tenant_id: string
           p_text_color: string
