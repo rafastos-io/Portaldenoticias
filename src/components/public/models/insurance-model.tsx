@@ -33,7 +33,7 @@ export function InsuranceHome({
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-primary">
               {heroEyebrow ?? "Proteção e autonomia"}
             </p>
-            <h1 className="mt-4 font-heading text-[clamp(2.6rem,5.5vw,5.1rem)] leading-[0.98] font-bold tracking-[-0.045em] text-brand-primary">
+            <h1 className="mt-4 font-heading text-[clamp(1.9rem,3.7vw,3.15rem)] leading-[1.03] font-bold tracking-[-0.04em] text-brand-primary">
               {hero.title}
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-8 text-text-muted">

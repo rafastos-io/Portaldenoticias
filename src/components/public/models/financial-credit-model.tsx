@@ -38,7 +38,7 @@ export function FinancialCreditHome({
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-primary">
                 {heroEyebrow ?? "Decisões financeiras"}
               </p>
-              <h1 className="mt-3 font-heading text-[clamp(2.5rem,4.6vw,4.35rem)] leading-[0.95] font-bold tracking-[-0.05em] text-brand-primary">
+              <h1 className="mt-3 font-heading text-[clamp(2rem,3.4vw,3rem)] leading-[1.02] font-bold tracking-[-0.04em] text-brand-primary">
                 {hero.title}
               </h1>
               <p className="mt-5 max-w-xl leading-7 text-text-muted">

@@ -32,7 +32,7 @@ export function InvestmentsHome({
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
                 {heroEyebrow ?? "Leitura de cenário"}
               </p>
-              <h1 className="mt-4 font-heading text-[clamp(2.8rem,5.7vw,5.5rem)] leading-[0.91] font-bold tracking-[-0.055em] text-brand-primary">
+              <h1 className="mt-4 font-heading text-[clamp(1.9rem,3.8vw,3.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-brand-primary">
                 {hero.title}
               </h1>
               <p className="mt-5 max-w-xl text-base leading-7 text-text-muted">
