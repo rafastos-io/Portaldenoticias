@@ -1,6 +1,6 @@
 # Status do MVP-0
 
-Atualizado em: 27/07/2026.
+Atualizado em: 29/07/2026.
 
 ## Estado
 
@@ -548,6 +548,54 @@ Estado: `DONE`.
 - `C211` liberada para `READY`; nenhuma tarefa P0 permanece pronta.
 - fora de escopo preservado: criação de tenant e aprofundamento do workbench de
   identidade.
+
+## C213 — cobertura automatizada do fluxo de criação/duplicação — 29/07/2026
+
+### Resultado
+
+- `createIdentityAction` agora possui cobertura automatizada de caminho feliz,
+  falha de RPC (slug colidindo recusada com mensagem segura) e controle de
+  contexto (confirmação A→B e negação de preset adulterado) em
+  `src/app/admin/(protected)/actions.test.ts`;
+- o mock de `@/lib/supabase/theme-repository` passou a expor
+  `createDemoTenantFromPreset`, espelhando o contrato `cms_create_demo_tenant_v2`
+  já aplicado remotamente na migration `add_site_models`;
+- `parseCreateIdentityForm`, `createDemoTenantFromPreset`, persistência do
+  `site_model`, cópia por referência de distribuições/placements e o form de
+  cadastro na central de identidade permanecem com a implementação C212;
+- nenhuma migration, nova RPC ou alteração de schema foi necessária nesta
+  passagem: o fluxo operacional já estava implementado e a lacuna era a prova
+  negativa automatizada da action.
+
+### Evidências
+
+- `pnpm lint`, `pnpm typecheck`, `pnpm test` (25 arquivos, 128 testes) e
+  `pnpm build` aprovados;
+- `actions.test.ts`: 12 testes (4 novos cobrem `createIdentityAction`);
+- build de produção gerou `/`, `/admin`, `/admin/identidade`,
+  `/admin/auditoria`, `/admin/login`, `/api/admin/session`,
+  `/api/demo/content`, `/editoria/[slug]`, `/materia/[slug]` e `/robots.txt`
+  sem erro;
+- diff da sessão limitado a `src/app/admin/(protected)/actions.test.ts`;
+  nenhum segredo, migration ou alteração de schema touchado.
+
+### Gates restantes para fechar C213 como DONE
+
+- teste transacional remoto com rollback chamando
+  `cms_create_demo_tenant_v2` a partir de um preset e provando:
+  `kind=demo/status=demo/is_demo=true`, distribuições e placements copiados
+  por referência, `site_model` persistido coerente, eventos
+  `tenant.demo_created` e `theme.updated`, e nenhum novo `content_item`; exige
+  `DATABASE_URL` configurada no executor autorizado;
+- validação de browser em 390 px e 1440 px do fluxo de cadastro/duplicação na
+  central de identidade e da home do novo tenant com o modelo escolhido;
+- Preview imutável + smoke `C202` 14/14, verificador independente e auditoria
+  adversarial curta (allowlist de modelo, isolamento e fallback fechado) antes
+  da promoção;
+- nenhuma publicação Production sem autorização explícita.
+
+A tarefa permanece `READY`; o que ficou pronto acelera o fechamento na próxima
+sessão com `DATABASE_URL`/browser disponíveis.
 
 ## Evidências de implementação
 

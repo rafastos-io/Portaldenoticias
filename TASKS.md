@@ -282,6 +282,12 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
 - progresso visual em 27/07/2026: seleção fechada dos quatro modelos no
   cadastro/edição, RPC versionada e quarta marca persistida; tarefa liberada
   para completar e validar o fluxo operacional de criação/duplicação.
+- progresso em 29/07/2026: `createIdentityAction` agora coberto por testes
+  automatizados (happy, falha de RPC por slug colidindo, confirmação A→B e
+  negação de preset adulterado); `pnpm lint`, `pnpm typecheck`, `pnpm test`
+  (128 testes) e `pnpm build` aprovados; permanecem como gates para `DONE` o
+  teste transacional remoto com rollback (exige `DATABASE_URL`) e a validação
+  de browser em 390/1440 + Preview/smoke.
 
 ### C214
 
