@@ -2,6 +2,61 @@
 
 Atualizado em: 29/07/2026.
 
+## Reforma do cadastro editorial — 29/07/2026
+
+### Problema
+
+- o cadastro de matéria exibia "Autor inválido" quando o `<select>` de
+  autoria vinha vazio ou sem opção selecionável;
+- não existia seletor de variante editorial;
+- a autoria era uma lista fixa, sem permitir digitar o nome.
+
+### Resultado implementado
+
+- `parseEditorialForm` agora valida `authorName` (texto, 2–120 caracteres)
+  em vez de `authorId` (UUID), eliminando o gatilho do "Autor inválido";
+- `resolveAuthorByName` faz lookup-or-create: busca por `display_name`
+  case-insensitive na plataforma + tenant e, se não existir, cadastra um novo
+  autor sob o tenant com slug normalizado;
+- novo `EditorialTypeFields` (client component) oferece quatro variantes
+  estruturais: Matéria padrão, Explicador ou análise, Patrocinada fictícia e
+  Correção, com campos condicionais:
+  - **explainer**: tópicos-chave (até 8, armazenados em `body_json.key_topics`);
+  - **sponsored**: patrocinador fictício (2–120 caracteres, `sponsorship_label`
+    + `content_type=sponsored`);
+  - **correction**: nota de correção (12–500 caracteres, `correction_note`);
+- `findOwnedContentItem` agora retorna `authorName`, `editorialType`,
+  `correctionNote`, `sponsorshipLabel` e `keyTopics` para repovoar o editor sem
+  perder dados;
+- nenhum CSS/JS/HTML arbitrário: variantes são allowlist tipada em código;
+- `createAdminContent` e `updateAdminContent` preservam RPCs existentes
+  (`cms_create_content_with_media` / `cms_update_content_with_media`) e
+  aplicam metadados editoriais via update pós-RPC — sem migration.
+
+### Evidências
+
+- `pnpm lint`, `pnpm typecheck`, `pnpm test` (25 arquivos, 133 testes) e
+  `pnpm build` aprovados;
+- `content-form.test.ts`: 7 testes cobrem happy path, autor vazio, patrocinada
+  sem patrocinador, correção sem nota, patrocinada válida e correção válida;
+- `content-repository.test.ts`: mock ampliado com `authors` e métodos
+  `or/ilike/insert/single/update`; teste de `findOwnedContentItem` agora valida
+  `authorName` e `editorialType`;
+- `actions.test.ts`: 12 testes preservados (C213);
+- build de produção gerou todas as rotas sem erro.
+
+### Limites
+
+- o novo autor criado por texto é cadastrado sob o tenant ativo com
+  `owner_tenant_id = tenantId`; um trigger existente já garante que conteúdo
+  de tenant B só pode referenciar autores do próprio tenant B ou da
+  plataforma — não há vazamento;
+- nenhuma publicação Vercel foi feita nesta sessão; o domínio público vigente
+  continua servindo a versão anterior até Preview, smoke, auditoria
+  independente e promoção autorizada;
+- a UI não foi exercitada em browser real nesta sessão — recomenda-se
+  validação em 390/1440 antes de fechar a tarefa como `DONE`.
+
 ## Estado
 
 - documentação de produto: concluída;

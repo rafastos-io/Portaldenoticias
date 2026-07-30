@@ -40,6 +40,22 @@ const database = vi.hoisted(() => ({
         is_primary: "true",
       },
     ],
+    authors: [
+      {
+        display_name: "Autor Teste",
+        id: "55555555-5555-4555-8555-555555555555",
+        owner_tenant_id: "22222222-2222-4222-8222-222222222222",
+        slug: "autor-teste",
+        status: "active",
+      },
+      {
+        display_name: "Joana Neri",
+        id: "55555555-5555-4555-8555-555555555566",
+        owner_tenant_id: "11111111-1111-4111-8111-111111111111",
+        slug: "joana-neri",
+        status: "active",
+      },
+    ],
     content_revisions: [
       {
         body_text:
@@ -88,9 +104,29 @@ vi.mock("./server", () => ({
           });
           return query;
         },
+        ilike() {
+          return query;
+        },
         in(column: string, values: string[]) {
           arrayPredicates.push({ column, values });
           return query;
+        },
+        insert(row: Record<string, unknown>) {
+          const inserted = { ...row, id: row.id ?? AUTHOR_ID };
+          if (database.tables[table]) {
+            database.tables[table].push(inserted);
+          } else {
+            database.tables[table] = [inserted];
+          }
+          return {
+            select(column: string) {
+              return {
+                async single() {
+                  return { data: { [column]: inserted.id }, error: null };
+                },
+              };
+            },
+          };
         },
         limit() {
           return query;
@@ -99,11 +135,18 @@ vi.mock("./server", () => ({
           const data = matchingRows()[0] ?? null;
           return { data, error: null };
         },
+        or() {
+          return query;
+        },
         order() {
           return query;
         },
         select() {
           return query;
+        },
+        async single() {
+          const data = matchingRows()[0] ?? null;
+          return { data, error: null };
         },
         then<TResult1 = { data: Row[]; error: null }>(
           onfulfilled?: (
@@ -113,6 +156,9 @@ vi.mock("./server", () => ({
           return Promise.resolve({ data: matchingRows(), error: null }).then(
             onfulfilled,
           );
+        },
+        update() {
+          return query;
         },
       };
       return query;
@@ -159,12 +205,12 @@ describe("content repository tenant isolation", () => {
   });
 
   it("carrega revisão e classificação somente após validar o tenant", async () => {
-    await expect(
+await expect(
       findOwnedContentItem(TENANT_B_ID, TENANT_B_ITEM_ID),
     ).resolves.toMatchObject({
-      authorId: AUTHOR_ID,
+      authorName: "Autor Teste",
       categoryId: CATEGORY_ID,
-      imageAlt: "Composição abstrata fictícia sobre saúde e longevidade.",
+      editorialType: "standard",
       imageMode: "fallback",
       id: TENANT_B_ITEM_ID,
       revision: { id: REVISION_ID },
@@ -182,12 +228,16 @@ describe("content repository tenant isolation", () => {
 
   it("envia tenant obrigatório aos RPCs de criação e status", async () => {
     await createAdminContent({
-      authorId: AUTHOR_ID,
+      authorName: "Joana Neri",
       body: "Texto fictício com mais de oitenta caracteres para validar a operação persistente do CMS demonstrativo.",
       categoryId: CATEGORY_ID,
+      correctionNote: null,
+      editorialType: "standard",
       imageAlt: "Composição abstrata fictícia sobre saúde e longevidade.",
       imageMode: "fallback",
+      keyTopics: [],
       slug: "nova-materia",
+      sponsorshipLabel: null,
       subtitle: "Linha fina para a nova matéria fictícia.",
       tenantId: TENANT_A_ID,
       title: "Nova matéria fictícia",

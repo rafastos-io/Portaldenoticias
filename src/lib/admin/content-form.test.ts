@@ -9,14 +9,14 @@ import {
 
 const TENANT_ID = "11111111-1111-4111-8111-111111111111";
 const CONTENT_ID = "22222222-2222-4222-8222-222222222222";
-const AUTHOR_ID = "33333333-3333-4333-8333-333333333333";
 const CATEGORY_ID = "44444444-4444-4444-8444-444444444444";
 
 function editorialData() {
   const formData = new FormData();
   formData.set("tenantId", TENANT_ID);
-  formData.set("authorId", AUTHOR_ID);
+  formData.set("authorName", "Joana Neri");
   formData.set("categoryId", CATEGORY_ID);
+  formData.set("editorialType", "standard");
   formData.set("imageMode", "fallback");
   formData.set(
     "imageAlt",
@@ -40,9 +40,11 @@ describe("validação editorial no servidor", () => {
 
   it("aceita um rascunho completo e normaliza os campos", () => {
     expect(parseEditorialForm(editorialData())).toMatchObject({
-      authorId: AUTHOR_ID,
+      authorName: "Joana Neri",
       categoryId: CATEGORY_ID,
+      editorialType: "standard",
       imageMode: "fallback",
+      keyTopics: [],
       slug: "saude-longevidade-visao-60",
       tenantId: TENANT_ID,
     });
@@ -52,6 +54,54 @@ describe("validação editorial no servidor", () => {
     const formData = editorialData();
     formData.set("body", "Muito curto.");
     expect(() => parseEditorialForm(formData)).toThrow(ContentFormError);
+  });
+
+  it("rejeita nome de autoria vazio", () => {
+    const formData = editorialData();
+    formData.set("authorName", "");
+    expect(() => parseEditorialForm(formData)).toThrow(
+      "O nome da autoria deve ter entre 2 e 120 caracteres.",
+    );
+  });
+
+  it("exige patrocinador fictício para variante patrocinada", () => {
+    const formData = editorialData();
+    formData.set("editorialType", "sponsored");
+    expect(() => parseEditorialForm(formData)).toThrow(
+      "patrocinador fictício",
+    );
+  });
+
+  it("exige nota de correção para variante correção", () => {
+    const formData = editorialData();
+    formData.set("editorialType", "correction");
+    expect(() => parseEditorialForm(formData)).toThrow(
+      "nota de correção",
+    );
+  });
+
+  it("aceita variante patrocinada com patrocinador fictício", () => {
+    const formData = editorialData();
+    formData.set("editorialType", "sponsored");
+    formData.set("sponsorshipLabel", "Instituto Fictício de Longevidade");
+    expect(parseEditorialForm(formData)).toMatchObject({
+      editorialType: "sponsored",
+      sponsorshipLabel: "Instituto Fictício de Longevidade",
+    });
+  });
+
+  it("aceita variante correção com nota", () => {
+    const formData = editorialData();
+    formData.set("editorialType", "correction");
+    formData.set(
+      "correctionNote",
+      "Artigo original informava valor incorreto sobre expectativa de vida.",
+    );
+    expect(parseEditorialForm(formData)).toMatchObject({
+      editorialType: "correction",
+      correctionNote:
+        "Artigo original informava valor incorreto sobre expectativa de vida.",
+    });
   });
 
   it("permite a exceção editorial sem imagem", () => {

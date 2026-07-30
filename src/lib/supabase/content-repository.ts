@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { EditorialType } from "@/lib/admin/content-form";
+
 import { createServerSupabaseClient } from "./server";
 import { toEntityId, toTenantId } from "./tenant-scope";
 import type { Json } from "./database.types";
@@ -166,7 +168,9 @@ export async function findOwnedContentItem(
 
   const { data: revision, error: revisionError } = await supabase
     .from("content_revisions")
-    .select("id, title, subtitle, body_text, body_json")
+    .select(
+        "id, title, subtitle, body_text, body_json, sponsorship_label, correction_note",
+      )
     .eq("content_item_id", item.id)
     .order("revision_number", { ascending: false })
     .limit(1)
@@ -204,29 +208,226 @@ export async function findOwnedContentItem(
     });
   }
 
+  let authorName = "";
+  if (authorResult.data?.author_id) {
+    const { data: authorRow } = await supabase
+      .from("authors")
+      .select("display_name")
+      .eq("id", authorResult.data.author_id)
+      .limit(1)
+      .maybeSingle();
+    authorName = authorRow?.display_name ?? "";
+  }
+
+  let editorialType: EditorialType = "standard";
+  let sponsorshipLabel: string | null = null;
+  let correctionNote: string | null = null;
+  let keyTopics: string[] = [];
+
+  if (
+    typeof revision.body_json === "object" &&
+    revision.body_json !== null &&
+    !Array.isArray(revision.body_json)
+  ) {
+    const bodyJson = revision.body_json as Record<string, unknown>;
+    if (
+      typeof bodyJson.editorial_type === "string" &&
+      EDITORIAL_TYPES.includes(bodyJson.editorial_type as EditorialType)
+    ) {
+      editorialType = bodyJson.editorial_type as EditorialType;
+    }
+    if (typeof revision.sponsorship_label === "string") {
+      sponsorshipLabel = revision.sponsorship_label;
+    }
+    if (typeof revision.correction_note === "string") {
+      correctionNote = revision.correction_note;
+    }
+    if (Array.isArray(bodyJson.key_topics)) {
+      keyTopics = bodyJson.key_topics.filter(
+        (item): item is string => typeof item === "string",
+      );
+    }
+  }
+
   return {
     ...item,
     revision,
     ...readDemoMedia(revision.body_json),
-    authorId: authorResult.data?.author_id ?? null,
+    authorName,
     categoryId: categoryResult.data?.category_id ?? null,
+    correctionNote,
+    editorialType,
+    keyTopics,
+    sponsorshipLabel,
   };
 }
 
+const EDITORIAL_TYPES = ["standard", "explainer", "sponsored", "correction"] as const;
+
+const AUTHOR_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+function slugifyAuthorName(name: string) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+    .replace(/-+$/g, "");
+}
+
+async function resolveAuthorByName(
+  tenantId: string,
+  authorName: string,
+): Promise<string> {
+  const supabase = createServerSupabaseClient();
+  const trimmed = authorName.trim();
+
+  const { data: existing, error: lookupError } = await supabase
+    .from("authors")
+    .select("id")
+    .or(
+      `owner_tenant_id.eq.${PLATFORM_TENANT_ID},owner_tenant_id.eq.${tenantId}`,
+    )
+    .eq("status", "active")
+    .ilike("display_name", trimmed)
+    .limit(1)
+    .maybeSingle();
+
+  if (lookupError) {
+    throw new Error("Não foi possível verificar a autoria.", {
+      cause: lookupError,
+    });
+  }
+
+  if (existing) return existing.id;
+
+  let candidateSlug = slugifyAuthorName(trimmed);
+  if (!AUTHOR_SLUG.test(candidateSlug)) {
+    candidateSlug = `autor-${Date.now().toString(36)}`;
+  }
+
+  const { data: created, error: insertError } = await supabase
+    .from("authors")
+    .insert({
+      bio: "Perfil fictício criado no CMS demonstrativo.",
+      display_name: trimmed,
+      is_demo: true,
+      owner_tenant_id: tenantId,
+      slug: candidateSlug,
+      status: "active",
+    })
+    .select("id")
+    .single();
+
+  if (insertError || !created) {
+    const { data: retry, error: retryError } = await supabase
+      .from("authors")
+      .select("id")
+      .or(
+        `owner_tenant_id.eq.${PLATFORM_TENANT_ID},owner_tenant_id.eq.${tenantId}`,
+      )
+      .eq("status", "active")
+      .ilike("display_name", trimmed)
+      .limit(1)
+      .maybeSingle();
+    if (retryError || !retry) {
+      throw new Error("Não foi possível cadastrar a autoria informada.", {
+        cause: retryError ?? insertError,
+      });
+    }
+    return retry.id;
+  }
+
+  return created.id;
+}
+
+async function applyEditorialMetadata(input: {
+  contentId: string;
+  correctionNote: string | null;
+  editorialType: EditorialType;
+  keyTopics: string[];
+  revisionId: string | null;
+  sponsorshipLabel: string | null;
+  tenantId: string;
+}) {
+  if (input.editorialType === "standard" && !input.correctionNote && !input.sponsorshipLabel && input.keyTopics.length === 0) {
+    return;
+  }
+
+  const supabase = createServerSupabaseClient();
+  let targetRevisionId = input.revisionId;
+
+  if (!targetRevisionId) {
+    const { data: revision, error: revisionError } = await supabase
+      .from("content_revisions")
+      .select("id")
+      .eq("content_item_id", input.contentId)
+      .order("revision_number", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (revisionError || !revision) {
+      throw new Error("Não foi possível localizar a revisão criada.", {
+        cause: revisionError,
+      });
+    }
+    targetRevisionId = revision.id;
+  }
+
+  const patch: {
+    body_json: Json;
+    correction_note?: string;
+    sponsorship_label?: string;
+  } = {
+    body_json: {
+      editorial_type: input.editorialType,
+      key_topics: input.keyTopics,
+    },
+  };
+  if (input.correctionNote) patch.correction_note = input.correctionNote;
+  if (input.sponsorshipLabel) patch.sponsorship_label = input.sponsorshipLabel;
+
+  const { error: updateError } = await supabase
+    .from("content_revisions")
+    .update(patch)
+    .eq("id", targetRevisionId);
+
+  if (updateError) {
+    throw new Error("Não foi possível salvar os metadados editoriais.", {
+      cause: updateError,
+    });
+  }
+
+  if (input.editorialType === "sponsored") {
+    await supabase
+      .from("content_items")
+      .update({ content_type: "sponsored" })
+      .eq("id", input.contentId)
+      .eq("owner_tenant_id", input.tenantId);
+  }
+}
+
 export async function createAdminContent(input: {
-  authorId: string;
+  authorName: string;
   body: string;
   categoryId: string;
+  correctionNote: string | null;
+  editorialType: EditorialType;
   imageAlt: string;
   imageMode: AdminImageMode;
+  keyTopics: string[];
   slug: string;
+  sponsorshipLabel: string | null;
   subtitle: string;
   tenantId: string;
   title: string;
 }) {
   const supabase = createServerSupabaseClient();
+  const authorId = await resolveAuthorByName(input.tenantId, input.authorName);
   const { data, error } = await supabase.rpc("cms_create_content_with_media", {
-    p_author_id: toEntityId(input.authorId),
+    p_author_id: toEntityId(authorId),
     p_body_text: input.body,
     p_category_id: toEntityId(input.categoryId),
     p_image_alt: input.imageAlt,
@@ -241,23 +442,39 @@ export async function createAdminContent(input: {
     throw new Error("Não foi possível criar a matéria.", { cause: error });
   }
 
+  await applyEditorialMetadata({
+    contentId: data,
+    correctionNote: input.correctionNote,
+    editorialType: input.editorialType,
+    keyTopics: input.keyTopics,
+    revisionId: null,
+    sponsorshipLabel: input.sponsorshipLabel,
+    tenantId: input.tenantId,
+  });
+
   return data;
 }
 
 export async function updateAdminContent(input: {
-  authorId: string;
+  authorName: string;
   body: string;
   categoryId: string;
   contentId: string;
+  correctionNote: string | null;
+  editorialType: EditorialType;
   imageAlt: string;
   imageMode: AdminImageMode;
+  keyTopics: string[];
+  slug: string;
+  sponsorshipLabel: string | null;
   subtitle: string;
   tenantId: string;
   title: string;
 }) {
   const supabase = createServerSupabaseClient();
+  const authorId = await resolveAuthorByName(input.tenantId, input.authorName);
   const { data, error } = await supabase.rpc("cms_update_content_with_media", {
-    p_author_id: toEntityId(input.authorId),
+    p_author_id: toEntityId(authorId),
     p_body_text: input.body,
     p_category_id: toEntityId(input.categoryId),
     p_content_id: toEntityId(input.contentId),
@@ -271,6 +488,16 @@ export async function updateAdminContent(input: {
   if (error) {
     throw new Error("Não foi possível editar a matéria.", { cause: error });
   }
+
+  await applyEditorialMetadata({
+    contentId: input.contentId,
+    correctionNote: input.correctionNote,
+    editorialType: input.editorialType,
+    keyTopics: input.keyTopics,
+    revisionId: data,
+    sponsorshipLabel: input.sponsorshipLabel,
+    tenantId: input.tenantId,
+  });
 
   return data;
 }

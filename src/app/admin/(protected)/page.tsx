@@ -8,6 +8,7 @@ import {
   resumeContentAction,
   updateContentAction,
 } from "@/app/admin/(protected)/actions";
+import { EditorialTypeFields } from "@/components/admin/editorial-type-fields";
 import {
   TenantMutationForm,
   type TenantMutationState,
@@ -16,6 +17,7 @@ import {
   ADMIN_TENANT_COOKIE,
   resolveAdminTenant,
 } from "@/lib/admin/tenant-context";
+import type { EditorialType } from "@/lib/admin/content-form";
 import {
   findOwnedContentItem,
   getAdminEditorOptions,
@@ -80,7 +82,6 @@ function Field({
 
 function EditorialForm({
   action,
-  authors,
   categories,
   contentId,
   initial,
@@ -90,15 +91,18 @@ function EditorialForm({
     state: TenantMutationState,
     formData: FormData,
   ) => Promise<TenantMutationState>;
-  authors: Array<{ display_name: string; id: string }>;
   categories: Array<{ id: string; name: string }>;
   contentId?: string;
   initial?: {
-    authorId: string | null;
+    authorName: string;
     body: string;
     categoryId: string | null;
+    correctionNote: string | null;
+    editorialType: EditorialType;
     imageAlt: string;
     imageMode: "fallback" | "none";
+    keyTopics: string[];
+    sponsorshipLabel: string | null;
     subtitle: string;
     title: string;
   };
@@ -138,22 +142,20 @@ function EditorialForm({
         />
       </Field>
       <div className="grid gap-5 md:grid-cols-2">
-        <Field label="Autoria" name="authorId">
-          <select
+        <Field label="Autoria (escreva o nome)" name="authorName">
+          <input
             className={control}
-            defaultValue={initial?.authorId ?? ""}
-            name="authorId"
+            defaultValue={
+              initial?.authorName && initial.authorName.length > 0
+                ? initial.authorName
+                : ""
+            }
+            maxLength={120}
+            minLength={2}
+            name="authorName"
+            placeholder="Ex.: Joana Neri"
             required
-          >
-            <option disabled value="">
-              Selecione um autor
-            </option>
-            {authors.map((author) => (
-              <option key={author.id} value={author.id}>
-                {author.display_name}
-              </option>
-            ))}
-          </select>
+          />
         </Field>
         <Field label="Editoria principal" name="categoryId">
           <select
@@ -173,18 +175,31 @@ function EditorialForm({
           </select>
         </Field>
       </div>
-      <div className="grid gap-5 md:grid-cols-2">
-        <Field label="Imagem principal" name="imageMode">
-          <select
-            className={control}
-            defaultValue={initial?.imageMode ?? "fallback"}
-            name="imageMode"
-            required
-          >
-            <option value="fallback">Asset editorial gerado</option>
-            <option value="none">Sem imagem — exceção demonstrativa</option>
-          </select>
-        </Field>
+      <EditorialTypeFields
+        initial={
+          initial
+            ? {
+                authorName: initial.authorName,
+                correctionNote: initial.correctionNote,
+                editorialType: initial.editorialType,
+                keyTopics: initial.keyTopics,
+                sponsorshipLabel: initial.sponsorshipLabel,
+              }
+            : undefined
+        }
+      />
+      <Field label="Imagem principal" name="imageMode">
+        <select
+          className={control}
+          defaultValue={initial?.imageMode ?? "fallback"}
+          name="imageMode"
+          required
+        >
+          <option value="fallback">Asset editorial gerado</option>
+          <option value="none">Sem imagem — exceção demonstrativa</option>
+        </select>
+      </Field>
+      {initial?.imageMode !== "none" ? (
         <Field label="Texto alternativo" name="imageAlt">
           <input
             className={control}
@@ -196,7 +211,7 @@ function EditorialForm({
             name="imageAlt"
           />
         </Field>
-      </div>
+      ) : null}
       <p className="-mt-2 text-xs leading-5 text-slate-500">
         O texto alternativo é obrigatório quando o asset editorial está
         selecionado. A biblioteca avançada de mídia não faz parte do MVP-0.
@@ -427,17 +442,20 @@ export default async function AdminPage({
                 action={
                   editedItem ? updateContentAction : createContentAction
                 }
-                authors={options.authors}
                 categories={options.categories}
                 contentId={editedItem?.id}
                 initial={
                   editedItem?.revision
                     ? {
-                        authorId: editedItem.authorId,
+                        authorName: editedItem.authorName,
                         body: editedItem.revision.body_text,
                         categoryId: editedItem.categoryId,
+                        correctionNote: editedItem.correctionNote,
+                        editorialType: editedItem.editorialType,
                         imageAlt: editedItem.imageAlt,
                         imageMode: editedItem.imageMode,
+                        keyTopics: editedItem.keyTopics,
+                        sponsorshipLabel: editedItem.sponsorshipLabel,
                         subtitle: editedItem.revision.subtitle,
                         title: editedItem.revision.title,
                       }

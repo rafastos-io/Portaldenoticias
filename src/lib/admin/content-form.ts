@@ -49,6 +49,24 @@ export function slugifyTitle(title: string) {
     .replace(/-+$/g, "");
 }
 
+export const EDITORIAL_TYPES = [
+  "standard",
+  "explainer",
+  "sponsored",
+  "correction",
+] as const;
+export type EditorialType = (typeof EDITORIAL_TYPES)[number];
+
+function parseKeyTopics(formData: FormData): string[] {
+  const raw = formData.get("keyTopics");
+  if (typeof raw !== "string") return [];
+  return raw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .slice(0, 8);
+}
+
 export function parseEditorialForm(formData: FormData) {
   const title = readText(formData, "title", "Título", 5, 180);
   const subtitle = readText(formData, "subtitle", "Linha fina", 10, 280);
@@ -59,6 +77,15 @@ export function parseEditorialForm(formData: FormData) {
       ? (imageModeValue as "fallback" | "none")
       : null;
   const slug = slugifyTitle(title);
+  const authorNameValue = formData.get("authorName");
+  const authorName =
+    typeof authorNameValue === "string" ? authorNameValue.trim() : "";
+
+  if (authorName.length < 2 || authorName.length > 120) {
+    throw new ContentFormError(
+      "O nome da autoria deve ter entre 2 e 120 caracteres.",
+    );
+  }
 
   if (!imageMode) {
     throw new ContentFormError("Selecione uma opção de imagem principal.");
@@ -70,10 +97,51 @@ export function parseEditorialForm(formData: FormData) {
     );
   }
 
+  const editorialTypeValue = formData.get("editorialType");
+  const editorialType: EditorialType | null =
+    typeof editorialTypeValue === "string" &&
+    EDITORIAL_TYPES.includes(editorialTypeValue as EditorialType)
+      ? (editorialTypeValue as EditorialType)
+      : null;
+
+  if (!editorialType) {
+    throw new ContentFormError("Selecione uma variante editorial.");
+  }
+
+  let sponsorshipLabel: string | null = null;
+  let correctionNote: string | null = null;
+
+  if (editorialType === "sponsored") {
+    const sponsorValue = formData.get("sponsorshipLabel");
+    const sponsor = typeof sponsorValue === "string" ? sponsorValue.trim() : "";
+    if (sponsor.length < 2 || sponsor.length > 120) {
+      throw new ContentFormError(
+        "Informe o patrocinador fictício (2 a 120 caracteres).",
+      );
+    }
+    sponsorshipLabel = sponsor;
+  }
+
+  if (editorialType === "correction") {
+    const noteValue = formData.get("correctionNote");
+    const note = typeof noteValue === "string" ? noteValue.trim() : "";
+    if (note.length < 12 || note.length > 500) {
+      throw new ContentFormError(
+        "A nota de correção deve ter entre 12 e 500 caracteres.",
+      );
+    }
+    correctionNote = note;
+  }
+
+  const keyTopics =
+    editorialType === "explainer" ? parseKeyTopics(formData) : [];
+
   return {
-    authorId: readUuid(formData, "authorId", "Autor"),
+    authorName,
     body,
     categoryId: readUuid(formData, "categoryId", "Editoria"),
+    correctionNote,
+    editorialType,
     imageAlt:
       imageMode === "fallback"
         ? readText(
@@ -85,7 +153,9 @@ export function parseEditorialForm(formData: FormData) {
           )
         : "",
     imageMode,
+    keyTopics,
     slug,
+    sponsorshipLabel,
     subtitle,
     tenantId: readUuid(formData, "tenantId", "Tenant"),
     title,
