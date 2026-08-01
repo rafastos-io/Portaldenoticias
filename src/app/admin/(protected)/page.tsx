@@ -8,7 +8,6 @@ import {
   resumeContentAction,
   updateContentAction,
 } from "@/app/admin/(protected)/actions";
-import { EditorialTypeFields } from "@/components/admin/editorial-type-fields";
 import {
   TenantMutationForm,
   type TenantMutationState,
@@ -17,7 +16,6 @@ import {
   ADMIN_TENANT_COOKIE,
   resolveAdminTenant,
 } from "@/lib/admin/tenant-context";
-import type { EditorialType } from "@/lib/admin/content-form";
 import {
   findOwnedContentItem,
   getAdminEditorOptions,
@@ -97,12 +95,7 @@ function EditorialForm({
     authorName: string;
     body: string;
     categoryId: string | null;
-    correctionNote: string | null;
-    editorialType: EditorialType;
-    imageAlt: string;
     imageMode: "fallback" | "none";
-    keyTopics: string[];
-    sponsorshipLabel: string | null;
     subtitle: string;
     title: string;
   };
@@ -175,19 +168,6 @@ function EditorialForm({
           </select>
         </Field>
       </div>
-      <EditorialTypeFields
-        initial={
-          initial
-            ? {
-                authorName: initial.authorName,
-                correctionNote: initial.correctionNote,
-                editorialType: initial.editorialType,
-                keyTopics: initial.keyTopics,
-                sponsorshipLabel: initial.sponsorshipLabel,
-              }
-            : undefined
-        }
-      />
       <Field label="Imagem principal" name="imageMode">
         <select
           className={control}
@@ -195,27 +175,10 @@ function EditorialForm({
           name="imageMode"
           required
         >
-          <option value="fallback">Asset editorial gerado</option>
-          <option value="none">Sem imagem — exceção demonstrativa</option>
+          <option value="fallback">Com imagem (asset editorial gerado)</option>
+          <option value="none">Sem imagem</option>
         </select>
       </Field>
-      {initial?.imageMode !== "none" ? (
-        <Field label="Texto alternativo" name="imageAlt">
-          <input
-            className={control}
-            defaultValue={
-              initial?.imageAlt ??
-              "Composição abstrata fictícia sobre saúde e longevidade."
-            }
-            maxLength={220}
-            name="imageAlt"
-          />
-        </Field>
-      ) : null}
-      <p className="-mt-2 text-xs leading-5 text-slate-500">
-        O texto alternativo é obrigatório quando o asset editorial está
-        selecionado. A biblioteca avançada de mídia não faz parte do MVP-0.
-      </p>
       <Field label="Corpo da matéria" name="body">
         <textarea
           className={`${control} min-h-64 resize-y leading-7`}
@@ -450,12 +413,7 @@ export default async function AdminPage({
                         authorName: editedItem.authorName,
                         body: editedItem.revision.body_text,
                         categoryId: editedItem.categoryId,
-                        correctionNote: editedItem.correctionNote,
-                        editorialType: editedItem.editorialType,
-                        imageAlt: editedItem.imageAlt,
                         imageMode: editedItem.imageMode,
-                        keyTopics: editedItem.keyTopics,
-                        sponsorshipLabel: editedItem.sponsorshipLabel,
                         subtitle: editedItem.revision.subtitle,
                         title: editedItem.revision.title,
                       }

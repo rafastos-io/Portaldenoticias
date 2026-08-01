@@ -16,7 +16,6 @@ function editorialData() {
   formData.set("tenantId", TENANT_ID);
   formData.set("authorName", "Joana Neri");
   formData.set("categoryId", CATEGORY_ID);
-  formData.set("editorialType", "standard");
   formData.set("imageMode", "fallback");
   formData.set(
     "imageAlt",
@@ -64,43 +63,19 @@ describe("validação editorial no servidor", () => {
     );
   });
 
-  it("exige patrocinador fictício para variante patrocinada", () => {
+  it("preenche o texto alternativo automaticamente quando ausente", () => {
     const formData = editorialData();
-    formData.set("editorialType", "sponsored");
-    expect(() => parseEditorialForm(formData)).toThrow(
-      "patrocinador fictício",
-    );
+    formData.delete("imageAlt");
+    const parsed = parseEditorialForm(formData);
+    expect(parsed.imageMode).toBe("fallback");
+    expect(parsed.imageAlt.length).toBeGreaterThanOrEqual(12);
   });
 
-  it("exige nota de correção para variante correção", () => {
+  it("assume 'com imagem' quando o modo não é informado", () => {
     const formData = editorialData();
-    formData.set("editorialType", "correction");
-    expect(() => parseEditorialForm(formData)).toThrow(
-      "nota de correção",
-    );
-  });
-
-  it("aceita variante patrocinada com patrocinador fictício", () => {
-    const formData = editorialData();
-    formData.set("editorialType", "sponsored");
-    formData.set("sponsorshipLabel", "Instituto Fictício de Longevidade");
+    formData.delete("imageMode");
     expect(parseEditorialForm(formData)).toMatchObject({
-      editorialType: "sponsored",
-      sponsorshipLabel: "Instituto Fictício de Longevidade",
-    });
-  });
-
-  it("aceita variante correção com nota", () => {
-    const formData = editorialData();
-    formData.set("editorialType", "correction");
-    formData.set(
-      "correctionNote",
-      "Artigo original informava valor incorreto sobre expectativa de vida.",
-    );
-    expect(parseEditorialForm(formData)).toMatchObject({
-      editorialType: "correction",
-      correctionNote:
-        "Artigo original informava valor incorreto sobre expectativa de vida.",
+      imageMode: "fallback",
     });
   });
 

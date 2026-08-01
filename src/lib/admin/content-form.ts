@@ -57,25 +57,15 @@ export const EDITORIAL_TYPES = [
 ] as const;
 export type EditorialType = (typeof EDITORIAL_TYPES)[number];
 
-function parseKeyTopics(formData: FormData): string[] {
-  const raw = formData.get("keyTopics");
-  if (typeof raw !== "string") return [];
-  return raw
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-    .slice(0, 8);
-}
+// Texto alternativo padrão para a imagem editorial. O CMS demonstrativo exige
+// um alt entre 12 e 220 caracteres quando há imagem; usamos este valor quando
+// a pessoa não informa nada, para que o cadastro nunca falhe por causa disso.
+const DEFAULT_IMAGE_ALT = "Composição editorial ilustrativa e fictícia.";
 
 export function parseEditorialForm(formData: FormData) {
   const title = readText(formData, "title", "Título", 5, 180);
   const subtitle = readText(formData, "subtitle", "Linha fina", 10, 280);
   const body = readText(formData, "body", "Corpo", 80, 20_000);
-  const imageModeValue = formData.get("imageMode");
-  const imageMode: "fallback" | "none" | null =
-    imageModeValue === "fallback" || imageModeValue === "none"
-      ? (imageModeValue as "fallback" | "none")
-      : null;
   const slug = slugifyTitle(title);
   const authorNameValue = formData.get("authorName");
   const authorName =
@@ -87,75 +77,36 @@ export function parseEditorialForm(formData: FormData) {
     );
   }
 
-  if (!imageMode) {
-    throw new ContentFormError("Selecione uma opção de imagem principal.");
-  }
-
   if (slug.length < 3) {
     throw new ContentFormError(
       "O título precisa gerar uma URL editorial válida.",
     );
   }
 
-  const editorialTypeValue = formData.get("editorialType");
-  const editorialType: EditorialType | null =
-    typeof editorialTypeValue === "string" &&
-    EDITORIAL_TYPES.includes(editorialTypeValue as EditorialType)
-      ? (editorialTypeValue as EditorialType)
-      : null;
+  // Imagem: só existem dois modos. Qualquer valor diferente de "none" cai em
+  // "fallback" (asset editorial), evitando o antigo erro de "selecione a
+  // imagem". O texto alternativo é preenchido automaticamente quando vazio.
+  const imageMode: "fallback" | "none" =
+    formData.get("imageMode") === "none" ? "none" : "fallback";
 
-  if (!editorialType) {
-    throw new ContentFormError("Selecione uma variante editorial.");
+  let imageAlt = "";
+  if (imageMode === "fallback") {
+    const altValue = formData.get("imageAlt");
+    const alt = typeof altValue === "string" ? altValue.trim() : "";
+    imageAlt = alt.length >= 12 && alt.length <= 220 ? alt : DEFAULT_IMAGE_ALT;
   }
-
-  let sponsorshipLabel: string | null = null;
-  let correctionNote: string | null = null;
-
-  if (editorialType === "sponsored") {
-    const sponsorValue = formData.get("sponsorshipLabel");
-    const sponsor = typeof sponsorValue === "string" ? sponsorValue.trim() : "";
-    if (sponsor.length < 2 || sponsor.length > 120) {
-      throw new ContentFormError(
-        "Informe o patrocinador fictício (2 a 120 caracteres).",
-      );
-    }
-    sponsorshipLabel = sponsor;
-  }
-
-  if (editorialType === "correction") {
-    const noteValue = formData.get("correctionNote");
-    const note = typeof noteValue === "string" ? noteValue.trim() : "";
-    if (note.length < 12 || note.length > 500) {
-      throw new ContentFormError(
-        "A nota de correção deve ter entre 12 e 500 caracteres.",
-      );
-    }
-    correctionNote = note;
-  }
-
-  const keyTopics =
-    editorialType === "explainer" ? parseKeyTopics(formData) : [];
 
   return {
     authorName,
     body,
     categoryId: readUuid(formData, "categoryId", "Editoria"),
-    correctionNote,
-    editorialType,
-    imageAlt:
-      imageMode === "fallback"
-        ? readText(
-            formData,
-            "imageAlt",
-            "Texto alternativo da imagem",
-            12,
-            220,
-          )
-        : "",
+    correctionNote: null,
+    editorialType: "standard" as EditorialType,
+    imageAlt,
     imageMode,
-    keyTopics,
+    keyTopics: [] as string[],
     slug,
-    sponsorshipLabel,
+    sponsorshipLabel: null,
     subtitle,
     tenantId: readUuid(formData, "tenantId", "Tenant"),
     title,
