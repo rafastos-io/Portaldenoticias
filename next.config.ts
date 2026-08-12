@@ -25,6 +25,9 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       allowedOrigins: serverActionAllowedOrigins,
+      // O formulário aceita logos de até 2 MB. O limite inclui também o
+      // envelope multipart; a validação real do arquivo continua no servidor.
+      bodySizeLimit: "3mb",
     },
   },
   images: {

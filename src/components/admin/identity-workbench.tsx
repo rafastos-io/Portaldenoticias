@@ -12,6 +12,7 @@ import { TenantMutationForm } from "@/components/admin/tenant-mutation-form";
 import {
   APPROVED_FONTS,
   contrastRatio,
+  MAX_THEME_LOGO_BYTES,
   type ThemeValues,
 } from "@/lib/admin/theme-form";
 import {
@@ -48,6 +49,7 @@ export function IdentityWorkbench({
 }: IdentityWorkbenchProps) {
   const [theme, setTheme] = useState(initialTheme);
   const [logoPreview, setLogoPreview] = useState(initialTheme.logoUrl);
+  const [logoError, setLogoError] = useState<string | null>(null);
   const [previewPage, setPreviewPage] = useState<PreviewPage>("home");
   const [previewWidth, setPreviewWidth] = useState<PreviewWidth>(1440);
 
@@ -112,7 +114,6 @@ export function IdentityWorkbench({
         <TenantMutationForm
           action={uploadThemeLogoAction}
           className="mt-6 grid gap-4 border-y border-slate-200 py-5"
-          encType="multipart/form-data"
           tenantId={tenantId}
         >
           <input name="tenantId" type="hidden" value={tenantId} />
@@ -149,6 +150,13 @@ export function IdentityWorkbench({
               onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (!file) return;
+                if (file.size > MAX_THEME_LOGO_BYTES) {
+                  event.currentTarget.value = "";
+                  setLogoPreview(initialTheme.logoUrl);
+                  setLogoError("O logo deve ter no máximo 2 MB.");
+                  return;
+                }
+                setLogoError(null);
                 const reader = new FileReader();
                 reader.addEventListener("load", () => {
                   if (typeof reader.result === "string") {
@@ -161,6 +169,11 @@ export function IdentityWorkbench({
               type="file"
             />
           </label>
+          {logoError ? (
+            <p className="text-sm font-semibold text-red-700" role="alert">
+              {logoError}
+            </p>
+          ) : null}
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="grid gap-2 text-sm font-bold">
               Texto alternativo
@@ -188,6 +201,7 @@ export function IdentityWorkbench({
           </div>
           <button
             className="min-h-11 w-fit bg-slate-950 px-5 text-sm font-bold text-white"
+            disabled={Boolean(logoError)}
             type="submit"
           >
             Salvar logo
