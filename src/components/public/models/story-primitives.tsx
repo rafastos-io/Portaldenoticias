@@ -115,9 +115,19 @@ export function ArticleBody({
           <strong>Nota de correção:</strong> {story.correctionNote}
         </aside>
       ) : null}
-      {story.body.map((paragraph, index) => (
-        <p key={`${story.id}-${index}`}>{paragraph}</p>
-      ))}
+      {(story.bodyBlocks ?? story.body.map((text) => ({ text, type: "paragraph" as const }))).map(
+        (block, index) =>
+          block.type === "heading" ? (
+            <h2
+              className="pt-4 font-heading text-2xl leading-tight font-bold text-brand-primary sm:text-3xl"
+              key={`${story.id}-${index}`}
+            >
+              {block.text}
+            </h2>
+          ) : (
+            <p key={`${story.id}-${index}`}>{block.text}</p>
+          ),
+      )}
     </div>
   );
 }

@@ -20,15 +20,41 @@ const categoryRenameMigration = readFileSync(
   ),
   "utf8",
 );
+const weightLossPensMigration = readFileSync(
+  new URL(
+    "../../supabase/migrations/20260812135243_add_weight_loss_pens_analysis.sql",
+    import.meta.url,
+  ),
+  "utf8",
+);
 
 describe("catálogo autorizado do Broadcast Saúde", () => {
-  it("mantém 16 pautas únicas e consolida a duplicidade da Bayer", () => {
-    const codes = new Set(migration.match(/BRS-[A-Z]+-\d{3}/g));
+  it("mantém as 16 pautas iniciais, adiciona a nova análise e consolida a Bayer", () => {
+    const codes = new Set(
+      `${migration}\n${weightLossPensMigration}`.match(/BRS-[A-Z]+-\d{3}/g),
+    );
     const bayerTitle =
       "BAYER VENDE FATIA DE 3 BILHÕES DE EUROS EM NEGÓCIO DE CONTRACEPTIVOS PARA A APOLLO";
 
-    expect(codes.size).toBe(16);
+    expect(codes.size).toBe(17);
     expect(migration.split(bayerTitle)).toHaveLength(2);
+    expect(weightLossPensMigration).toContain(
+      "A revolução das canetas emagrecedoras",
+    );
+    expect(weightLossPensMigration).toContain("'text', 'Estilo de vida'");
+    expect(weightLossPensMigration).toContain("'text', 'Benefício corporativo'");
+    expect(weightLossPensMigration).toMatch(
+      /create or replace function private\.apply_weight_loss_pens_analysis\(\)[\s\S]+security definer/,
+    );
+    expect(weightLossPensMigration).toContain(
+      "revoke all on function private.apply_weight_loss_pens_analysis()",
+    );
+    expect(seed).toContain(
+      "select private.apply_weight_loss_pens_analysis();",
+    );
+    expect(migration).toContain(
+      "BTG PACTUAL: SETOR DE SAÚDE PASSA POR MOMENTO DE TRANSIÇÃO ESTRUTURAL",
+    );
   });
 
   it("preserva marcas, slugs e distribuição compartilhada", () => {
@@ -64,10 +90,13 @@ describe("catálogo autorizado do Broadcast Saúde", () => {
   });
 
   it("preserva UTF-8 e trechos críticos do material fornecido", () => {
-    expect(migration).not.toMatch(/Ã(?:§|£|­|©|µ|º|¡|ª|³|´|¢| )/);
-    expect(migration).not.toContain("â€");
+    const migrations = `${migration}\n${weightLossPensMigration}`;
+    expect(migrations).not.toMatch(/Ã(?:§|£|­|©|µ|º|¡|ª|³|´|¢| )/);
+    expect(migrations).not.toContain("â€");
     expect(migration).toContain("BIOMM TEM LUCRO LÍQUIDO DE R$ 9,7 MI NO 1TRI26");
     expect(migration).toContain("A fusão seria uma das maiores da história.");
     expect(migration).toContain("Hoje, não existe tratamento específico");
+    expect(weightLossPensMigration).toContain("StoneX");
+    expect(weightLossPensMigration).toContain("€ 22 mil");
   });
 });

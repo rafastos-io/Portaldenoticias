@@ -13,6 +13,7 @@ import {
   getDemoTenantIdentity,
   getDemoTenantThemeFallback,
   getPublicCategoryName,
+  readPublicStoryBodyBlocks,
   readEditorialOrigin,
   resolveDefaultPublicTenant,
 } from "./portal-repository";
@@ -58,6 +59,26 @@ describe("identidade pública de tenant", () => {
       "Tecnologia e Inovação",
     );
     expect(getPublicCategoryName("pesquisa", "Pesquisa")).toBe("Pesquisa");
+  });
+
+  it("preserva intertítulos estruturados no corpo editorial", () => {
+    expect(
+      readPublicStoryBodyBlocks(
+        {
+          content: [
+            { text: "Abertura da análise.", type: "paragraph" },
+            { text: "Estilo de vida", type: "heading" },
+            { text: "Desdobramento do mercado.", type: "paragraph" },
+          ],
+          type: "doc",
+        },
+        "fallback",
+      ),
+    ).toEqual([
+      { text: "Abertura da análise.", type: "paragraph" },
+      { text: "Estilo de vida", type: "heading" },
+      { text: "Desdobramento do mercado.", type: "paragraph" },
+    ]);
   });
 
   it("lê somente procedência real autorizada e URL HTTPS", () => {
