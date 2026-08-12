@@ -1,6 +1,22 @@
 # Status do MVP-0
 
-Atualizado em: 09/08/2026.
+Atualizado em: 12/08/2026.
+
+## C251 — correção da persistência da identidade — 12/08/2026
+
+### Diagnóstico e correção
+
+- as alterações recentes da Abrafarma foram confirmadas no tema publicado e
+  no portal de produção, sem cache estático: nome, slogan e tokens chegam ao
+  HTML como variáveis CSS do tenant;
+- o upload de um PNG com 1,18 MB reproduziu HTTP 500 antes da Server Action,
+  embora a interface e a validação aceitassem até 2 MB;
+- `serverActions.bodySizeLimit` passou a 3 MB para comportar o arquivo de 2 MB
+  e o envelope multipart, mantendo no servidor o limite efetivo de 2 MB;
+- a seleção do arquivo agora recusa imediatamente logos acima de 2 MB com uma
+  mensagem acessível, antes do envio;
+- um teste de regressão fixa a relação entre o limite de transporte e o limite
+  validado do arquivo.
 
 ## C250 — Abrafarma, Broadcast Saúde e catálogo real autorizado — 09/08/2026
 

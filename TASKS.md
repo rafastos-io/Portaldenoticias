@@ -43,6 +43,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C230 | P1 | BLOCKED | C212,C214 | Densidade editorial e navegação mobile |
 | C240 | P1 | BLOCKED | C213,C214,C221,C230 | Matriz final de QA e auditoria adversarial |
 | C250 | P0 | DONE | C205,C212 | Separar Abrafarma/Broadcast Saúde, adotar conteúdo real autorizado e ticker setorial |
+| C251 | P0 | DONE | C211,C250 | Corrigir upload de logo de até 2 MB e confirmar persistência da identidade no portal |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,

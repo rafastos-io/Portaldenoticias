@@ -47,6 +47,8 @@ export type ThemeValues = {
   textColor: string;
 };
 
+export const MAX_THEME_LOGO_BYTES = 2 * 1024 * 1024;
+
 function text(formData: FormData, field: string, label: string, max: number) {
   const value = formData.get(field);
   const parsed = typeof value === "string" ? value.trim() : "";
@@ -240,7 +242,7 @@ export async function parseLogoUploadForm(formData: FormData) {
   if (!(file instanceof File) || file.size === 0) {
     throw new ContentFormError("Selecione um arquivo de logo.");
   }
-  if (file.size > 2 * 1024 * 1024) {
+  if (file.size > MAX_THEME_LOGO_BYTES) {
     throw new ContentFormError("O logo deve ter no máximo 2 MB.");
   }
 
