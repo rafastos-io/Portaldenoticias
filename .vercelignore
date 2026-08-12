@@ -1,0 +1,17 @@
+.git/
+.next/
+.pnpm-store/
+.supabase/
+.vercel/
+artifacts/
+coverage/
+dist/
+node_modules/
+out/
+tmp/
+.env
+.env.local
+.env.*.local
+*.log
+*.tsbuildinfo
+Broadcast V2.pdf

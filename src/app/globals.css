@@ -1,0 +1,298 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --brand-primary: #12324a;
+  --brand-secondary: #246a87;
+  --accent: #9a6f22;
+  --surface-page: #f5f7f8;
+  --surface-raised: #ffffff;
+  --surface-muted: #e9eef1;
+  --surface-inverse: #102b3f;
+  --text-primary: #14232d;
+  --text-muted: #556570;
+  --text-on-brand: #ffffff;
+  --border-subtle: #cfd8dd;
+  --link: #0d627e;
+  --focus: #6b4600;
+  --demo-surface: #fff5d6;
+  --demo-text: #493600;
+  --status-success: #176b4a;
+  --status-warning: #9b5a15;
+  --status-danger: #a33b38;
+  --font-heading: Arial, Helvetica, sans-serif;
+  --font-body: Arial, Helvetica, sans-serif;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --container: 77.5rem;
+  --motion-fast: 160ms;
+  --motion-normal: 420ms;
+}
+
+@theme inline {
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-accent: var(--accent);
+  --color-surface-page: var(--surface-page);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-text-on-brand: var(--text-on-brand);
+  --color-border-subtle: var(--border-subtle);
+  --color-link: var(--link);
+  --color-focus: var(--focus);
+  --color-demo-surface: var(--demo-surface);
+  --color-demo-text: var(--demo-text);
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-danger: var(--status-danger);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--surface-page);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text-primary);
+  background: var(--surface-page);
+  font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--focus);
+}
+
+::selection {
+  color: var(--text-on-brand);
+  background: var(--brand-primary);
+}
+
+.page-container {
+  width: min(calc(100% - 2rem), var(--container));
+  margin-inline: auto;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.75rem;
+  left: 0.75rem;
+  transform: translateY(-200%);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  color: var(--text-on-brand);
+  background: var(--surface-inverse);
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.hero-copy > * {
+  animation: hero-rise var(--motion-normal) both;
+}
+
+.hero-copy > :nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.hero-copy > :nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.hero-copy > :nth-child(4) {
+  animation-delay: 200ms;
+}
+
+.hero-media img {
+  animation: hero-scale 900ms ease-out both;
+}
+
+.site-model main > section {
+  animation: section-enter 520ms ease-out both;
+}
+
+.site-model main > section:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.site-model main > section:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.model-mobile-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.model-mobile-menu[open] summary span {
+  transform: rotate(45deg);
+}
+
+.model-mobile-menu summary span {
+  transition: transform var(--motion-fast) ease;
+}
+
+[data-site-model="investments-asset-management"] {
+  --container: 82rem;
+}
+
+[data-site-model="investments-asset-management"] .model-header {
+  text-transform: none;
+}
+
+[data-site-model="investments-asset-management"] .model-footer {
+  border-top-color: var(--text-primary);
+}
+
+[data-site-model="insurance-pension"] {
+  --container: 75rem;
+  --radius-md: 1.5rem;
+}
+
+[data-site-model="insurance-pension"] .model-header {
+  padding-block: 0.35rem;
+}
+
+[data-site-model="insurance-pension"] .model-footer {
+  border-radius: 2.5rem 2.5rem 0 0;
+}
+
+[data-site-model="health-pharma"] {
+  --container: 80rem;
+}
+
+[data-site-model="health-pharma"] .model-footer {
+  border-top-width: 1px;
+}
+
+[data-site-model="financial-services-credit"] .model-header nav a {
+  min-height: 3rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.story-link svg {
+  transition: transform var(--motion-fast) ease;
+}
+
+.story-link:hover svg,
+.story-link:focus-visible svg {
+  transform: translateX(0.25rem);
+}
+
+.market-ticker-track {
+  animation: market-ticker-scroll 52s linear infinite;
+  will-change: transform;
+}
+
+.market-ticker:hover .market-ticker-track,
+.market-ticker:focus-within .market-ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes market-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-scale {
+  from {
+    opacity: 0.8;
+    transform: scale(1.025);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 48rem) {
+  .page-container {
+    width: min(calc(100% - 4rem), var(--container));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .market-ticker-viewport {
+    overflow-x: auto;
+  }
+
+  .market-ticker-track {
+    animation: none !important;
+  }
+
+  .market-ticker-copy[aria-hidden="true"] {
+    display: none;
+  }
+}

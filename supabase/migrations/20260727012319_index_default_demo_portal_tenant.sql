@@ -1,0 +1,2 @@
+create index demo_portal_settings_default_tenant_idx
+on public.demo_portal_settings (default_tenant_id);
