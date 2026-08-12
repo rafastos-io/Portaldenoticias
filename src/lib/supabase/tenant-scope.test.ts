@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   assertTenantStorageKey,
   tenantStorageKey,
+  toEntityId,
   toTenantId,
 } from "./tenant-scope";
 
@@ -22,6 +23,12 @@ describe("tenant scope", () => {
     expect(() => tenantStorageKey(HORIZONTE_ID, "../capa.webp")).toThrow(
       "Nome de arquivo inválido",
     );
+  });
+
+  it("aceita UUID determinístico persistido pelo PostgreSQL", () => {
+    const contentId = "0949f0d3-39ce-0743-411f-27dfda108b1e";
+
+    expect(toEntityId(contentId)).toBe(contentId);
   });
 
   it("nega acesso a objeto prefixado por outro tenant", () => {
