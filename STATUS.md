@@ -2,6 +2,23 @@
 
 Atualizado em: 12/08/2026.
 
+## C252 — nova análise sobre canetas emagrecedoras — 12/08/2026
+
+### Resultado
+
+- a pauta `A revolução das canetas emagrecedoras` foi adicionada como um novo
+  conteúdo canônico da editoria Análise, sem alterar a análise existente do
+  BTG Pactual;
+- o corpo preserva os intertítulos `Estilo de vida` e `Benefício corporativo`
+  como headings estruturados, renderizados semanticamente no artigo;
+- a análise foi distribuída por referência para Abrafarma e Broadcast Saúde,
+  com `rights_code = authorized-real`, autorização de 12/08/2026 e auditoria
+  individual por tenant;
+- o catálogo de saúde passa a ter 17 pautas reais autorizadas, além do hero de
+  IA preservado, totalizando 18 conteúdos ativos em cada marca;
+- a persistência remota foi conferida lado a lado com a análise anterior: dois
+  itens publicados, duas distribuições ativas e cinco blocos no novo corpo.
+
 ## C251 — correção da persistência da identidade — 12/08/2026
 
 ### Diagnóstico e correção

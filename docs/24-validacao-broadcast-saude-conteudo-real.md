@@ -38,9 +38,10 @@ a nova taxonomia sem quebrar URLs existentes.
 - São permitidos apenas ajustes mecânicos, como espaços e separação de autoria.
 - Campos ausentes podem ser inferidos com cautela, deixando essa origem
   registrada em `body_json.editorial_origin`.
-- O catálogo contém 16 pautas únicas. A matéria da Bayer, repetida no DOCX, é
-  consolidada em um único conteúdo canônico.
-- Treze pautas possuem o trecho integral autorizado fornecido no documento.
+- O catálogo contém 17 pautas únicas: as 16 pautas iniciais e a análise
+  `revolucao-canetas-emagrecedoras`, autorizada em 12/08/2026. A matéria da
+  Bayer, repetida no DOCX, é consolidada em um único conteúdo canônico.
+- Quatorze pautas possuem o trecho integral autorizado fornecido.
 - Três pautas da Viva são `external_only`: não armazenam corpo reproduzido e
   encaminham o leitor à fonte original.
 - O ambiente continua com `is_demo = true` por restrição estrutural do MVP e
@@ -59,8 +60,9 @@ disponível:
 - `briefing_order`;
 - `authorization_reference`.
 
-As distribuições usam `rights_code = authorized-real` e a referência contratual
-`CLIENTE-VALIDACAO-2026-08-09`.
+As distribuições usam `rights_code = authorized-real`. O catálogo inicial usa a
+referência contratual `CLIENTE-VALIDACAO-2026-08-09`; a nova análise usa
+`CLIENTE-VALIDACAO-2026-08-12`.
 
 ## Ticker setorial
 
@@ -84,7 +86,7 @@ indisponível; preços estáticos ou inventados são proibidos.
 
 ## Critérios de QA
 
-- 17 conteúdos ativos por marca: 16 reais autorizados e o hero de IA preservado;
+- 18 conteúdos ativos por marca: 17 reais autorizados e o hero de IA preservado;
 - nove editorias reais presentes nas duas marcas;
 - uma única matéria da Bayer;
 - três referências externas sem corpo copiado;

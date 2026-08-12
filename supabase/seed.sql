@@ -708,3 +708,4 @@ on conflict (id) do nothing;
 select private.apply_broadcast_saude_catalog();
 select private.align_broadcast_saude_briefing_order();
 select private.apply_technology_and_innovation_category_label();
+select private.apply_weight_loss_pens_analysis();

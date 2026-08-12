@@ -17,6 +17,7 @@ export type PublicTenant = {
 export type PublicStory = {
   author: string;
   body: string[];
+  bodyBlocks?: PublicStoryBodyBlock[];
   canonicalSlug: string;
   categoryName: string;
   categorySlug: string;
@@ -33,6 +34,11 @@ export type PublicStory = {
   sponsorshipLabel: string | null;
   subtitle: string;
   title: string;
+};
+
+export type PublicStoryBodyBlock = {
+  text: string;
+  type: "heading" | "paragraph";
 };
 
 const DEMO_TENANTS: Record<string, PublicTenant> = {
@@ -167,26 +173,38 @@ export function getPublicCategoryName(
   return persistedName?.trim() || "Destaques";
 }
 
-function readBody(bodyJson: Json, bodyText: string) {
+export function readPublicStoryBodyBlocks(
+  bodyJson: Json,
+  bodyText: string,
+): PublicStoryBodyBlock[] {
   if (
     typeof bodyJson === "object" &&
     bodyJson !== null &&
     !Array.isArray(bodyJson) &&
     Array.isArray(bodyJson.content)
   ) {
-    const paragraphs = bodyJson.content.flatMap((node) =>
+    const blocks = bodyJson.content.flatMap((node) =>
       typeof node === "object" &&
       node !== null &&
       !Array.isArray(node) &&
-      node.type === "paragraph" &&
+      (node.type === "paragraph" || node.type === "heading") &&
       typeof node.text === "string"
-        ? [node.text]
+        ? [{ text: node.text, type: node.type } as PublicStoryBodyBlock]
         : [],
     );
-    if (paragraphs.length > 0) return paragraphs;
+    if (blocks.length > 0) return blocks;
   }
 
-  return bodyText.split(/\n\s*\n/).filter(Boolean);
+  return bodyText
+    .split(/\n\s*\n/)
+    .filter(Boolean)
+    .map((text) => ({ text, type: "paragraph" }));
+}
+
+function readBody(bodyJson: Json, bodyText: string) {
+  return readPublicStoryBodyBlocks(bodyJson, bodyText)
+    .filter((block) => block.type === "paragraph")
+    .map((block) => block.text);
 }
 
 function readMedia(bodyJson: Json) {
@@ -500,10 +518,16 @@ export async function listPublicStories(
     );
     const origin = readEditorialOrigin(revision.body_json);
 
+    const bodyBlocks = readPublicStoryBodyBlocks(
+      revision.body_json,
+      revision.body_text,
+    );
+
     return [
       {
         author: author?.display_name ?? "Redação demonstrativa",
         body: readBody(revision.body_json, revision.body_text),
+        bodyBlocks,
         canonicalSlug: distribution.slug_override ?? item.canonical_slug,
         categoryName: getPublicCategoryName(categorySlug, category?.name),
         categorySlug,
