@@ -33,7 +33,9 @@ Leia primeiro:
 
 ## Estado decidido do MVP-0
 
-- Todos os dados, marcas, autores, organizações, fontes e matérias são fictícios.
+- O catálogo histórico do MVP-0 permanece fictício. Na etapa de validação,
+  conteúdo real pode ser usado somente com autorização explícita, procedência,
+  direitos e fidelidade editorial registrados conforme `docs/24-validacao-broadcast-saude-conteudo-real.md`.
 - O foco é demonstrar portal white-label, CMS e central de identidade.
 - Deploy alvo: Vercel.
 - Persistência e mídia: Supabase Postgres + Storage.

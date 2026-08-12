@@ -115,7 +115,8 @@ Critérios:
 - origem externa não cria sessão;
 - cookie adulterado expira;
 - reset recusado em Production;
-- conteúdo real/terceiro: zero.
+- conteúdo real/terceiro: somente o catálogo autorizado da validação, com
+  origem, direitos, fidelidade textual e tratamento `external_only` verificados.
 
 ## Performance e estabilidade
 

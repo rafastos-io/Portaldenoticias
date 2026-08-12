@@ -12,6 +12,8 @@ vi.mock("./server", () => ({
 import {
   getDemoTenantIdentity,
   getDemoTenantThemeFallback,
+  getPublicCategoryName,
+  readEditorialOrigin,
   resolveDefaultPublicTenant,
 } from "./portal-repository";
 
@@ -23,7 +25,8 @@ describe("identidade pública de tenant", () => {
   it.each([
     ["banco-demo-horizonte", "Banco Demo Horizonte"],
     ["seguros-demo-atlas", "Seguros Demo Atlas"],
-    ["healthtech-demo-lumen", "Healthtech Demo Lúmen"],
+    ["abrafarma", "Abrafarma"],
+    ["broadcast-saude", "Broadcast Saúde"],
     ["credito-demo-orbita", "Crédito Demo Órbita"],
   ])("resolve %s sem fallback entre clientes", (slug, displayName) => {
     expect(getDemoTenantIdentity(slug)).toMatchObject({
@@ -37,16 +40,54 @@ describe("identidade pública de tenant", () => {
     expect(getDemoTenantThemeFallback("tenant-inexistente")).toBeNull();
   });
 
-  it("mantém os quatro modelos explícitos no fallback seguro", () => {
+  it("mantém as cinco marcas explícitas no fallback seguro", () => {
     const themes = [
       getDemoTenantThemeFallback("banco-demo-horizonte"),
       getDemoTenantThemeFallback("seguros-demo-atlas"),
-      getDemoTenantThemeFallback("healthtech-demo-lumen"),
+      getDemoTenantThemeFallback("abrafarma"),
+      getDemoTenantThemeFallback("broadcast-saude"),
       getDemoTenantThemeFallback("credito-demo-orbita"),
     ];
 
-    expect(new Set(themes.map((theme) => theme?.primary)).size).toBe(4);
+    expect(new Set(themes.map((theme) => theme?.primary)).size).toBe(5);
     expect(new Set(themes.map((theme) => theme?.siteModel)).size).toBe(4);
+  });
+
+  it("normaliza o rótulo público da editoria ti sem alterar o slug", () => {
+    expect(getPublicCategoryName("ti", "TI")).toBe(
+      "Tecnologia e Inovação",
+    );
+    expect(getPublicCategoryName("pesquisa", "Pesquisa")).toBe("Pesquisa");
+  });
+
+  it("lê somente procedência real autorizada e URL HTTPS", () => {
+    expect(
+      readEditorialOrigin({
+        editorial_origin: {
+          briefing_order: 4,
+          external_only: true,
+          kind: "authorized-real",
+          source_label: "Viva",
+          source_published_at: "2026-07-02T13:30:00.000Z",
+          source_url: "https://viva.com.br/pauta",
+        },
+      }),
+    ).toMatchObject({
+      editorialOrder: 4,
+      externalOnly: true,
+      isRealContent: true,
+      sourceLabel: "Viva",
+      sourceUrl: "https://viva.com.br/pauta",
+    });
+
+    expect(
+      readEditorialOrigin({
+        editorial_origin: {
+          kind: "authorized-real",
+          source_url: "javascript:alert(1)",
+        },
+      }).sourceUrl,
+    ).toBeNull();
   });
 
   it("resolves the persisted public default through a validated demo tenant", async () => {
@@ -65,9 +106,9 @@ describe("identidade pública de tenant", () => {
       revision: 2,
     });
     const tenantChain = query({
-      display_name: "Healthtech Demo Lúmen",
+      display_name: "Abrafarma",
       id: "00000000-0000-4000-8000-000000000004",
-      slug: "healthtech-demo-lumen",
+      slug: "abrafarma",
     });
     mocks.createServerSupabaseClient
       .mockReturnValueOnce({
@@ -78,9 +119,9 @@ describe("identidade pública de tenant", () => {
       });
 
     await expect(resolveDefaultPublicTenant()).resolves.toMatchObject({
-      displayName: "Healthtech Demo Lúmen",
+      displayName: "Abrafarma",
       id: "00000000-0000-4000-8000-000000000004",
-      slug: "healthtech-demo-lumen",
+      slug: "abrafarma",
     });
     expect(tenantChain.eq).toHaveBeenCalledWith("kind", "demo");
     expect(tenantChain.eq).toHaveBeenCalledWith("status", "demo");

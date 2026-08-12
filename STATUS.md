@@ -1,6 +1,75 @@
 # Status do MVP-0
 
-Atualizado em: 29/07/2026.
+Atualizado em: 09/08/2026.
+
+## C250 — Abrafarma, Broadcast Saúde e catálogo real autorizado — 09/08/2026
+
+### Resultado
+
+- o tenant existente de saúde foi preservado como `abrafarma` e definido como
+  portal público padrão;
+- o tenant `broadcast-saude` foi criado separadamente no modelo
+  `health-pharma`, com tema próprio;
+- ambas as marcas recebem por referência o mesmo catálogo canônico: 16 pautas
+  reais autorizadas e a matéria de IA já aprovada como `home.hero`;
+- 17 matérias anteriores da vertical passaram para rascunho e outras
+  distribuições antigas da Abrafarma foram retiradas da seleção pública, sem
+  exclusão física;
+- a duplicidade exata da Bayer foi consolidada em um único conteúdo;
+- três referências da Viva usam `external_only`, sem corpo reproduzido, e
+  encaminham à fonte original;
+- as editorias promovidas são Empresas, M&A, RelGov, Investimentos, Regulação,
+  Pesquisa, Tecnologia e Inovação, Análise e Radar da Imprensa;
+- a ordem editorial do briefing foi aplicada aos destaques: Biomm, Novo Nordisk
+  e Novartis nos ranks 0, 1 e 2 das duas marcas.
+
+### Procedência, ticker e persistência
+
+- cada pauta real registra origem, data/link quando disponíveis, ordem do
+  briefing e autorização em `body_json.editorial_origin`;
+- as distribuições usam `rights_code = authorized-real` e referência de
+  autorização explícita;
+- o ticker de saúde cobre Rede D’Or, Fleury, Hapvida, Mater Dei, Dasa,
+  Oncoclínicas, Qualicorp, BradSaúde e a transição OdontoPrev → BradSaúde;
+- `BRAPI_API_TOKEN` é opcional e exclusivamente server-side; sem token, nenhum
+  preço é inventado e a UI informa `cotação indisponível`;
+- migrations remotas aplicadas: `20260809154809` e `20260809161927`;
+- a função de catálogo foi reaplicada e manteve Abrafarma na revisão 32, 16
+  pautas reais e uma Bayer, confirmando idempotência;
+- advisor Supabase de segurança: zero alertas; performance: apenas avisos
+  informativos preexistentes de índices ainda não utilizados.
+
+### QA e auditoria
+
+- `pnpm check`: lint, TypeScript, 26 arquivos/138 testes e build de produção
+  aprovados após a correção final;
+- navegador automatizado validou Abrafarma, Broadcast Saúde e uma pauta
+  `external_only`, com imagens carregadas, CTA de fonte e sem overlay de erro;
+- viewports 390, 768 e 1440 px foram percorridos; em 768 e 1440,
+  `scrollWidth === clientWidth`;
+- as nove editorias aparecem no menu final e nas seções da home;
+- evidências visuais em `artifacts/c250-browser/`;
+- auditor independente encontrou um P1 de ordem dos destaques; após a correção
+  e nova consulta remota, aprovou a C250 sem P0/P1;
+- documentação de escopo e governança atualizada em
+  `docs/24-validacao-broadcast-saude-conteudo-real.md` e documentos correlatos.
+
+### Deploy Vercel — 09/08/2026
+
+- o banco Supabase definitivo já recebeu as migrations e os dados;
+- `BRAPI_API_TOKEN` foi configurado como variável sensível nos ambientes
+  Preview e Production, sem exposição no cliente;
+- a integração foi ajustada para consultar um ativo por requisição, limite do
+  plano atual da Brapi, preservando falha isolada e cache por ativo;
+- Preview tipográfica validada: `dpl_9haac3FSVX576ijkmUHAc9Dx3o9o`;
+- Production promovida e `READY`: `dpl_7pc65sGFRRJ5RfKLTshyvjKVqWfR`;
+- alias estável: `https://portaldenoticias-five.vercel.app`;
+- HTTP público confirmou `200`, marca correta, conteúdo real, ticker com preços
+  e zero ocorrência de `cotação indisponível` em Abrafarma e Broadcast Saúde;
+- título das matérias de saúde recalibrado de `43,2–91,2 px` para `36–64 px`;
+  navegador em 1920 x 1024 e 390 x 844 confirmou hierarquia legível, ausência de
+  overflow horizontal, overlay e erros de console;
+- logs da nova Production nos 30 minutos após a validação: zero erro.
 
 ## Reforma do cadastro editorial — 29/07/2026
 

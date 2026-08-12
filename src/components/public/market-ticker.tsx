@@ -21,25 +21,37 @@ const percent = new Intl.NumberFormat("pt-BR", {
   style: "percent",
 });
 
-export function MarketTicker({ quotes }: { quotes: MarketQuote[] }) {
+export function MarketTicker({
+  label = "Mercados",
+  quotes,
+}: {
+  label?: string;
+  quotes: MarketQuote[];
+}) {
   if (quotes.length === 0) return null;
   const referenceDate = quotes
-    .map((quote) => quote.referenceAt.slice(0, 10))
+    .flatMap((quote) =>
+      quote.referenceAt ? [quote.referenceAt.slice(0, 10)] : [],
+    )
     .sort()
     .at(-1)
     ?.split("-")
     .reverse()
     .join("/");
+  const sources = [...new Set(quotes.map((quote) => quote.source))].join(" + ");
+  const sourceSummary = referenceDate
+    ? `Ref. ${referenceDate} · ${sources}`
+    : `Símbolos verificados · ${sources}`;
 
   return (
     <aside
-      aria-label="Cotações de moedas e ações"
+      aria-label={`Cotações e referências — ${label}`}
       className="market-ticker border-b border-border-subtle bg-surface-inverse text-text-on-brand"
       id="mercados"
     >
       <div className="flex min-h-11 items-stretch">
         <p className="relative z-10 grid shrink-0 place-items-center border-r border-white/20 bg-surface-inverse px-4 text-[10px] font-bold uppercase tracking-[0.18em] sm:px-6">
-          Mercados
+          {label}
         </p>
         <div
           aria-describedby="market-source"
@@ -53,15 +65,16 @@ export function MarketTicker({ quotes }: { quotes: MarketQuote[] }) {
           </div>
         </div>
         <p className="hidden shrink-0 place-items-center border-l border-white/20 px-5 text-[10px] font-semibold opacity-65 xl:grid">
-          Ref. {referenceDate} · Frankfurter + brapi
+          {sourceSummary}
         </p>
       </div>
       <p className="border-t border-white/10 px-4 py-1 text-right text-[9px] opacity-55 xl:hidden">
-        Ref. {referenceDate} · Frankfurter + brapi
+        {sourceSummary}
       </p>
       <p className="sr-only" id="market-source">
-        Valores de referência fornecidos por Frankfurter e brapi. Não são
-        recomendação financeira.
+        Valores ou símbolos de referência fornecidos por {sources}. Quando a
+        cotação estiver indisponível, nenhum preço estimado será exibido. Não
+        são recomendação financeira.
       </p>
     </aside>
   );
@@ -91,11 +104,20 @@ function TickerCopy({
             title={`${quote.label} · fonte ${quote.source}`}
           >
             <strong className="text-sm tracking-tight">{quote.symbol}</strong>
-            <span className="font-semibold">
-              {(quote.kind === "currency" ? brlExchange : brlCurrency).format(
-                quote.price,
-              )}
+            <span className="max-w-36 truncate text-[0.68rem] font-medium opacity-75">
+              {quote.label}
             </span>
+            {quote.price !== null ? (
+              <span className="font-semibold">
+                {(quote.kind === "currency" ? brlExchange : brlCurrency).format(
+                  quote.price,
+                )}
+              </span>
+            ) : (
+              <span className="font-medium opacity-65">
+                {quote.statusLabel ?? "cotação indisponível"}
+              </span>
+            )}
             {quote.changePercent !== null ? (
               <span
                 className={
@@ -108,9 +130,9 @@ function TickerCopy({
               >
                 {percent.format(quote.changePercent / 100)}
               </span>
-            ) : (
+            ) : quote.price !== null ? (
               <span className="opacity-60">referência</span>
-            )}
+            ) : null}
           </p>
         );
       })}

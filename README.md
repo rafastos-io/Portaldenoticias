@@ -15,7 +15,8 @@ O produto proposto combina:
 
 O primeiro ciclo será deliberadamente demonstrativo:
 
-- todas as marcas, matérias, autores, organizações e métricas serão fictícios;
+- o catálogo histórico do MVP-0 permanece fictício, enquanto a etapa de
+  validação admite conteúdo real expressamente autorizado e com procedência;
 - três identidades white-label serão entregues como exemplos;
 - o ADM terá tela de login, mas sem autenticação real ou Supabase Auth;
 - credenciais de demonstração: `USER` / `User123`;
@@ -63,6 +64,7 @@ O MVP será uma plataforma multi-tenant com conteúdo canônico compartilhado e 
 | [Plano de discovery](docs/14-plano-de-discovery.md) | Reuniões e saídas para fechar o briefing |
 | [Decisões confirmadas do MVP-0](docs/15-mvp0-decisoes-confirmadas.md) | Recorte rápido para Vercel + Supabase |
 | [Catálogo fictício de seed](docs/16-catalogo-ficticio-seed.md) | Marcas, autores, editorias e 24 matérias |
+| [Validação Broadcast Saúde](docs/24-validacao-broadcast-saude-conteudo-real.md) | Marcas de saúde, conteúdo autorizado, fontes e ticker |
 | [Plano do Ciclo 2](docs/17-plano-ciclo-de-melhoria.md) | Estabilização, ondas e métricas do ciclo |
 | [Maleabilidade de marcas](docs/18-maleabilidade-de-marcas-e-personalizacao.md) | Cadastro de demos, tokens, presets e variantes |
 | [Variantes editoriais](docs/19-variantes-de-cadastro-e-operacao-editorial.md) | Templates, distribuição e contexto do ADM |
@@ -85,7 +87,10 @@ O MVP será uma plataforma multi-tenant com conteúdo canônico compartilhado e 
 - [Broadcast Widgets](https://www.broadcast.com.br/broadcast-widgets/).
 - [Broadcast Curadoria](https://www.broadcast.com.br/broadcast-curadoria/).
 
-As referências externas servem para alinhamento de posicionamento. Elas não autorizam copiar código, conteúdo protegido, marca de terceiros ou interfaces proprietárias.
+Referências externas não autorizam copiar código, conteúdo protegido, marca de
+terceiros ou interfaces proprietárias. A exceção editorial documentada para a
+validação limita-se ao material autorizado pela cliente e às referências
+externas exibidas apenas como links de origem.
 
 ## Estado atual
 

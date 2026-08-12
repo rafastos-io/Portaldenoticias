@@ -2,6 +2,17 @@ import type { MarketQuote } from "./types";
 
 const TEST_SYMBOLS = ["PETR4", "VALE3", "ITUB4", "MGLU3"] as const;
 
+export const HEALTH_STOCKS = [
+  { label: "Rede D’Or", symbol: "RDOR3" },
+  { label: "Fleury", symbol: "FLRY3" },
+  { label: "Hapvida", symbol: "HAPV3" },
+  { label: "Mater Dei", symbol: "MATD3" },
+  { label: "Dasa", symbol: "DASA3" },
+  { label: "Oncoclínicas", symbol: "ONCO3" },
+  { label: "Qualicorp", symbol: "QUAL3" },
+  { label: "BradSaúde", symbol: "SAUD3" },
+] as const;
+
 type BrapiQuote = {
   currency?: unknown;
   regularMarketChangePercent?: unknown;
@@ -16,11 +27,11 @@ type BrapiResult = {
   symbol?: unknown;
 };
 
-function isTestSymbol(input: string): input is (typeof TEST_SYMBOLS)[number] {
-  return TEST_SYMBOLS.some((symbol) => symbol === input);
-}
-
-export function parseBrapiQuotes(input: unknown): MarketQuote[] {
+export function parseBrapiQuotes(
+  input: unknown,
+  allowedSymbols: readonly string[] = TEST_SYMBOLS,
+  preferredLabels: Readonly<Record<string, string>> = {},
+): MarketQuote[] {
   if (typeof input !== "object" || input === null || Array.isArray(input)) {
     return [];
   }
@@ -43,7 +54,7 @@ export function parseBrapiQuotes(input: unknown): MarketQuote[] {
         : typeof result.requestedSymbol === "string"
           ? result.requestedSymbol
           : "";
-    if (!isTestSymbol(symbol)) continue;
+    if (!allowedSymbols.includes(symbol)) continue;
     if (
       typeof result.data !== "object" ||
       result.data === null ||
@@ -69,9 +80,10 @@ export function parseBrapiQuotes(input: unknown): MarketQuote[] {
       changePercent: quote.regularMarketChangePercent,
       kind: "equity",
       label:
-        typeof quote.shortName === "string" && quote.shortName.trim()
+        preferredLabels[symbol] ??
+        (typeof quote.shortName === "string" && quote.shortName.trim()
           ? quote.shortName.trim()
-          : symbol,
+          : symbol),
       price: quote.regularMarketPrice,
       referenceAt: quote.regularMarketTime,
       source: "brapi",
@@ -79,25 +91,77 @@ export function parseBrapiQuotes(input: unknown): MarketQuote[] {
     });
   }
 
-  return TEST_SYMBOLS.flatMap((symbol) => {
+  return allowedSymbols.flatMap((symbol) => {
     const quote = parsed.get(symbol);
     return quote ? [quote] : [];
   });
 }
 
-export async function getStockQuotes(): Promise<MarketQuote[]> {
+async function fetchStockQuotes(
+  symbols: readonly string[],
+  token?: string,
+  preferredLabels: Readonly<Record<string, string>> = {},
+): Promise<MarketQuote[]> {
   try {
-    const query = new URLSearchParams({ symbols: TEST_SYMBOLS.join(",") });
+    const query = new URLSearchParams({ symbols: symbols.join(",") });
+    const headers: Record<string, string> = { Accept: "application/json" };
+    if (token) headers.Authorization = `Bearer ${token}`;
     const response = await fetch(
       `https://brapi.dev/api/v2/stocks/quote?${query}`,
       {
-        headers: { Accept: "application/json" },
+        headers,
         next: { revalidate: 15 * 60 },
       },
     );
     if (!response.ok) return [];
-    return parseBrapiQuotes(await response.json());
+    return parseBrapiQuotes(await response.json(), symbols, preferredLabels);
   } catch {
     return [];
   }
+}
+
+export async function getStockQuotes(): Promise<MarketQuote[]> {
+  return fetchStockQuotes(TEST_SYMBOLS);
+}
+
+export async function getHealthStockQuotes(): Promise<MarketQuote[]> {
+  const symbols = HEALTH_STOCKS.map((stock) => stock.symbol);
+  const labels = Object.fromEntries(
+    HEALTH_STOCKS.map((stock) => [stock.symbol, stock.label]),
+  );
+  const token = process.env.BRAPI_API_TOKEN?.trim();
+  const live = token
+    ? (
+        await Promise.all(
+          symbols.map((symbol) => fetchStockQuotes([symbol], token, labels)),
+        )
+      ).flat()
+    : [];
+  const quotes = new Map(live.map((quote) => [quote.symbol, quote]));
+
+  return [
+    ...HEALTH_STOCKS.map(
+      ({ label, symbol }): MarketQuote =>
+        quotes.get(symbol) ?? {
+          changePercent: null,
+          kind: "equity",
+          label,
+          price: null,
+          referenceAt: null,
+          source: "B3",
+          statusLabel: "cotação indisponível",
+          symbol,
+        },
+    ),
+    {
+      changePercent: null,
+      kind: "equity",
+      label: "OdontoPrev",
+      price: null,
+      referenceAt: null,
+      source: "B3",
+      statusLabel: "integrada à BradSaúde",
+      symbol: "ODPV3 → SAUD3",
+    },
+  ];
 }

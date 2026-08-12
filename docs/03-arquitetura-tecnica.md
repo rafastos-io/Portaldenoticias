@@ -261,7 +261,8 @@ Logos e fontes pertencem ao tenant. Imagens editoriais podem ser do catálogo gl
 - `local`: dados seed e storage local/compatível;
 - `staging`: integrações de teste, domínios próprios e conteúdo fictício;
 - `production-demo`: somente dados fictícios, segredos isolados e backups;
-- não inserir conteúdo real ou sensível até substituir o gate demonstrativo.
+- não inserir conteúdo sensível nem conteúdo real fora do catálogo autorizado
+  da validação; o gate demonstrativo não concede acesso editorial de produção.
 
 ## Estratégia de deploy
 

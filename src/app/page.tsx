@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SiteModelHome } from "@/components/public/models";
 import { PublicShell } from "@/components/public/public-shell";
 import { getMarketQuotes } from "@/lib/market/market-data";
+import { listPublicCategories } from "@/lib/presentation/public-categories";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
 import {
   getDemoTenantIdentity,
@@ -28,13 +29,13 @@ async function loadHome(request: ReturnType<typeof parsePublicTenantRequest>) {
         ? await resolvePublicTenant(request.slug)
         : await resolveDefaultPublicTenant();
     if (!tenant) return { found: false as const, ok: true as const };
-    const [stories, placements, theme, marketQuotes] = await Promise.all([
+    const theme = await getTenantTheme(tenant.id);
+    if (!theme) return { found: false as const, ok: true as const };
+    const [stories, placements, marketQuotes] = await Promise.all([
       listPublicStories(tenant.id),
       listHomePlacementIds(tenant.id),
-      getTenantTheme(tenant.id),
-      getMarketQuotes(),
+      getMarketQuotes(theme.siteModel),
     ]);
-    if (!theme) return { found: false as const, ok: true as const };
     return {
       found: true as const,
       ok: true as const,
@@ -98,14 +99,7 @@ export default async function HomePage({
     notFound();
   }
   const { marketQuotes, placements, stories, tenant, theme } = loaded;
-  const categories = [
-    ...new Map(
-      stories.map((story) => [
-        story.categorySlug,
-        { name: story.categoryName, slug: story.categorySlug },
-      ]),
-    ).values(),
-  ];
+  const categories = listPublicCategories(stories, theme.siteModel);
   const orderedIds = placements.map((placement) => placement.content_item_id);
   const ordered = [...stories].sort((left, right) => {
     const leftIndex = orderedIds.indexOf(left.id);

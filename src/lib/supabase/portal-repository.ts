@@ -21,10 +21,15 @@ export type PublicStory = {
   categoryName: string;
   categorySlug: string;
   correctionNote: string | null;
+  editorialOrder: number | null;
+  externalOnly: boolean;
   id: string;
   imageAlt: string | null;
   imagePath: string | null;
+  isRealContent: boolean;
   publishedAt: string | null;
+  sourceLabel: string | null;
+  sourceUrl: string | null;
   sponsorshipLabel: string | null;
   subtitle: string;
   title: string;
@@ -43,11 +48,17 @@ const DEMO_TENANTS: Record<string, PublicTenant> = {
     slug: "seguros-demo-atlas",
     slogan: "Proteção que acompanha cada fase",
   },
-  "healthtech-demo-lumen": {
-    displayName: "Healthtech Demo Lúmen",
+  abrafarma: {
+    displayName: "Abrafarma",
     id: "00000000-0000-4000-8000-000000000004",
-    slug: "healthtech-demo-lumen",
-    slogan: "Ciência para ampliar futuros",
+    slug: "abrafarma",
+    slogan: "Aqui você fica por dentro da saúde",
+  },
+  "broadcast-saude": {
+    displayName: "Broadcast Saúde",
+    id: "00000000-0000-4000-8000-000000000006",
+    slug: "broadcast-saude",
+    slogan: "Informação estratégica para o setor de saúde",
   },
   "credito-demo-orbita": {
     displayName: "Crédito Demo Órbita",
@@ -90,10 +101,10 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     slogan: "Proteção que acompanha cada fase",
     textColor: "#18302F",
   },
-  "healthtech-demo-lumen": {
+  abrafarma: {
     accent: "#8ED1C9",
     background: "#F6F5FA",
-    brandName: "Healthtech Demo Lúmen",
+    brandName: "Abrafarma",
     card: "data-led",
     font: "sans-geometrica",
     header: "masthead-minimal",
@@ -103,8 +114,24 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     primary: "#4A2E78",
     secondary: "#20A4B8",
     siteModel: "health-pharma",
-    slogan: "Ciência para ampliar futuros",
+    slogan: "Aqui você fica por dentro da saúde",
     textColor: "#222033",
+  },
+  "broadcast-saude": {
+    accent: "#D9912B",
+    background: "#F7F9F8",
+    brandName: "Broadcast Saúde",
+    card: "data-led",
+    font: "sans-editorial",
+    header: "masthead-minimal",
+    hero: "science-feature",
+    logoAlt: "",
+    logoUrl: null,
+    primary: "#0B4A5A",
+    secondary: "#1F7A8C",
+    siteModel: "health-pharma",
+    slogan: "Informação estratégica para o setor de saúde",
+    textColor: "#15272C",
   },
   "credito-demo-orbita": {
     accent: "#E6A23C",
@@ -130,6 +157,14 @@ export function getDemoTenantIdentity(slug: string) {
 
 export function getDemoTenantThemeFallback(slug: string) {
   return DEMO_THEME_FALLBACKS[slug] ?? null;
+}
+
+export function getPublicCategoryName(
+  categorySlug: string,
+  persistedName?: string | null,
+) {
+  if (categorySlug === "ti") return "Tecnologia e Inovação";
+  return persistedName?.trim() || "Destaques";
 }
 
 function readBody(bodyJson: Json, bodyText: string) {
@@ -173,6 +208,62 @@ function readMedia(bodyJson: Json) {
     };
   }
   return { imageAlt: null, imagePath: null };
+}
+
+export function readEditorialOrigin(bodyJson: Json) {
+  const emptyOrigin = {
+    editorialOrder: null,
+    externalOnly: false,
+    isRealContent: false,
+    sourceLabel: null,
+    sourcePublishedAt: null,
+    sourceUrl: null,
+  };
+  if (
+    typeof bodyJson !== "object" ||
+    bodyJson === null ||
+    Array.isArray(bodyJson) ||
+    typeof bodyJson.editorial_origin !== "object" ||
+    bodyJson.editorial_origin === null ||
+    Array.isArray(bodyJson.editorial_origin)
+  ) {
+    return emptyOrigin;
+  }
+
+  const origin = bodyJson.editorial_origin;
+  if (origin.kind !== "authorized-real") return emptyOrigin;
+  const sourceLabel =
+    typeof origin.source_label === "string" && origin.source_label.trim()
+      ? origin.source_label.trim()
+      : null;
+  const sourcePublishedAt =
+    typeof origin.source_published_at === "string" &&
+    !Number.isNaN(Date.parse(origin.source_published_at))
+      ? origin.source_published_at
+      : null;
+  let sourceUrl: string | null = null;
+  if (typeof origin.source_url === "string") {
+    try {
+      const candidate = new URL(origin.source_url);
+      sourceUrl = candidate.protocol === "https:" ? candidate.toString() : null;
+    } catch {
+      sourceUrl = null;
+    }
+  }
+
+  return {
+    editorialOrder:
+      typeof origin.briefing_order === "number" &&
+      Number.isInteger(origin.briefing_order) &&
+      origin.briefing_order > 0
+        ? origin.briefing_order
+        : null,
+    externalOnly: origin.external_only === true,
+    isRealContent: true,
+    sourceLabel,
+    sourcePublishedAt,
+    sourceUrl,
+  };
 }
 
 const CATEGORY_IMAGES: Record<string, { alt: string; path: string }> = {
@@ -407,18 +498,26 @@ export async function listPublicStories(
       readMedia(revision.body_json),
       categorySlug,
     );
+    const origin = readEditorialOrigin(revision.body_json);
 
     return [
       {
         author: author?.display_name ?? "Redação demonstrativa",
         body: readBody(revision.body_json, revision.body_text),
         canonicalSlug: distribution.slug_override ?? item.canonical_slug,
-        categoryName: category?.name ?? "Destaques",
+        categoryName: getPublicCategoryName(categorySlug, category?.name),
         categorySlug,
         correctionNote: revision.correction_note,
+        editorialOrder: origin.editorialOrder,
+        externalOnly: origin.externalOnly,
         id: item.id,
         ...media,
-        publishedAt: item.last_published_at,
+        isRealContent: origin.isRealContent,
+        publishedAt: origin.isRealContent
+          ? origin.sourcePublishedAt
+          : item.last_published_at,
+        sourceLabel: origin.sourceLabel,
+        sourceUrl: origin.sourceUrl,
         sponsorshipLabel: revision.sponsorship_label,
         subtitle: distribution.subtitle_override ?? revision.subtitle,
         title: distribution.headline_override ?? revision.title,

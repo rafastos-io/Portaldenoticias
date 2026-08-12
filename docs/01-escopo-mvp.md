@@ -36,6 +36,14 @@ Uma pessoa consegue:
 
 O catálogo obrigatório está em `docs/16-catalogo-ficticio-seed.md`.
 
+### Exceção promovida na validação
+
+Em 09/08/2026, a cliente autorizou um catálogo real delimitado para Abrafarma e
+Broadcast Saúde. Essa promoção não libera ingestão arbitrária: somente o
+material autorizado, com procedência e direitos registrados, pode sair do
+regime fictício. O gate demonstrativo, o `noindex` e os demais limites do MVP
+permanecem ativos. Ver `docs/24-validacao-broadcast-saude-conteudo-real.md`.
+
 ## P0 - obrigatório
 
 ### Aplicação

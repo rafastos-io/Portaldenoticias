@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SiteModelCategory } from "@/components/public/models";
 import { PublicShell } from "@/components/public/public-shell";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
+import { listPublicCategories } from "@/lib/presentation/public-categories";
 import {
   listPublicStories,
   resolveDefaultPublicTenant,
@@ -30,16 +31,15 @@ export default async function CategoryPage({
     getTenantTheme(tenant.id),
   ]);
   if (!theme) notFound();
-  const categoryStories = stories.filter((story) => story.categorySlug === slug);
+  const categoryStories = stories
+    .filter((story) => story.categorySlug === slug)
+    .sort(
+      (left, right) =>
+        (left.editorialOrder ?? Number.MAX_SAFE_INTEGER) -
+        (right.editorialOrder ?? Number.MAX_SAFE_INTEGER),
+    );
   if (categoryStories.length === 0) notFound();
-  const categories = [
-    ...new Map(
-      stories.map((story) => [
-        story.categorySlug,
-        { name: story.categoryName, slug: story.categorySlug },
-      ]),
-    ).values(),
-  ];
+  const categories = listPublicCategories(stories, theme.siteModel);
 
   return (
     <PublicShell categories={categories} tenant={tenant} theme={theme}>

@@ -75,7 +75,10 @@ Feed/API autenticado por cliente, com seleção editorial, metadados, direitos, 
 
 Para chegar rapidamente a uma demonstração vendável, o primeiro ciclo implementa integralmente os produtos 1 e 2. O produto 3 será apenas representado por uma rota JSON demonstrativa e pelo modelo de dados; autenticação comercial, credenciais e SLAs ficam para o ciclo seguinte.
 
-Todos os dados do MVP-0 serão fictícios e marcados como demonstração. Nenhum conteúdo clínico, financeiro ou institucional deve parecer uma afirmação real atribuída à Broadcast ou a terceiros.
+O catálogo histórico do MVP-0 é fictício e marcado como demonstração. Na etapa
+de validação, o catálogo real autorizado de Abrafarma e Broadcast Saúde deve
+ser apresentado com procedência explícita e sem ampliar alegações além do
+material fornecido; ver `docs/24-validacao-broadcast-saude-conteudo-real.md`.
 
 ## Posicionamento
 

@@ -50,7 +50,8 @@ O ciclo precisa melhorar seis capacidades:
 - os avisos de performance são apenas índices ainda não usados em um catálogo
   pequeno e demonstrativo;
 - lint, tipos e testes estavam aprovados no início desta auditoria;
-- dados e marcas permanecem 100% fictícios.
+- dados e marcas permanecem fictícios fora do catálogo real autorizado de
+  Abrafarma e Broadcast Saúde promovido em 09/08/2026.
 
 ## Contrato de escopo do Ciclo 2
 

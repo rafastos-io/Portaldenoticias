@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SiteModelArticle } from "@/components/public/models";
 import { PublicShell } from "@/components/public/public-shell";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
+import { listPublicCategories } from "@/lib/presentation/public-categories";
 import {
   listPublicStories,
   resolveDefaultPublicTenant,
@@ -32,14 +33,7 @@ export default async function StoryPage({
   if (!theme) notFound();
   const story = stories.find((item) => item.canonicalSlug === slug);
   if (!story) notFound();
-  const categories = [
-    ...new Map(
-      stories.map((item) => [
-        item.categorySlug,
-        { name: item.categoryName, slug: item.categorySlug },
-      ]),
-    ).values(),
-  ];
+  const categories = listPublicCategories(stories, theme.siteModel);
   return (
     <PublicShell categories={categories} tenant={tenant} theme={theme}>
       <SiteModelArticle

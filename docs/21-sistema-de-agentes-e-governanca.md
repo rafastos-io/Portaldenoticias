@@ -126,7 +126,8 @@ Após três falhas do mesmo tipo:
 
 - segurança e isolamento vencem velocidade;
 - `docs/15`, escopo do ciclo e `TASKS.md` vencem ideias amplas;
-- dados continuam fictícios;
+- dados continuam fictícios fora das exceções reais formalmente autorizadas e
+  documentadas; nenhuma fonte nova pode ser inferida como licenciada;
 - nenhuma mutação externa fora da autorização do usuário;
 - migrations novas exigem advisor depois do DDL;
 - Production exige Preview aprovado;

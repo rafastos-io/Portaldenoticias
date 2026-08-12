@@ -702,3 +702,9 @@ select
 from audit_tenants
 cross join audit_actions
 on conflict (id) do nothing;
+
+-- Reaplica a etapa de validação após o catálogo histórico do MVP-0.
+-- A função é criada pela migration 20260809154809 e mantém o reset idempotente.
+select private.apply_broadcast_saude_catalog();
+select private.align_broadcast_saude_briefing_order();
+select private.apply_technology_and_innovation_category_label();

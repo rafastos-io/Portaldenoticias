@@ -35,7 +35,9 @@ Decidido para o MVP-0: portal white-label + CMS + central de identidade. Feed/AP
 
 ### D04 - Origem do conteúdo
 
-Decidido para o MVP-0: todo conteúdo será fictício e persistido como seed demonstrativo. Nenhum texto, imagem ou dado real será ingerido.
+Decidido originalmente para o MVP-0: o catálogo inicial seria fictício. A
+decisão foi parcialmente superada em 09/08/2026 para o catálogo real autorizado
+de Abrafarma e Broadcast Saúde, sem liberar ingestão real fora desse recorte.
 
 Para o produto real, permanece a pergunta: redação própria, Agência Estado/Broadcast, parceiros, curadoria licenciada ou combinação?
 
@@ -190,7 +192,7 @@ Escolher solução e base legal antes de inserir scripts.
 | D01 | A definir | Negócio/Marca | - | Aberta |
 | D02 | A definir | Editorial/Negócio | - | Aberta |
 | D03 | White-label + CMS; API comercial depois | Comercial/Produto | 24/07/2026 | Decidida MVP-0 |
-| D04 | Conteúdo 100% fictício no MVP-0; origem real depois | Editorial/Jurídico | 24/07/2026 | Decidida MVP-0 |
+| D04 | Conteúdo 100% fictício no seed original; parcialmente superada pela D31 | Editorial/Jurídico | 24/07/2026 | Superada em parte |
 | D05 | A definir | Editorial/Jurídico | - | Aberta |
 | D06 | Três segmentos com marcas fictícias | Comercial/Produto | 24/07/2026 | Decidida MVP-0 |
 | D07 | A definir | Growth/Editorial/Jurídico | - | Aberta |
@@ -206,3 +208,4 @@ Escolher solução e base legal antes de inserir scripts.
 | D27 | A faixa pode usar no MVP-0 as ações PETR4, VALE3, ITUB4 e MGLU3 disponíveis no modo público de teste da brapi; qualquer ampliação exige token server-only, cache e nova decisão explícita | Produto/Editorial/Tecnologia | 27/07/2026 | Decidida Ciclo 2 |
 | D28 | A experiência pública terá quatro modelos estruturais aprovados: serviços financeiros/crédito, investimentos/gestão, seguros/previdência e saúde/farma | Produto/Comercial/Design | 27/07/2026 | Decidida Ciclo 2 |
 | D29 | O modelo de site é uma camada acima da marca; tenants escolhem um ID aprovado, compartilham a mesma aplicação e não podem enviar CSS/JS/HTML arbitrário | Produto/Design/Tecnologia | 27/07/2026 | Decidida Ciclo 2 |
+| D31 | Catálogo real autorizado para Abrafarma e Broadcast Saúde, com procedência, fidelidade e links externos sem reprodução integral | Cliente/Editorial | 09/08/2026 | Decidida validação |

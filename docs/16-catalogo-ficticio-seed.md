@@ -1,5 +1,10 @@
 # Catálogo fictício de seed
 
+> Este documento preserva o catálogo histórico do MVP-0. O recorte real
+> autorizado da etapa de validação está em
+> `docs/24-validacao-broadcast-saude-conteudo-real.md` e é reaplicado ao final
+> do seed, sem apagar os registros históricos colocados em rascunho.
+
 ## Regra de uso
 
 Todo o catálogo é demonstrativo:

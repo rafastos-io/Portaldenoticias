@@ -42,6 +42,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C221 | P1 | BLOCKED | C220 | Distribuição e overrides por tenant |
 | C230 | P1 | BLOCKED | C212,C214 | Densidade editorial e navegação mobile |
 | C240 | P1 | BLOCKED | C213,C214,C221,C230 | Matriz final de QA e auditoria adversarial |
+| C250 | P0 | DONE | C205,C212 | Separar Abrafarma/Broadcast Saúde, adotar conteúdo real autorizado e ticker setorial |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
@@ -341,6 +342,26 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
 - secret scan e bundle scan;
 - Preview e Production sem P0/P1;
 - commit, URLs, checks, screenshots e limitações em `STATUS.md`.
+
+### C250
+
+- preservar o tenant e a identidade já aprovados da Abrafarma;
+- criar o tenant `broadcast-saude` no modelo `health-pharma`, sem duplicar
+  conteúdo canônico;
+- usar `abrafarma` e `broadcast-saude` como slugs públicos;
+- manter publicada e em `home.hero` a matéria já aprovada de IA;
+- mover as demais matérias antigas da vertical de saúde para rascunho ou
+  retirar apenas suas distribuições nessa vertical, sem exclusão física;
+- cadastrar uma única vez as matérias reais autorizadas do DOCX, preservando
+  literalmente títulos e textos, exceto ajustes mecânicos de espaçamento;
+- consolidar apenas a duplicidade exata da matéria da Bayer;
+- cadastrar as editorias Empresas, M&A, RelGov, Investimentos, Regulação,
+  Pesquisa, Tecnologia e Inovação, Análise e Radar da Imprensa;
+- distribuir o catálogo real para Abrafarma e Broadcast Saúde por referência;
+- incluir no modelo de saúde o ticker setorial com ativos validados e fallback
+  sem preço falso quando a fonte autenticada não estiver configurada;
+- validar fidelidade textual, isolamento, 390/768/1440, conteúdo pausado,
+  lint, tipos, testes, build e auditor independente sem P0/P1.
 
 ## Como desbloquear
 

@@ -28,6 +28,22 @@ Criar rapidamente uma demonstração convincente do portal editorial white-label
 - não inventar estudos clínicos atribuídos a instituições reais;
 - não indexar o portal enquanto o conteúdo for demonstrativo.
 
+### Emenda da etapa de validação — 09/08/2026
+
+A decisão histórica de catálogo integralmente fictício continua válida para o
+seed original do MVP-0, mas foi parcialmente superada para o ecossistema de
+saúde. A cliente autorizou formalmente o uso das matérias reais fornecidas no
+briefing e no DOCX, com estas condições:
+
+- texto, título e sentido devem ser preservados;
+- ajustes permitidos são apenas mecânicos, como separar autoria do corpo;
+- campos ausentes podem ser inferidos com cautela e procedência registrada;
+- referências externas sem licença de reprodução mantêm somente título,
+  autoria/data disponíveis e link para a íntegra;
+- o ambiente continua marcado como validação e `noindex` até nova decisão;
+- o contrato operacional está detalhado em
+  `docs/24-validacao-broadcast-saude-conteudo-real.md`.
+
 ## Marcas fictícias
 
 ### Banco Demo Horizonte

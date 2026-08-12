@@ -90,6 +90,24 @@ export function ArticleBody({
 }: {
   story: PublicStory;
 }) {
+  if (story.externalOnly && story.sourceUrl) {
+    return (
+      <div className="border-y border-border-subtle py-8 text-base leading-7">
+        <p>
+          Esta pauta foi indicada no briefing como referência externa. A íntegra
+          permanece na publicação de origem.
+        </p>
+        <a
+          className="mt-5 inline-flex min-h-11 items-center border border-brand-primary px-4 font-bold text-brand-primary no-underline hover:bg-surface-muted"
+          href={story.sourceUrl}
+          rel="noreferrer"
+          target="_blank"
+        >
+          Ler na fonte {story.sourceLabel ? `— ${story.sourceLabel}` : ""}
+        </a>
+      </div>
+    );
+  }
   return (
     <div className="space-y-7 text-[1.05rem] leading-8 sm:text-lg">
       {story.correctionNote ? (
@@ -105,18 +123,39 @@ export function ArticleBody({
 }
 
 export function PublishedMeta({ story }: { story: PublicStory }) {
+  const publishedDate = story.publishedAt
+    ? new Intl.DateTimeFormat("pt-BR", {
+        dateStyle: "long",
+        timeZone: "America/Sao_Paulo",
+      }).format(new Date(story.publishedAt))
+    : "data editorial não informada";
+
   return (
     <p className="text-xs leading-5 text-text-muted">
       Por <strong className="text-text-primary">{story.author}</strong>
       <span aria-hidden="true"> · </span>
-      perfil fictício
+      {story.isRealContent ? (
+        <>
+          Fonte: {story.sourceUrl ? (
+            <a
+              className="font-semibold underline underline-offset-2"
+              href={story.sourceUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {story.sourceLabel ?? "origem externa"}
+            </a>
+          ) : (
+            <strong className="text-text-primary">
+              {story.sourceLabel ?? "material autorizado"}
+            </strong>
+          )}
+        </>
+      ) : (
+        "perfil demonstrativo"
+      )}
       <span aria-hidden="true"> · </span>
-      {story.publishedAt
-        ? new Intl.DateTimeFormat("pt-BR", {
-            dateStyle: "long",
-            timeZone: "America/Sao_Paulo",
-          }).format(new Date(story.publishedAt))
-        : "data editorial não informada"}
+      {publishedDate}
     </p>
   );
 }

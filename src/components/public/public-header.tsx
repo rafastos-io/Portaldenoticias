@@ -33,6 +33,10 @@ export function PublicHeader({
   const tenantQuery = `?tenant=${encodeURIComponent(tenant.slug)}`;
   const model = getSiteModelDefinition(theme.siteModel);
   const centered = theme.siteModel === "insurance-pension";
+  const visibleCategories = categories.slice(
+    0,
+    theme.siteModel === "health-pharma" ? 9 : 5,
+  );
   return (
     <header
       className="model-header border-b border-border-subtle bg-surface-raised"
@@ -93,6 +97,10 @@ export function PublicHeader({
       >
         <div
           className={`page-container flex min-h-12 items-center gap-7 text-sm font-semibold ${
+            theme.siteModel === "health-pharma"
+              ? "overflow-x-auto whitespace-nowrap"
+              : ""
+          } ${
             centered ? "justify-center" : ""
           }`}
         >
@@ -102,7 +110,7 @@ export function PublicHeader({
           >
             Início
           </Link>
-          {categories.slice(0, 5).map((category) => (
+          {visibleCategories.map((category) => (
             <Link
               className="text-brand-primary decoration-brand-secondary decoration-2 hover:underline"
               href={`/editoria/${category.slug}${tenantQuery}`}
@@ -128,7 +136,7 @@ export function PublicHeader({
           >
             Início
           </Link>
-          {categories.slice(0, 5).map((category) => (
+          {visibleCategories.map((category) => (
             <Link
               className="min-h-12 bg-surface-raised px-3 py-3 text-sm font-bold text-brand-primary no-underline"
               href={`/editoria/${category.slug}${tenantQuery}`}
