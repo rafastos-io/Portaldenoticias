@@ -36,8 +36,8 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C210 | P1 | DONE | C203 | Contexto global de tenant no ADM |
 | C211 | P1 | DONE | C204 | Workbench de identidade com preview vivo |
 | C212 | P1 | DONE | C211 | Quatro modelos estruturais de site por segmento |
-| C213 | P1 | VERIFY | C210,C211,C212 | Criar/duplicar tenant demo escolhendo o modelo |
-| C214 | P1 | BLOCKED | C213 | Logo e mídia fictícia com Storage isolado |
+| C213 | P1 | DONE | C210,C211,C212 | Criar/duplicar tenant demo escolhendo o modelo |
+| C214 | P1 | READY | C213 | Logo e mídia fictícia com Storage isolado |
 | C220 | P1 | BLOCKED | C210 | Templates e variantes de cadastro editorial |
 | C221 | P1 | BLOCKED | C220 | Distribuição e overrides por tenant |
 | C230 | P1 | BLOCKED | C212,C214 | Densidade editorial e navegação mobile |
@@ -291,6 +291,9 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
   (128 testes) e `pnpm build` aprovados; permanecem como gates para `DONE` o
   teste transacional remoto com rollback (exige `DATABASE_URL`) e a validação
   de browser em 390/1440 + Preview/smoke.
+- concluída em 20/08/2026: `bv-educacao` cadastrada pelo fluxo real, com tema,
+  distribuições por referência, auditoria e marca persistidos no Supabase;
+  produção validada em 390/1440 e deploy da `main` aprovado na Vercel.
 
 ### C214
 

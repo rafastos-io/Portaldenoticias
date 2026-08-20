@@ -43,8 +43,14 @@ Atualizado em: 20/08/2026.
 - `pnpm check`: lint, TypeScript, 27 arquivos/145 testes e build de produção
   aprovados.
 
-Status promovido a `VERIFY`; falta validar o Preview imutável, integrar na
-`main`, reverificar a Production e remover a branch remota.
+### Publicação concluída
+
+- commit de produção: `58c009135010e8698eeb5be113ffb962380c5f75`;
+- implantação da `main` concluída com sucesso na Vercel;
+- produção reverificada em 390 e 1440 px: HTTP 200, marca e logo presentes,
+  um `h1`, sem overflow e sem erros no console;
+- rota pública confirmou o tenant `bv-educacao` e 25 matérias ativas;
+- `C213` promovida a `DONE`; `C214` liberada para `READY`.
 
 ## C252 — nova análise sobre canetas emagrecedoras — 12/08/2026
 
