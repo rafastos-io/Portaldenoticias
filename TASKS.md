@@ -46,8 +46,8 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C251 | P0 | DONE | C211,C250 | Corrigir upload de logo de até 2 MB e confirmar persistência da identidade no portal |
 | C252 | P0 | DONE | C250 | Adicionar análise sobre canetas emagrecedoras sem substituir pautas existentes |
 | C253 | P0 | DONE | C213 | Catalogar a pauta BV Educação e compartilhá-la com o padrão de crédito |
-| C254 | P0 | VERIFY | C253 | Incorporar vídeos e reforçar acessibilidade pública gratuita |
-| C255 | P1 | BLOCKED | C254 | Avatar discreto de matérias relacionadas por categoria |
+| C254 | P0 | DONE | C253 | Incorporar vídeos e reforçar acessibilidade pública gratuita |
+| C255 | P1 | READY | C254 | Avatar discreto de matérias relacionadas por categoria |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,

@@ -33,8 +33,14 @@ Atualizado em: 20/08/2026.
   ausência de overflow e console limpo em mobile/desktop;
 - evidências visuais em `artifacts/c254-accessibility/`;
 - `pnpm check`: lint, tipos, 30 arquivos/153 testes e build aprovados.
+- `d2ff3d3` publicado na `main`; Preview compilou com sucesso, mas permaneceu
+  protegido pelo login da Vercel;
+- Production aprovada pela Vercel e reverificada no domínio público: embed,
+  título acessível, VLibras, preferências, console e overflow corretos;
+- `A11Y_BASE_URL=https://portaldenoticias-five.vercel.app pnpm smoke:a11y`:
+  axe aprovado em duas rotas × 390/768/1440.
 
-Status: `VERIFY`; falta Preview, Production e reverificação pública.
+Status: `DONE`.
 
 ## C253 — pauta BV Educação e padrão de crédito — 20/08/2026
 
