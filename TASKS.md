@@ -45,7 +45,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C250 | P0 | DONE | C205,C212 | Separar Abrafarma/Broadcast Saúde, adotar conteúdo real autorizado e ticker setorial |
 | C251 | P0 | DONE | C211,C250 | Corrigir upload de logo de até 2 MB e confirmar persistência da identidade no portal |
 | C252 | P0 | DONE | C250 | Adicionar análise sobre canetas emagrecedoras sem substituir pautas existentes |
-| C253 | P0 | VERIFY | C213 | Catalogar a pauta BV Educação e compartilhá-la com o padrão de crédito |
+| C253 | P0 | DONE | C213 | Catalogar a pauta BV Educação e compartilhá-la com o padrão de crédito |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,

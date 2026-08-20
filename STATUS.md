@@ -29,9 +29,16 @@ Atualizado em: 20/08/2026.
 - produção com dados atuais: rota JSON HTTP 200 e 46 matérias totais; matéria
   de inflação HTTP 200 com fonte e corpo; vídeo HTTP 200 com aviso externo e
   link para a origem; sem overflow ou erros de console em 390/1440;
+- `ff74ee7` publicado na `main` com deploy de produção aprovado pela Vercel;
+  a navegação pública exibe as nove categorias com conteúdo na ordem definida,
+  enquanto Glossário permanece cadastrado e vazio;
+- reverificação pública final em desktop e mobile: marca BV, nove categorias,
+  matéria integral e referência externa corretas, sem overflow ou mensagens de
+  erro no console; o Preview protegido exigiu SSO e a validação funcional foi
+  concluída no domínio público de produção;
 - `pnpm check`: lint, tipos, 29 arquivos/150 testes e build aprovados.
 
-Status: `VERIFY`; falta publicar e reverificar a navegação ampliada.
+Status: `DONE`.
 
 ## C213 — retomada: cadastro persistente da marca BV Educação — 20/08/2026
 
