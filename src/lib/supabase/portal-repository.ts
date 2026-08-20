@@ -72,12 +72,6 @@ const DEMO_TENANTS: Record<string, PublicTenant> = {
     slug: "credito-demo-orbita",
     slogan: "Clareza para decidir o próximo passo",
   },
-  "bv-educacao": {
-    displayName: "BV Educação",
-    id: "00000000-0000-4000-8000-000000000007",
-    slug: "bv-educacao",
-    slogan: "Educação financeira e soluções de crédito para todas as fases da vida",
-  },
 };
 
 const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
@@ -161,22 +155,6 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     slogan: "Clareza para decidir o próximo passo",
     textColor: "#142633",
   },
-  "bv-educacao": {
-    accent: "#00BAF2",
-    background: "#F4F6F8",
-    brandName: "BV Educação",
-    card: "image-top",
-    font: "sans-geometrica",
-    header: "masthead-clean",
-    hero: "featured-grid",
-    logoAlt: "Logo BV Educação",
-    logoUrl: "/images/bv-logo.png",
-    primary: "#002B49",
-    secondary: "#0099DA",
-    siteModel: "financial-services-credit",
-    slogan: "Educação financeira e soluções de crédito para todas as fases da vida",
-    textColor: "#101828",
-  },
 };
 
 export function getDemoTenantIdentity(slug: string) {
@@ -185,6 +163,22 @@ export function getDemoTenantIdentity(slug: string) {
 
 export function getDemoTenantThemeFallback(slug: string) {
   return DEMO_THEME_FALLBACKS[slug] ?? null;
+}
+
+export function readTenantSlogan(
+  settings: Json,
+  fallback = "Conteúdo para vidas mais longas",
+) {
+  if (
+    typeof settings === "object" &&
+    settings !== null &&
+    !Array.isArray(settings) &&
+    typeof settings.slogan === "string" &&
+    settings.slogan.trim()
+  ) {
+    return settings.slogan.trim();
+  }
+  return fallback;
 }
 
 export function getPublicCategoryName(
@@ -356,7 +350,7 @@ export async function resolvePublicTenant(
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from("tenants")
-    .select("id, slug, display_name")
+    .select("id, slug, display_name, settings_json")
     .eq("slug", slug)
     .eq("kind", "demo")
     .eq("status", "demo")
@@ -369,9 +363,10 @@ export async function resolvePublicTenant(
     displayName: data.display_name,
     id: data.id,
     slug: data.slug,
-    slogan:
-      getDemoTenantIdentity(data.slug)?.slogan ??
-      "Conteúdo para vidas mais longas",
+    slogan: readTenantSlogan(
+      data.settings_json,
+      getDemoTenantIdentity(data.slug)?.slogan,
+    ),
   };
 }
 
@@ -382,7 +377,7 @@ export async function resolvePublicTenantById(
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from("tenants")
-    .select("id, slug, display_name")
+    .select("id, slug, display_name, settings_json")
     .eq("id", tenantId)
     .eq("kind", "demo")
     .eq("status", "demo")
@@ -400,9 +395,10 @@ export async function resolvePublicTenantById(
     displayName: data.display_name,
     id: data.id,
     slug: data.slug,
-    slogan:
-      getDemoTenantIdentity(data.slug)?.slogan ??
-      "Conteúdo para vidas mais longas",
+    slogan: readTenantSlogan(
+      data.settings_json,
+      getDemoTenantIdentity(data.slug)?.slogan,
+    ),
   };
 }
 

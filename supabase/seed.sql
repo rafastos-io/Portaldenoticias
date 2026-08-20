@@ -49,15 +49,6 @@ values
     'demo',
     '{"slogan":"Clareza para decidir o próximo passo","segment":"serviços financeiros/crédito","fallback_image":"/images/editorial-hero-demo.png"}',
     true
-  ),
-  (
-    '00000000-0000-4000-8000-000000000007',
-    'bv-educacao',
-    'BV Educação',
-    'demo',
-    'demo',
-    '{"slogan":"Educação financeira e soluções de crédito para todas as fases da vida","segment":"serviços financeiros/crédito","fallback_image":"/images/editorial-hero-demo.png"}',
-    true
   )
 on conflict (id) do update set
   slug = excluded.slug,

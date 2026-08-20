@@ -161,12 +161,14 @@ describe("validação da identidade no servidor", () => {
     formData.set("tenantId", TENANT_ID);
     formData.set("logoAlt", "Logo da Vértice Longevidade");
     formData.set("logoCredit", "Asset original de demonstração");
+    formData.set("logoRightsBasis", "demo-original");
     formData.set("logo", new File([bytes], "logo.png", { type: "image/png" }));
 
     await expect(parseLogoUploadForm(formData)).resolves.toMatchObject({
       contentType: "image/png",
       extension: "png",
       height: 120,
+      rightsBasis: "demo-original",
       tenantId: TENANT_ID,
       width: 320,
     });
@@ -177,6 +179,7 @@ describe("validação da identidade no servidor", () => {
     formData.set("tenantId", TENANT_ID);
     formData.set("logoAlt", "Logo inválido");
     formData.set("logoCredit", "Teste");
+    formData.set("logoRightsBasis", "demo-original");
     formData.set(
       "logo",
       new File(["not-an-image"], "logo.png", { type: "image/png" }),
@@ -184,6 +187,29 @@ describe("validação da identidade no servidor", () => {
 
     await expect(parseLogoUploadForm(formData)).rejects.toThrow(
       "PNG ou JPEG válido",
+    );
+  });
+
+  it("registra logo real somente com base de uso aprovada", async () => {
+    const bytes = new Uint8Array(24);
+    bytes.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    const view = new DataView(bytes.buffer);
+    view.setUint32(16, 320);
+    view.setUint32(20, 120);
+    const formData = new FormData();
+    formData.set("tenantId", TENANT_ID);
+    formData.set("logoAlt", "Logo do banco BV");
+    formData.set("logoCredit", "Banco BV — banco de imagens oficial");
+    formData.set("logoRightsBasis", "authorized-brand-validation");
+    formData.set("logo", new File([bytes], "logo.png", { type: "image/png" }));
+
+    await expect(parseLogoUploadForm(formData)).resolves.toMatchObject({
+      rightsBasis: "authorized-brand-validation",
+    });
+
+    formData.set("logoRightsBasis", "public-repository");
+    await expect(parseLogoUploadForm(formData)).rejects.toThrow(
+      "Variante visual não aprovada",
     );
   });
 });

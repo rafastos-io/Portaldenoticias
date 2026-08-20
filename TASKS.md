@@ -36,7 +36,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C210 | P1 | DONE | C203 | Contexto global de tenant no ADM |
 | C211 | P1 | DONE | C204 | Workbench de identidade com preview vivo |
 | C212 | P1 | DONE | C211 | Quatro modelos estruturais de site por segmento |
-| C213 | P1 | READY | C210,C211,C212 | Criar/duplicar tenant demo escolhendo o modelo |
+| C213 | P1 | VERIFY | C210,C211,C212 | Criar/duplicar tenant demo escolhendo o modelo |
 | C214 | P1 | BLOCKED | C213 | Logo e mídia fictícia com Storage isolado |
 | C220 | P1 | BLOCKED | C210 | Templates e variantes de cadastro editorial |
 | C221 | P1 | BLOCKED | C220 | Distribuição e overrides por tenant |

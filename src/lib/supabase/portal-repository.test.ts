@@ -15,6 +15,7 @@ import {
   getPublicCategoryName,
   readPublicStoryBodyBlocks,
   readEditorialOrigin,
+  readTenantSlogan,
   resolveDefaultPublicTenant,
 } from "./portal-repository";
 
@@ -29,7 +30,6 @@ describe("identidade pública de tenant", () => {
     ["abrafarma", "Abrafarma"],
     ["broadcast-saude", "Broadcast Saúde"],
     ["credito-demo-orbita", "Crédito Demo Órbita"],
-    ["bv-educacao", "BV Educação"],
   ])("resolve %s sem fallback entre clientes", (slug, displayName) => {
     expect(getDemoTenantIdentity(slug)).toMatchObject({
       displayName,
@@ -42,18 +42,24 @@ describe("identidade pública de tenant", () => {
     expect(getDemoTenantThemeFallback("tenant-inexistente")).toBeNull();
   });
 
-  it("mantém as seis marcas explícitas no fallback seguro", () => {
+  it("mantém as cinco marcas explícitas no fallback seguro", () => {
     const themes = [
       getDemoTenantThemeFallback("banco-demo-horizonte"),
       getDemoTenantThemeFallback("seguros-demo-atlas"),
       getDemoTenantThemeFallback("abrafarma"),
       getDemoTenantThemeFallback("broadcast-saude"),
       getDemoTenantThemeFallback("credito-demo-orbita"),
-      getDemoTenantThemeFallback("bv-educacao"),
     ];
 
-    expect(new Set(themes.map((theme) => theme?.primary)).size).toBe(6);
+    expect(new Set(themes.map((theme) => theme?.primary)).size).toBe(5);
     expect(new Set(themes.map((theme) => theme?.siteModel)).size).toBe(4);
+  });
+
+  it("resolve o slogan persistido de uma identidade criada no ADM", () => {
+    expect(
+      readTenantSlogan({ slogan: "Educação para escolhas mais leves" }),
+    ).toBe("Educação para escolhas mais leves");
+    expect(readTenantSlogan({}, "Fallback seguro")).toBe("Fallback seguro");
   });
 
   it("normaliza o rótulo público da editoria ti sem alterar o slug", () => {

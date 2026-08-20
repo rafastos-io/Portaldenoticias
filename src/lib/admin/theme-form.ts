@@ -27,6 +27,10 @@ export const APPROVED_CARDS = [
   "compact-horizontal",
   "data-led",
 ] as const;
+export const APPROVED_LOGO_RIGHTS = [
+  "demo-original",
+  "authorized-brand-validation",
+] as const;
 
 const HEX = /^#[0-9a-f]{6}$/i;
 
@@ -299,6 +303,11 @@ export async function parseLogoUploadForm(formData: FormData) {
     extension,
     height: dimensions.height,
     tenantId: readUuid(formData, "tenantId", "Tenant"),
+    rightsBasis: option(
+      formData,
+      "logoRightsBasis",
+      APPROVED_LOGO_RIGHTS,
+    ),
     width: dimensions.width,
   };
 }

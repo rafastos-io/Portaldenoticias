@@ -3,7 +3,6 @@ import {
   parseDemoApiQuery,
 } from "@/lib/demo-api/query";
 import {
-  getDemoTenantIdentity,
   listPublicStories,
   resolvePublicTenant,
 } from "@/lib/supabase/portal-repository";
@@ -55,16 +54,6 @@ export async function GET(request: Request) {
             : "Filtros inválidos.",
       },
       400,
-    );
-  }
-
-  if (!getDemoTenantIdentity(query.tenantSlug)) {
-    return json(
-      {
-        demo: true,
-        error: "Tenant demonstrativo não encontrado.",
-      },
-      404,
     );
   }
 

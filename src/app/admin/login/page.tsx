@@ -41,8 +41,8 @@ export default function AdminLoginPage() {
               Operação editorial, pronta para cada marca.
             </p>
             <p className="mt-5 max-w-xl text-base leading-7 text-slate-200">
-              Ambiente com conteúdo e identidades inteiramente fictícios para
-              demonstração do produto.
+              Ambiente demonstrativo. Marcas ou conteúdos reais aparecem
+              somente quando há autorização e procedência registradas.
             </p>
           </div>
         </section>
@@ -84,8 +84,8 @@ export default function AdminLoginPage() {
             </p>
             <LoginForm loginToken={loginToken} />
             <p className="mt-7 border-t border-slate-300 pt-5 text-xs leading-5 text-slate-500">
-              Este gate protege apenas dados fictícios e deve ser substituído
-              antes de qualquer uso em produção real.
+              Este gate protege apenas o ambiente de validação e deve ser
+              substituído antes de qualquer operação editorial real.
             </p>
           </div>
         </section>

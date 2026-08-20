@@ -144,6 +144,7 @@ export async function uploadAdminThemeLogo(input: {
   credit: string;
   extension: "jpg" | "png";
   height: number;
+  rightsBasis: "authorized-brand-validation" | "demo-original";
   tenantId: string;
   width: number;
 }) {
@@ -165,7 +166,7 @@ export async function uploadAdminThemeLogo(input: {
       height: input.height,
       mime_type: input.contentType,
       owner_tenant_id: tenantId,
-      rights_basis: "demo-original",
+      rights_basis: input.rightsBasis,
       sha256: createHash("sha256").update(input.body).digest("hex"),
       size_bytes: input.body.byteLength,
       status: "ready",

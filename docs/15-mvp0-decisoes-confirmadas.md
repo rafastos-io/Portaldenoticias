@@ -44,6 +44,18 @@ briefing e no DOCX, com estas condições:
 - o contrato operacional está detalhado em
   `docs/24-validacao-broadcast-saude-conteudo-real.md`.
 
+### Emenda de marca da validação — 20/08/2026
+
+O responsável autorizou o cadastro da marca `BV Educação` para validação do
+portal white-label. A autorização limita-se à identidade da demonstração:
+
+- o logo usa material fornecido para esta validação, com referência ao banco
+  de imagens oficial do banco BV;
+- o asset fica no Storage privado e isolado do tenant;
+- crédito e base de uso `authorized-brand-validation` são obrigatórios;
+- o cadastro não autoriza copiar matérias, campanhas ou interfaces do banco;
+- o ambiente permanece `kind/status=demo`, `is_demo=true` e `noindex`.
+
 ## Marcas fictícias
 
 ### Banco Demo Horizonte

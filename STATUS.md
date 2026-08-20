@@ -1,6 +1,50 @@
 # Status do MVP-0
 
-Atualizado em: 12/08/2026.
+Atualizado em: 20/08/2026.
+
+## C213 — retomada: cadastro persistente da marca BV Educação — 20/08/2026
+
+### Contrato da entrega
+
+- resultado: cadastrar `bv-educacao` pelo fluxo multi-tenant real, com tema,
+  logo e referências editoriais persistidos no Supabase, sem depender de
+  fallback codificado;
+- aceite: tenant `kind/status=demo`, `is_demo=true`, modelo
+  `financial-services-credit`, tema publicado, logo no Storage isolado,
+  matérias reaproveitadas por distribuição, auditoria e portal/ADM validados
+  em 390/768/1440 px;
+- riscos: uso autorizado de marca real precisa manter procedência do logo e o
+  ambiente demonstrativo; nenhuma matéria canônica será duplicada;
+- deploy: Preview aprovado antes de integrar a branch na `main`, publicar a
+  Production e remover a branch remota;
+- diagnóstico inicial: o commit `17dc23e` não persistiu o tenant. O script
+  dependia de `DATABASE_URL`, ausente neste ambiente, e encerrava com sucesso;
+  fallbacks de código e seed incompleto mascaravam a ausência no Supabase.
+
+### Implementação e evidências locais
+
+- removidos o script silencioso, o seed incompleto, o logo público sem
+  isolamento e os fallbacks codificados de `bv-educacao`;
+- a resolução pública e a rota JSON agora aceitam qualquer tenant demo válido
+  persistido, com slogan vindo de `settings_json`, sem allowlist por slug;
+- o cadastro real pelo ADM criou o tenant
+  `d1780f5a-16ec-4dae-9b07-070f0d8c7b8a`, com modelo
+  `financial-services-credit`, tema publicado e auditoria
+  `tenant.demo_created`, `theme.updated` e `theme.logo_updated`;
+- 27 distribuições e três placements foram copiados por referência; o tenant
+  possui zero `content_items` e zero categorias próprias, comprovando que não
+  houve duplicação canônica;
+- o portal e a rota JSON publicaram 25 matérias ativas do preset de crédito;
+- logo PNG de 17.613 bytes salvo no bucket privado sob prefixo do tenant, com
+  alt, crédito, `authorized-brand-validation` e URL assinada funcional;
+- navegador local: portal 200, um `h1`, logo presente, sem overlay, sem erro de
+  console e sem overflow em 390 e 1440 px; evidências em
+  `artifacts/c213-bv/`;
+- `pnpm check`: lint, TypeScript, 27 arquivos/145 testes e build de produção
+  aprovados.
+
+Status promovido a `VERIFY`; falta validar o Preview imutável, integrar na
+`main`, reverificar a Production e remover a branch remota.
 
 ## C252 — nova análise sobre canetas emagrecedoras — 12/08/2026
 

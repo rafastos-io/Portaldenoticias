@@ -6,8 +6,6 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/supabase/portal-repository", () => ({
-  getDemoTenantIdentity: (slug: string) =>
-    slug === "banco-demo-horizonte" ? { slug } : null,
   listPublicStories: mocks.listPublicStories,
   resolvePublicTenant: mocks.resolvePublicTenant,
 }));
@@ -81,7 +79,8 @@ describe("GET /api/demo/content", () => {
     expect(mocks.listPublicStories).toHaveBeenCalledWith(tenant.id);
   });
 
-  it("recusa tenant fora da allowlist antes de consultar o banco", async () => {
+  it("recusa tenant inexistente após consultar o catálogo persistido", async () => {
+    mocks.resolvePublicTenant.mockResolvedValueOnce(null);
     const response = await GET(
       new Request(
         "http://localhost/api/demo/content?tenant=tenant-inexistente",
@@ -91,7 +90,7 @@ describe("GET /api/demo/content", () => {
     expect(response.status).toBe(404);
     expect(response.headers.get("x-robots-tag")).toBe("noindex, nofollow");
     expect(await response.json()).toMatchObject({ demo: true });
-    expect(mocks.resolvePublicTenant).not.toHaveBeenCalled();
+    expect(mocks.resolvePublicTenant).toHaveBeenCalledWith("tenant-inexistente");
     expect(mocks.listPublicStories).not.toHaveBeenCalled();
   });
 

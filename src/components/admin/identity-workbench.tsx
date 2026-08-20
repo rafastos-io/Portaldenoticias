@@ -198,6 +198,22 @@ export function IdentityWorkbench({
                 required
               />
             </label>
+            <label className="grid gap-2 text-sm font-bold sm:col-span-2">
+              Base de uso
+              <select
+                className={control}
+                defaultValue="demo-original"
+                name="logoRightsBasis"
+                required
+              >
+                <option value="demo-original">
+                  Asset original da demonstração
+                </option>
+                <option value="authorized-brand-validation">
+                  Marca autorizada para validação
+                </option>
+              </select>
+            </label>
           </div>
           <button
             className="min-h-11 w-fit bg-slate-950 px-5 text-sm font-bold text-white"
