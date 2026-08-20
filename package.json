@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "demo:reset": "node --env-file-if-exists=.env.local scripts/reset-demo.mjs",
     "smoke:admin": "node --env-file-if-exists=.env.local scripts/smoke-admin.mjs",
+    "smoke:a11y": "node scripts/smoke-accessibility.mjs",
     "release:promote": "node --env-file-if-exists=.env.local scripts/promote-with-smoke.mjs",
     "build": "next build",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
@@ -30,6 +31,7 @@
     "@types/node": "24.10.1",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
+    "axe-core": "4.12.1",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.11",
     "playwright": "1.62.0",

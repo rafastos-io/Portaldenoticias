@@ -6,6 +6,7 @@ import type {
   PublicStory,
   PublicTenant,
 } from "@/lib/supabase/portal-repository";
+import { getYouTubeEmbedUrl } from "@/lib/presentation/youtube-embed";
 
 export function tenantQuery(tenant: PublicTenant) {
   return `?tenant=${encodeURIComponent(tenant.slug)}`;
@@ -91,6 +92,36 @@ export function ArticleBody({
   story: PublicStory;
 }) {
   if (story.externalOnly && story.sourceUrl) {
+    const embedUrl = getYouTubeEmbedUrl(story.sourceUrl);
+    if (embedUrl) {
+      return (
+        <div className="border-y border-border-subtle py-8 text-base leading-7">
+          <div className="aspect-video overflow-hidden bg-black">
+            <iframe
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="size-full border-0"
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              src={embedUrl}
+              title={`Vídeo: ${story.title}`}
+            />
+          </div>
+          <p className="mt-5 text-sm text-text-muted">
+            O vídeo pode ser reproduzido nesta página. Legendas e demais
+            recursos dependem da publicação original no YouTube.
+          </p>
+          <a
+            className="mt-4 inline-flex min-h-11 items-center font-bold text-brand-primary underline underline-offset-4"
+            href={story.sourceUrl}
+            rel="noreferrer"
+            target="_blank"
+          >
+            Abrir no YouTube {story.sourceLabel ? `— ${story.sourceLabel}` : ""}
+          </a>
+        </div>
+      );
+    }
     return (
       <div className="border-y border-border-subtle py-8 text-base leading-7">
         <p>

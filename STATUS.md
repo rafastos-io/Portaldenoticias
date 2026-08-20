@@ -2,6 +2,40 @@
 
 Atualizado em: 20/08/2026.
 
+## C254 — vídeos incorporados e acessibilidade pública — 20/08/2026
+
+### Contrato da entrega
+
+- resultado: reproduzir os três vídeos BV dentro da matéria e adicionar um
+  conjunto gratuito, leve e verificável de recursos de acessibilidade;
+- aceite: embed seguro e responsivo, VLibras, controles de leitura persistidos,
+  navegação por teclado, contraste e movimento reduzido validados em
+  390/768/1440;
+- ferramentas: VLibras para tradução assistiva; controles nativos para tamanho,
+  contraste e movimento; ESLint JSX a11y, axe e revisão manual WCAG 2.2 AA para
+  qualidade;
+- riscos: widget ou automação não substituem conformidade manual; não copiar
+  mídia do YouTube; preservar tenant, procedência e alterações locais do usuário;
+- escopo posterior: avatar de matérias relacionadas registrado em `C255`.
+
+### Implementação e evidências locais
+
+- os três formatos autorizados (`watch`, `shorts` e `youtu.be`) são convertidos
+  somente quando HTTPS e com ID válido para `youtube-nocookie.com`;
+- iframe responsivo com título acessível, tela cheia, carregamento tardio,
+  pedido de legendas em português e link de origem alternativo;
+- VLibras carregado após a interação inicial, sem bloquear o conteúdo;
+- painel nativo com texto padrão/grande/muito grande, alto contraste e redução
+  de movimento; preferências persistem no navegador e usam `aria-pressed`;
+- axe identificou seis falhas reais de contraste no rodapé BV; todas foram
+  corrigidas e o smoke final passou em duas rotas × 390/768/1440;
+- navegador real confirmou embed, VLibras, persistência, contraste, movimento,
+  ausência de overflow e console limpo em mobile/desktop;
+- evidências visuais em `artifacts/c254-accessibility/`;
+- `pnpm check`: lint, tipos, 30 arquivos/153 testes e build aprovados.
+
+Status: `VERIFY`; falta Preview, Production e reverificação pública.
+
 ## C253 — pauta BV Educação e padrão de crédito — 20/08/2026
 
 ### Contrato da entrega

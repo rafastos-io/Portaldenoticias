@@ -63,8 +63,9 @@ briefing para validação da marca e para compartilhamento com os tenants ativos
 do modelo `financial-services-credit`:
 
 - os 18 textos locais preservam título, autoria, data, texto e fonte;
-- os três vídeos mantêm somente metadados e link para o YouTube, sem cópia de
-  vídeo, miniatura ou transcrição;
+- os três vídeos permanecem hospedados no YouTube e podem ser reproduzidos por
+  embed em modo de privacidade reforçada, sem cópia de vídeo, miniatura ou
+  transcrição; o link de origem continua disponível como alternativa;
 - a referência operacional é `CLIENTE-VALIDACAO-BV-2026-08-20` e as
   distribuições usam `rights_code = authorized-real`;
 - o conteúdo é canônico na plataforma e distribuído por referência, sem

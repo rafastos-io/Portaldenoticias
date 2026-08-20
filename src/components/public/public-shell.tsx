@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
 import { PublicHeader } from "@/components/public/public-header";
+import { AccessibilityControls } from "@/components/public/accessibility-controls";
+import { VLibrasWidget } from "@/components/public/vlibras-widget";
 import type { ThemeValues } from "@/lib/admin/theme-form";
 import type { PublicTenant } from "@/lib/supabase/portal-repository";
 
@@ -49,13 +51,15 @@ export function PublicShell({
       <a className="skip-link" href="#conteudo-principal">
         Pular para o conteúdo
       </a>
+      <AccessibilityControls />
       <PublicHeader categories={categories} tenant={tenant} theme={theme} />
       {children}
+      <VLibrasWidget />
       <footer className="model-footer border-t-4 border-accent bg-surface-inverse text-text-on-brand">
         <div className="page-container py-12 sm:py-16">
           <div className="grid gap-12 border-b border-white/20 pb-12 lg:grid-cols-[1.3fr_0.7fr_0.9fr]">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-65">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-90">
                 Portal editorial
               </p>
               <p className="mt-4 max-w-xl font-heading text-3xl leading-tight font-bold sm:text-4xl">
@@ -64,7 +68,7 @@ export function PublicShell({
               <p className="mt-3 max-w-xl text-base leading-7 opacity-75">
                 {theme.slogan}
               </p>
-              <p className="mt-6 max-w-xl text-sm leading-6 opacity-65">
+              <p className="mt-6 max-w-xl text-sm leading-6 opacity-90">
                 Jornalismo sobre saúde, longevidade, inovação e seus impactos
                 econômicos, apresentado em uma experiência editorial
                 white-label.
@@ -72,7 +76,7 @@ export function PublicShell({
             </div>
 
             <nav aria-label="Navegação do rodapé">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] opacity-55">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] opacity-90">
                 Navegue
               </p>
               <ul className="mt-4 space-y-3 text-sm font-semibold">
@@ -109,7 +113,7 @@ export function PublicShell({
             </nav>
 
             <nav aria-label="Editorias no rodapé">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] opacity-55">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] opacity-90">
                 Editorias
               </p>
               <ul className="mt-4 grid gap-3 text-sm font-semibold sm:grid-cols-2 lg:grid-cols-1">
@@ -127,7 +131,7 @@ export function PublicShell({
             </nav>
           </div>
 
-          <div className="flex flex-col gap-4 pt-6 text-xs leading-5 opacity-60 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 pt-6 text-xs leading-5 opacity-80 sm:flex-row sm:items-center sm:justify-between">
             <p>
               © {currentYear} {theme.brandName}. Todos os direitos reservados.
             </p>

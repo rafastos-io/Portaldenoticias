@@ -62,6 +62,30 @@ html {
   scroll-behavior: smooth;
 }
 
+html[data-a11y-font="large"] {
+  font-size: 112.5%;
+}
+
+html[data-a11y-font="xlarge"] {
+  font-size: 125%;
+}
+
+html[data-a11y-contrast="high"] .site-model {
+  --accent: #ffbf00 !important;
+  --brand-primary: #000000 !important;
+  --brand-secondary: #00458f !important;
+  --border-subtle: #000000 !important;
+  --focus: #d10000 !important;
+  --link: #0033cc !important;
+  --surface-inverse: #000000 !important;
+  --surface-muted: #e6e6e6 !important;
+  --surface-page: #ffffff !important;
+  --surface-raised: #ffffff !important;
+  --text-muted: #262626 !important;
+  --text-on-brand: #ffffff !important;
+  --text-primary: #000000 !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -295,4 +319,25 @@ textarea {
   .market-ticker-copy[aria-hidden="true"] {
     display: none;
   }
+}
+
+html[data-a11y-motion="reduced"] *,
+html[data-a11y-motion="reduced"] *::before,
+html[data-a11y-motion="reduced"] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+html[data-a11y-motion="reduced"] .market-ticker-viewport {
+  overflow-x: auto;
+}
+
+html[data-a11y-motion="reduced"] .market-ticker-track {
+  animation: none !important;
+}
+
+html[data-a11y-motion="reduced"] .market-ticker-copy[aria-hidden="true"] {
+  display: none;
 }

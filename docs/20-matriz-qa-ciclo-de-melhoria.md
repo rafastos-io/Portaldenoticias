@@ -127,6 +127,19 @@ Critérios:
 - nenhuma dependência nova sem justificativa;
 - avisos de índice não justificam remoção antes de dados de uso.
 
+## Ferramentas gratuitas de acessibilidade
+
+- `pnpm smoke:a11y` executa axe-core nas rotas públicas críticas em mobile e
+  desktop, cobrindo WCAG 2.0/2.1/2.2 A/AA e boas práticas;
+- ESLint com JSX a11y permanece como gate estático de componentes React;
+- VLibras oferece tradução assistiva em Libras e os controles nativos permitem
+  tamanho de texto, alto contraste e redução de movimento;
+- embeds de terceiros são verificados separadamente por origem, título e
+  responsividade; o axe não inspeciona o conteúdo interno cross-origin;
+- automação e widgets não comprovam conformidade sozinhos: teclado, zoom de
+  200%, leitor de tela, legendas e testes com pessoas com deficiência continuam
+  obrigatórios para uma declaração WCAG 2.2 AA.
+
 ## Evidência mínima por tarefa
 
 Registrar em `STATUS.md`:

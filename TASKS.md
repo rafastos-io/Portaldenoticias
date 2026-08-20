@@ -46,6 +46,8 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C251 | P0 | DONE | C211,C250 | Corrigir upload de logo de até 2 MB e confirmar persistência da identidade no portal |
 | C252 | P0 | DONE | C250 | Adicionar análise sobre canetas emagrecedoras sem substituir pautas existentes |
 | C253 | P0 | DONE | C213 | Catalogar a pauta BV Educação e compartilhá-la com o padrão de crédito |
+| C254 | P0 | VERIFY | C253 | Incorporar vídeos e reforçar acessibilidade pública gratuita |
+| C255 | P1 | BLOCKED | C254 | Avatar discreto de matérias relacionadas por categoria |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
@@ -382,6 +384,29 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
 - não criar conteúdo para Glossário enquanto não houver verbetes ou links;
 - validar idempotência, isolamento de tenants, navegação, rota JSON, portal em
   390/1440, lint, tipos, testes e build.
+
+### C254
+
+- incorporar vídeos autorizados do YouTube na página da matéria sem copiar a
+  mídia e sem obrigar a saída do portal;
+- restringir embeds a URLs HTTPS reconhecidas do YouTube e usar o domínio de
+  privacidade reforçada;
+- integrar VLibras e controles gratuitos de tamanho do texto, contraste e
+  redução de movimento, mantendo navegação por teclado e preferências locais;
+- manter ESLint JSX a11y e axe como gates automatizados, complementados por
+  revisão manual WCAG 2.2 AA;
+- validar 390/768/1440, teclado, movimento reduzido, vídeo, lint, tipos,
+  testes, build, Preview e Production.
+
+### C255
+
+- exibir no canto inferior esquerdo um avatar opcional e não intrusivo,
+  preservando o canto do VLibras;
+- sugerir matérias correlatas da mesma categoria sem compartilhar dados entre
+  tenants e sem cobrir controles de acessibilidade;
+- respeitar movimento reduzido, fechamento, teclado, leitores de tela e
+  persistência da preferência do visitante;
+- definir frequência, copy, estados vazio/erro e medição antes de implementar.
 
 ## Como desbloquear
 
