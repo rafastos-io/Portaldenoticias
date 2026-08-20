@@ -43,11 +43,11 @@ describe("site model database contract", () => {
   });
 
   it("keeps both RPCs server-only", () => {
-    expect(migration).toContain(
-      "from public, anon, authenticated;\ngrant execute on function public.cms_save_theme_v2",
+    expect(migration).toMatch(
+      /from public, anon, authenticated;\r?\ngrant execute on function public\.cms_save_theme_v2/,
     );
-    expect(migration).toContain(
-      "from public, anon, authenticated;\ngrant execute on function public.cms_create_demo_tenant_v2",
+    expect(migration).toMatch(
+      /from public, anon, authenticated;\r?\ngrant execute on function public\.cms_create_demo_tenant_v2/,
     );
     expect(migration).toContain("to service_role;");
   });
@@ -57,8 +57,8 @@ describe("site model database contract", () => {
       expect(seed).toContain(`"site_model":"${siteModel}"`);
     }
     expect(seed).toContain("'credito-demo-orbita'");
-    expect(seed).toContain(
-      "from public.distributions source\nwhere source.tenant_id",
+    expect(seed).toMatch(
+      /from public\.distributions source\r?\nwhere source\.tenant_id/,
     );
   });
 

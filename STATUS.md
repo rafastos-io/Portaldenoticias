@@ -2,6 +2,37 @@
 
 Atualizado em: 20/08/2026.
 
+## C253 — pauta BV Educação e padrão de crédito — 20/08/2026
+
+### Contrato da entrega
+
+- resultado: cadastrar a pauta fornecida para `BV Educação` e compartilhá-la,
+  sem duplicação canônica, com os tenants ativos do modelo de crédito;
+- entrada: 18 arquivos em `BV`, um vídeo do especial de Imposto de Renda e
+  dois Shorts de Dicas valiosas; Glossário foi indicado sem conteúdo;
+- aceite: dez categorias ativas, 21 conteúdos catalogados, procedência e
+  autorização persistidas, distribuições ativas para BV e Crédito Órbita,
+  navegação atualizada e portal/JSON validados em 390/1440;
+- riscos: preservar as mudanças locais não relacionadas, não copiar mídia do
+  YouTube e não inventar verbetes ausentes.
+
+### Implementação e evidências
+
+- 18 textos locais e três vídeos catalogados em 21 conteúdos canônicos;
+- dez categorias ativas; Glossário permanece vazio por ausência de verbetes;
+- 42 distribuições ativas com `authorized-real`: 21 para `bv-educacao` e 21
+  para `credito-demo-orbita`, sem distribuição para outros modelos;
+- três vídeos por tenant mantêm `allow_full_body/allow_media=false` e link para
+  a origem; nenhuma mídia ou transcrição do YouTube foi copiada;
+- navegação do padrão de crédito ordenada pelas categorias do briefing e
+  ampliada de cinco para até dez editorias com rolagem horizontal;
+- produção com dados atuais: rota JSON HTTP 200 e 46 matérias totais; matéria
+  de inflação HTTP 200 com fonte e corpo; vídeo HTTP 200 com aviso externo e
+  link para a origem; sem overflow ou erros de console em 390/1440;
+- `pnpm check`: lint, tipos, 29 arquivos/150 testes e build aprovados.
+
+Status: `VERIFY`; falta publicar e reverificar a navegação ampliada.
+
 ## C213 — retomada: cadastro persistente da marca BV Educação — 20/08/2026
 
 ### Contrato da entrega

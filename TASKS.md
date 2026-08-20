@@ -45,6 +45,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C250 | P0 | DONE | C205,C212 | Separar Abrafarma/Broadcast Saúde, adotar conteúdo real autorizado e ticker setorial |
 | C251 | P0 | DONE | C211,C250 | Corrigir upload de logo de até 2 MB e confirmar persistência da identidade no portal |
 | C252 | P0 | DONE | C250 | Adicionar análise sobre canetas emagrecedoras sem substituir pautas existentes |
+| C253 | P0 | VERIFY | C213 | Catalogar a pauta BV Educação e compartilhá-la com o padrão de crédito |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
@@ -367,6 +368,20 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
   sem preço falso quando a fonte autenticada não estiver configurada;
 - validar fidelidade textual, isolamento, 390/768/1440, conteúdo pausado,
   lint, tipos, testes, build e auditor independente sem P0/P1.
+
+### C253
+
+- catalogar as 18 matérias fornecidas na pasta `BV` e os três vídeos indicados
+  no briefing, preservando título, autoria, data, origem e link;
+- criar as editorias Indicadores, Investimentos, Alerta de golpes, Programando
+  o futuro, Isso ou aquilo, Saia das dívidas, Alívio no orçamento, Guias,
+  Dicas valiosas e Glossário;
+- manter um único conteúdo canônico e distribuir por referência para todos os
+  tenants ativos do modelo `financial-services-credit`;
+- registrar autorização, procedência, direitos e caráter externo dos vídeos;
+- não criar conteúdo para Glossário enquanto não houver verbetes ou links;
+- validar idempotência, isolamento de tenants, navegação, rota JSON, portal em
+  390/1440, lint, tipos, testes e build.
 
 ## Como desbloquear
 

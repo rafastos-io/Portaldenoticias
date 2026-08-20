@@ -56,6 +56,21 @@ portal white-label. A autorização limita-se à identidade da demonstração:
 - o cadastro não autoriza copiar matérias, campanhas ou interfaces do banco;
 - o ambiente permanece `kind/status=demo`, `is_demo=true` e `noindex`.
 
+### Emenda editorial BV Educação — 20/08/2026
+
+O responsável autorizou o catálogo fornecido na pasta `BV` e nos links do
+briefing para validação da marca e para compartilhamento com os tenants ativos
+do modelo `financial-services-credit`:
+
+- os 18 textos locais preservam título, autoria, data, texto e fonte;
+- os três vídeos mantêm somente metadados e link para o YouTube, sem cópia de
+  vídeo, miniatura ou transcrição;
+- a referência operacional é `CLIENTE-VALIDACAO-BV-2026-08-20` e as
+  distribuições usam `rights_code = authorized-real`;
+- o conteúdo é canônico na plataforma e distribuído por referência, sem
+  duplicação por tenant;
+- a editoria Glossário é criada vazia até o responsável fornecer verbetes.
+
 ## Marcas fictícias
 
 ### Banco Demo Horizonte

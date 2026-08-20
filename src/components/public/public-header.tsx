@@ -35,7 +35,11 @@ export function PublicHeader({
   const centered = theme.siteModel === "insurance-pension";
   const visibleCategories = categories.slice(
     0,
-    theme.siteModel === "health-pharma" ? 9 : 5,
+    theme.siteModel === "health-pharma"
+      ? 9
+      : theme.siteModel === "financial-services-credit"
+        ? 10
+        : 5,
   );
   return (
     <header
@@ -97,7 +101,8 @@ export function PublicHeader({
       >
         <div
           className={`page-container flex min-h-12 items-center gap-7 text-sm font-semibold ${
-            theme.siteModel === "health-pharma"
+            theme.siteModel === "health-pharma" ||
+            theme.siteModel === "financial-services-credit"
               ? "overflow-x-auto whitespace-nowrap"
               : ""
           } ${
