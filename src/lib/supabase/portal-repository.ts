@@ -72,6 +72,12 @@ const DEMO_TENANTS: Record<string, PublicTenant> = {
     slug: "credito-demo-orbita",
     slogan: "Clareza para decidir o próximo passo",
   },
+  "bv-educacao": {
+    displayName: "BV Educação",
+    id: "00000000-0000-4000-8000-000000000007",
+    slug: "bv-educacao",
+    slogan: "Educação financeira e soluções de crédito para todas as fases da vida",
+  },
 };
 
 const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
@@ -154,6 +160,22 @@ const DEMO_THEME_FALLBACKS: Record<string, ThemeValues> = {
     siteModel: "financial-services-credit",
     slogan: "Clareza para decidir o próximo passo",
     textColor: "#142633",
+  },
+  "bv-educacao": {
+    accent: "#00BAF2",
+    background: "#F4F6F8",
+    brandName: "BV Educação",
+    card: "image-top",
+    font: "sans-geometrica",
+    header: "masthead-clean",
+    hero: "featured-grid",
+    logoAlt: "Logo BV Educação",
+    logoUrl: "/images/bv-logo.png",
+    primary: "#002B49",
+    secondary: "#0099DA",
+    siteModel: "financial-services-credit",
+    slogan: "Educação financeira e soluções de crédito para todas as fases da vida",
+    textColor: "#101828",
   },
 };
 

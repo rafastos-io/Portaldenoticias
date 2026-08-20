@@ -29,6 +29,7 @@ describe("identidade pública de tenant", () => {
     ["abrafarma", "Abrafarma"],
     ["broadcast-saude", "Broadcast Saúde"],
     ["credito-demo-orbita", "Crédito Demo Órbita"],
+    ["bv-educacao", "BV Educação"],
   ])("resolve %s sem fallback entre clientes", (slug, displayName) => {
     expect(getDemoTenantIdentity(slug)).toMatchObject({
       displayName,
@@ -41,16 +42,17 @@ describe("identidade pública de tenant", () => {
     expect(getDemoTenantThemeFallback("tenant-inexistente")).toBeNull();
   });
 
-  it("mantém as cinco marcas explícitas no fallback seguro", () => {
+  it("mantém as seis marcas explícitas no fallback seguro", () => {
     const themes = [
       getDemoTenantThemeFallback("banco-demo-horizonte"),
       getDemoTenantThemeFallback("seguros-demo-atlas"),
       getDemoTenantThemeFallback("abrafarma"),
       getDemoTenantThemeFallback("broadcast-saude"),
       getDemoTenantThemeFallback("credito-demo-orbita"),
+      getDemoTenantThemeFallback("bv-educacao"),
     ];
 
-    expect(new Set(themes.map((theme) => theme?.primary)).size).toBe(5);
+    expect(new Set(themes.map((theme) => theme?.primary)).size).toBe(6);
     expect(new Set(themes.map((theme) => theme?.siteModel)).size).toBe(4);
   });
 
