@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { EditorialNavigation } from "@/components/public/editorial-navigation";
 import type { ThemeValues } from "@/lib/admin/theme-form";
+import { getPublicBrandCopy } from "@/lib/presentation/public-brand-copy";
 import { getSiteModelDefinition } from "@/lib/presentation/site-models";
 import type { PublicTenant } from "@/lib/supabase/portal-repository";
 
@@ -32,6 +34,7 @@ export function PublicHeader({
 }) {
   const tenantQuery = `?tenant=${encodeURIComponent(tenant.slug)}`;
   const model = getSiteModelDefinition(theme.siteModel);
+  const brandCopy = getPublicBrandCopy(tenant.slug, model);
   const centered = theme.siteModel === "insurance-pension";
   const visibleCategories = categories.slice(
     0,
@@ -86,46 +89,21 @@ export function PublicHeader({
         {!centered ? (
           <div className="hidden text-right sm:block">
             <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-brand-primary">
-              {model.eyebrow}
+              {brandCopy.headerEyebrow}
             </p>
             <p className="mt-1 text-xs text-text-muted">
-              Saúde · Economia · Longevidade
+              {brandCopy.headerTopics}
             </p>
           </div>
         ) : null}
       </div>
 
-      <nav
-        aria-label="Navegação editorial"
-        className="hidden border-t border-border-subtle md:block"
-      >
-        <div
-          className={`page-container flex min-h-12 items-center gap-7 text-sm font-semibold ${
-            theme.siteModel === "health-pharma" ||
-            theme.siteModel === "financial-services-credit"
-              ? "overflow-x-auto whitespace-nowrap"
-              : ""
-          } ${
-            centered ? "justify-center" : ""
-          }`}
-        >
-          <Link
-            className="text-brand-primary decoration-brand-secondary decoration-2 hover:underline"
-            href={`/${tenantQuery}`}
-          >
-            Início
-          </Link>
-          {visibleCategories.map((category) => (
-            <Link
-              className="text-brand-primary decoration-brand-secondary decoration-2 hover:underline"
-              href={`/editoria/${category.slug}${tenantQuery}`}
-              key={category.slug}
-            >
-              {category.name}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <EditorialNavigation
+        categories={visibleCategories}
+        centered={centered}
+        homeHref={`/${tenantQuery}`}
+        tenantQuery={tenantQuery}
+      />
 
       <details className="model-mobile-menu border-t border-border-subtle md:hidden">
         <summary className="page-container flex min-h-12 cursor-pointer list-none items-center justify-between text-sm font-bold text-brand-primary">

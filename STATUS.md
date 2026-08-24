@@ -1,6 +1,46 @@
 # Status do MVP-0
 
-Atualizado em: 20/08/2026.
+Atualizado em: 23/08/2026.
+
+## C256 — posicionamento e navegação do BV Educação — 23/08/2026
+
+### Contrato da entrega
+
+- resultado: alinhar cabeçalho e rodapé à educação financeira do banco, tornar
+  a navegação extensa mais clara e reduzir o vazio da notícia VIVA sem imagem;
+- aceite: mudanças restritas ao tenant `bv-educacao` quando forem de marca,
+  demais tenants preservados, navegação acessível sem scrollbar nativa e
+  ausência de overflow em 390/768/1440;
+- risco: não alterar texto canônico, distribuição, direitos ou isolamento.
+
+### Implementação e evidências locais
+
+- cabeçalho BV usa `Educação financeira` e
+  `Crédito · Planejamento · Segurança`;
+- rodapé BV usa descrição sobre orçamento, crédito, prevenção a golpes e
+  planejamento, com atalhos reais para Guias e Dicas valiosas; nenhum texto de
+  saúde/longevidade permanece nessa marca;
+- demais tenants preservam o posicionamento anterior, coberto por teste;
+- navegação desktop mantém toque, trackpad e teclado, esconde a scrollbar
+  nativa, adiciona fades e botões laterais com rótulos acessíveis e respeita
+  movimento reduzido;
+- reprodução Playwright: barra com `scrollWidth=1450` e `clientWidth=1240`,
+  botão avançou `scrollLeft` de 4 para 210 e `scrollbar-width=none`;
+- notícia VIVA sem imagem usa grade de uma coluna; a chamada ocupou cerca de
+  688 px no desktop e deixou de reservar a coluna vazia;
+- navegador real retornou HTTP 200, sem overlay, erro de console ou overflow da
+  página em 390, 768 e 1440 px;
+- evidências visuais em `artifacts/c256-bv-ui/bv-home-390.png`,
+  `bv-home-768.png` e `bv-home-1440.png`;
+- `pnpm lint`, `pnpm typecheck`, 31 arquivos/155 testes e `pnpm build` passaram;
+- verificação independente aprovou código e fluxo sem P0/P1 funcional; o gate
+  concorrente de `.next/dev/types` foi regenerado após encerrar o dev server e
+  os checks limpos passaram;
+- P2 aceito: os controles foram validados em browser, mas ainda não possuem
+  teste automatizado de DOM dedicado;
+- commit: registrado na entrega isolada da C256.
+
+Status: `DONE`.
 
 ## C254 — vídeos incorporados e acessibilidade pública — 20/08/2026
 

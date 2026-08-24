@@ -223,6 +223,66 @@ textarea {
   align-items: center;
 }
 
+.editorial-nav-scroll {
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+}
+
+.editorial-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.editorial-nav-scroll a {
+  scroll-snap-align: start;
+}
+
+.editorial-nav-fade {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  width: 4.5rem;
+  pointer-events: none;
+  transition: opacity var(--motion-fast) ease;
+}
+
+.editorial-nav-fade-left {
+  left: 0;
+  background: linear-gradient(90deg, var(--surface-raised) 45%, transparent);
+}
+
+.editorial-nav-fade-right {
+  right: 0;
+  background: linear-gradient(270deg, var(--surface-raised) 45%, transparent);
+}
+
+.editorial-nav-control {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  transform: translateY(-50%);
+  place-items: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  color: var(--brand-primary);
+  background: var(--surface-raised);
+  box-shadow: 0 0.2rem 0.8rem rgb(0 0 0 / 10%);
+  cursor: pointer;
+  transition:
+    opacity var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    background var(--motion-fast) ease;
+}
+
+.editorial-nav-control:hover {
+  color: var(--text-on-brand);
+  background: var(--brand-primary);
+}
+
 .story-link svg {
   transition: transform var(--motion-fast) ease;
 }

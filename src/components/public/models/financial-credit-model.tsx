@@ -160,7 +160,9 @@ function FinancialNewsList({
         <div className="border-t-2 border-brand-primary">
           {stories.slice(0, 6).map((story) => (
             <article
-              className="grid gap-4 border-b border-border-subtle py-5 sm:grid-cols-[9rem_1fr]"
+              className={`grid gap-4 border-b border-border-subtle py-5 ${
+                story.imagePath ? "sm:grid-cols-[9rem_1fr]" : "grid-cols-1"
+              }`}
               key={story.id}
             >
               <StoryImage

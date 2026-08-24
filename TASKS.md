@@ -48,6 +48,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C253 | P0 | DONE | C213 | Catalogar a pauta BV Educação e compartilhá-la com o padrão de crédito |
 | C254 | P0 | DONE | C253 | Incorporar vídeos e reforçar acessibilidade pública gratuita |
 | C255 | P1 | READY | C254 | Avatar discreto de matérias relacionadas por categoria |
+| C256 | P1 | DONE | C254 | Ajustar posicionamento, rodapé, navegação editorial e lista de notícias do BV Educação |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
@@ -407,6 +408,17 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
 - respeitar movimento reduzido, fechamento, teclado, leitores de tela e
   persistência da preferência do visitante;
 - definir frequência, copy, estados vazio/erro e medição antes de implementar.
+
+### C256
+
+- substituir referências genéricas a saúde e longevidade no cabeçalho e no
+  rodapé do tenant `bv-educacao` por linguagem de educação financeira;
+- preservar o texto dos demais modelos e tenants;
+- esconder a scrollbar nativa da navegação editorial, mantendo rolagem por
+  toque, trackpad, teclado e controles laterais acessíveis;
+- indicar visualmente quando existem editorias fora da área visível;
+- fazer chamadas sem imagem ocuparem a largura disponível na lista de notícias;
+- validar 390/768/1440, foco, movimento reduzido, lint, tipos, testes e build.
 
 ## Como desbloquear
 

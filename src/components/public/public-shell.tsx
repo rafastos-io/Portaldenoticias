@@ -5,6 +5,8 @@ import { PublicHeader } from "@/components/public/public-header";
 import { AccessibilityControls } from "@/components/public/accessibility-controls";
 import { VLibrasWidget } from "@/components/public/vlibras-widget";
 import type { ThemeValues } from "@/lib/admin/theme-form";
+import { getPublicBrandCopy } from "@/lib/presentation/public-brand-copy";
+import { getSiteModelDefinition } from "@/lib/presentation/site-models";
 import type { PublicTenant } from "@/lib/supabase/portal-repository";
 
 type PublicShellProps = {
@@ -22,6 +24,27 @@ export function PublicShell({
 }: PublicShellProps) {
   const tenantQuery = `?tenant=${encodeURIComponent(tenant.slug)}`;
   const currentYear = new Date().getFullYear();
+  const brandCopy = getPublicBrandCopy(
+    tenant.slug,
+    getSiteModelDefinition(theme.siteModel),
+  );
+  const footerLinks =
+    tenant.slug === "bv-educacao"
+      ? [
+          { href: `/${tenantQuery}`, label: "Início" },
+          { href: `/${tenantQuery}#financial-latest`, label: "Últimas notícias" },
+          { href: `/editoria/guias${tenantQuery}`, label: "Guias" },
+          {
+            href: `/editoria/dicas-valiosas${tenantQuery}`,
+            label: "Dicas valiosas",
+          },
+        ]
+      : [
+          { href: `/${tenantQuery}`, label: "Início" },
+          { href: `/${tenantQuery}#destaques`, label: "Últimas notícias" },
+          { href: `/${tenantQuery}#editorias`, label: "Editorias" },
+          { href: `/${tenantQuery}#mercados`, label: "Mercados" },
+        ];
   const font =
     theme.font === "sans-geometrica"
       ? "Arial, Helvetica, sans-serif"
@@ -69,9 +92,7 @@ export function PublicShell({
                 {theme.slogan}
               </p>
               <p className="mt-6 max-w-xl text-sm leading-6 opacity-90">
-                Jornalismo sobre saúde, longevidade, inovação e seus impactos
-                econômicos, apresentado em uma experiência editorial
-                white-label.
+                {brandCopy.footerDescription}
               </p>
             </div>
 
@@ -80,35 +101,13 @@ export function PublicShell({
                 Navegue
               </p>
               <ul className="mt-4 space-y-3 text-sm font-semibold">
-                <li>
-                  <Link className="hover:opacity-70" href={`/${tenantQuery}`}>
-                    Início
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="hover:opacity-70"
-                    href={`/${tenantQuery}#destaques`}
-                  >
-                    Últimas notícias
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="hover:opacity-70"
-                    href={`/${tenantQuery}#editorias`}
-                  >
-                    Editorias
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="hover:opacity-70"
-                    href={`/${tenantQuery}#mercados`}
-                  >
-                    Mercados
-                  </Link>
-                </li>
+                {footerLinks.map((link) => (
+                  <li key={link.label}>
+                    <Link className="hover:opacity-70" href={link.href}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </nav>
 
@@ -135,7 +134,7 @@ export function PublicShell({
             <p>
               © {currentYear} {theme.brandName}. Todos os direitos reservados.
             </p>
-            <p>Saúde · Economia · Longevidade</p>
+            <p>{brandCopy.footerTopics}</p>
           </div>
         </div>
       </footer>
