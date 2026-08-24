@@ -88,6 +88,19 @@ O responsável autorizou duas novas editorias para a validação `BV Educação`
   `bv-educacao`; compartilhar o modelo visual não autoriza publicação automática
   em outro white-label.
 
+### Correção do escopo editorial BV — 23/08/2026
+
+- o catálogo público do `bv-educacao` fica restrito aos contratos
+  `CLIENTE-VALIDACAO-BV-2026-08-20` e `CLIENTE-VALIDACAO-BV-2026-08-23`, além de
+  futuros conteúdos próprios explicitamente criados pelo tenant;
+- distribuições herdadas de Abrafarma, Banco Horizonte, Crédito Órbita e Seguros
+  Atlas são retiradas somente do BV, sem excluir ou alterar o conteúdo canônico;
+- a navegação publicada funciona como allowlist por tenant e também protege
+  home, editorias e matérias contra distribuição acidental;
+- no Admin, conteúdo canônico da plataforma distribuído ao BV é visível e
+  identificado como somente leitura; edição e mudança de workflow continuam
+  exclusivas dos conteúdos próprios.
+
 ## Marcas fictícias
 
 ### Banco Demo Horizonte

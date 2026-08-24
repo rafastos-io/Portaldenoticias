@@ -304,9 +304,9 @@ export default async function AdminPage({
   const { editedItem, items, options, selectedTenant } = loaded;
   const showEditor = mode === "new" || Boolean(editedItem);
   const statusCounts = {
-    draft: items.filter((item) => item.workflow_status === "draft").length,
-    paused: items.filter((item) => item.workflow_status === "paused").length,
-    published: items.filter((item) => item.workflow_status === "published")
+    draft: items.filter((item) => item.effective_status === "draft").length,
+    paused: items.filter((item) => item.effective_status === "paused").length,
+    published: items.filter((item) => item.effective_status === "published")
       .length,
   };
 
@@ -322,7 +322,8 @@ export default async function AdminPage({
                 Conteúdo
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                Crie revisões e controle a publicação do tenant selecionado.
+                Crie matérias próprias e acompanhe o catálogo distribuído ao
+                tenant selecionado.
               </p>
             </div>
             <Link
@@ -431,12 +432,12 @@ export default async function AdminPage({
                   {selectedTenant.display_name}
                 </p>
                 <h2 className="mt-2 text-xl font-bold" id="conteudo-title">
-                  Matérias do tenant
+                  Catálogo disponível
                 </h2>
                 <p className="mt-1 text-sm text-slate-600">
                   {status
                     ? `${items.length} item(ns) com status ${statusLabels[status].toLowerCase()}.`
-                    : `${items.length} item(ns) persistidos neste catálogo.`}
+                    : `${items.length} item(ns) próprios ou distribuídos para este tenant.`}
                 </p>
               </div>
               {!status ? (
@@ -457,7 +458,7 @@ export default async function AdminPage({
               <div className="mt-6 border-y border-slate-300 bg-white py-12 text-center">
                 <h3 className="font-bold">Nenhuma matéria neste filtro</h3>
                 <p className="mt-2 text-sm text-slate-600">
-                  Ajuste o status ou crie um novo rascunho para este tenant.
+                  Ajuste o status ou crie uma matéria própria para este tenant.
                 </p>
               </div>
             ) : (
@@ -467,6 +468,9 @@ export default async function AdminPage({
                     <tr>
                       <th className="px-4 py-3 font-bold" scope="col">
                         Matéria
+                      </th>
+                      <th className="px-4 py-3 font-bold" scope="col">
+                        Origem
                       </th>
                       <th className="px-4 py-3 font-bold" scope="col">
                         Status
@@ -496,16 +500,29 @@ export default async function AdminPage({
                         <td className="px-4 py-4">
                           <span
                             className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${
-                              item.workflow_status === "published"
+                              item.catalog_source === "owned"
+                                ? "bg-sky-100 text-sky-950"
+                                : "bg-violet-100 text-violet-950"
+                            }`}
+                          >
+                            {item.catalog_source === "owned"
+                              ? "Própria"
+                              : "Distribuída"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <span
+                            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${
+                              item.effective_status === "published"
                                 ? "bg-emerald-100 text-emerald-900"
-                                : item.workflow_status === "paused"
+                                : item.effective_status === "paused"
                                   ? "bg-amber-100 text-amber-950"
                                   : "bg-slate-200 text-slate-800"
                             }`}
                           >
                             {
                               statusLabels[
-                                item.workflow_status as AdminContentStatus
+                                item.effective_status
                               ]
                             }
                           </span>
@@ -514,34 +531,57 @@ export default async function AdminPage({
                           {formatUpdate(item.updated_at)}
                         </td>
                         <td className="px-4 py-4">
-                          <div className="flex justify-end gap-2">
-                            <Link
-                              className="min-h-10 rounded-md px-3 py-2 text-xs font-bold text-[#174a47] no-underline hover:bg-slate-100"
-                              href={adminHref(selectedTenant.id, {
-                                edit: item.id,
-                                status,
-                              })}
-                            >
-                              Editar
-                            </Link>
-                            {item.workflow_status === "draft" ? (
-                              <StatusButton
-                                action={publishContentAction}
-                                contentId={item.id}
-                                label="Publicar"
-                                tenantId={selectedTenant.id}
-                              />
-                            ) : null}
-                            {item.workflow_status === "paused" ? (
-                              <StatusButton
-                                action={resumeContentAction}
-                                contentId={item.id}
-                                label="Retomar"
-                                tenantId={selectedTenant.id}
-                              />
-                            ) : null}
-                          </div>
-                          {item.workflow_status === "published" ? (
+                          {item.catalog_source === "owned" ? (
+                            <div className="flex justify-end gap-2">
+                              <Link
+                                className="min-h-10 rounded-md px-3 py-2 text-xs font-bold text-[#174a47] no-underline hover:bg-slate-100"
+                                href={adminHref(selectedTenant.id, {
+                                  edit: item.id,
+                                  status,
+                                })}
+                              >
+                                Editar
+                              </Link>
+                              {item.workflow_status === "draft" ? (
+                                <StatusButton
+                                  action={publishContentAction}
+                                  contentId={item.id}
+                                  label="Publicar"
+                                  tenantId={selectedTenant.id}
+                                />
+                              ) : null}
+                              {item.workflow_status === "paused" ? (
+                                <StatusButton
+                                  action={resumeContentAction}
+                                  contentId={item.id}
+                                  label="Retomar"
+                                  tenantId={selectedTenant.id}
+                                />
+                              ) : null}
+                            </div>
+                          ) : (
+                            <div className="text-right">
+                              {item.effective_status === "published" ? (
+                                <Link
+                                  className="inline-flex min-h-10 items-center rounded-md px-3 py-2 text-xs font-bold text-[#174a47] no-underline hover:bg-slate-100"
+                                  href={`/materia/${item.public_slug}?tenant=${encodeURIComponent(selectedTenant.slug)}`}
+                                  rel="noreferrer"
+                                  target="_blank"
+                                >
+                                  Ver no portal
+                                </Link>
+                              ) : (
+                                <span className="inline-flex min-h-10 items-center px-3 py-2 text-xs font-bold text-slate-500">
+                                  Indisponível no portal
+                                </span>
+                              )}
+                              <span className="mt-1 block text-xs text-slate-500">
+                                Edição canônica protegida
+                              </span>
+                            </div>
+                          )}
+                          {item.catalog_source === "owned" &&
+                          item.workflow_status === "published" ? (
                             <details className="mt-2 text-right">
                               <summary className="cursor-pointer text-xs font-bold text-amber-800">
                                 Pausar publicação

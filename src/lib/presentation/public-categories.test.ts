@@ -42,4 +42,28 @@ describe("ordenação das editorias públicas", () => {
       "especialista-responde",
     ]);
   });
+
+  it("usa a navegação publicada como allowlist do tenant", () => {
+    const stories = [
+      story("indicadores", "Indicadores"),
+      story("open-finance", "Open Finance"),
+      story("saude-e-regulacao", "Saúde & Regulação"),
+      story("jornada-de-credito-bv", "Jornada de crédito BV"),
+      story("especialista-responde", "Especialista responde"),
+    ];
+
+    expect(
+      listPublicCategories(stories, "financial-services-credit", [
+        "Início",
+        "Indicadores",
+        "Jornada de crédito BV",
+        "Especialista responde",
+        "Glossário",
+      ]).map((category) => category.slug),
+    ).toEqual([
+      "indicadores",
+      "jornada-de-credito-bv",
+      "especialista-responde",
+    ]);
+  });
 });

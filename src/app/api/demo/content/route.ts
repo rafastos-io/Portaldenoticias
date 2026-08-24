@@ -69,7 +69,9 @@ export async function GET(request: Request) {
       );
     }
 
-    const stories = (await listPublicStories(tenant.id)).filter(
+    const stories = (
+      await listPublicStories(tenant.id, tenant.catalogReferences)
+    ).filter(
       (story) =>
         !query.categorySlug || story.categorySlug === query.categorySlug,
     );

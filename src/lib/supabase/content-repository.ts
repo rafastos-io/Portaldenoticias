@@ -11,6 +11,30 @@ const PLATFORM_TENANT_ID = "00000000-0000-4000-8000-000000000001";
 export type AdminContentStatus = "draft" | "published" | "paused";
 export type AdminImageMode = "fallback" | "none";
 
+function distributionStatusToAdminStatus(
+  distribution: {
+    ends_at?: string | null;
+    starts_at?: string | null;
+    status: string;
+  },
+  workflowStatus: string,
+): AdminContentStatus {
+  if (workflowStatus !== "published") {
+    return workflowStatus === "paused" ? "paused" : "draft";
+  }
+  if (distribution.status === "paused") return "paused";
+  if (distribution.status !== "active") return "draft";
+  const now = Date.now();
+  if (
+    (distribution.starts_at && Date.parse(distribution.starts_at) > now) ||
+    (distribution.ends_at && Date.parse(distribution.ends_at) <= now)
+  ) {
+    return "draft";
+  }
+  if (distribution.status === "active") return "published";
+  return "draft";
+}
+
 function readDemoMedia(value: Json): {
   imageAlt: string;
   imageMode: AdminImageMode;
@@ -61,23 +85,101 @@ export async function listAdminContent(
 ) {
   const tenantId = toTenantId(tenantIdInput);
   const supabase = createServerSupabaseClient();
-  let itemQuery = supabase
+  let ownedItemQuery = supabase
     .from("content_items")
-    .select("id, content_type, workflow_status, updated_at, last_published_at")
+    .select(
+      "id, owner_tenant_id, canonical_slug, content_type, workflow_status, updated_at, last_published_at",
+    )
     .eq("owner_tenant_id", tenantId)
     .in("workflow_status", ["draft", "published", "paused"])
     .order("updated_at", { ascending: false });
 
   if (status) {
-    itemQuery = itemQuery.eq("workflow_status", status);
+    ownedItemQuery = ownedItemQuery.eq("workflow_status", status);
   }
 
-  const { data: items, error: itemsError } = await itemQuery;
-  if (itemsError) {
+  const distributionQuery = supabase
+    .from("distributions")
+    .select(
+      "content_item_id, status, slug_override, starts_at, ends_at, updated_at",
+    )
+    .eq("tenant_id", tenantId)
+    .in("status", ["draft", "scheduled", "active", "paused"])
+    .contains("channels", ["portal"])
+    .order("updated_at", { ascending: false });
+
+  const [ownedItemsResult, distributionsResult] = await Promise.all([
+    ownedItemQuery,
+    distributionQuery,
+  ]);
+  if (ownedItemsResult.error || distributionsResult.error) {
     throw new Error("Não foi possível listar as matérias do tenant.", {
-      cause: itemsError,
+      cause: ownedItemsResult.error ?? distributionsResult.error,
     });
   }
+
+  const distributionMap = new Map(
+    distributionsResult.data.map((distribution) => [
+      distribution.content_item_id,
+      distribution,
+    ]),
+  );
+  const distributedIds = [...distributionMap.keys()];
+  let distributedItems: typeof ownedItemsResult.data = [];
+  if (distributedIds.length > 0) {
+    const distributedItemQuery = supabase
+      .from("content_items")
+      .select(
+        "id, owner_tenant_id, canonical_slug, content_type, workflow_status, updated_at, last_published_at",
+      )
+      .in("id", distributedIds)
+      .in("workflow_status", ["draft", "published", "paused"])
+      .order("updated_at", { ascending: false });
+    const result = await distributedItemQuery;
+    if (result.error) {
+      throw new Error("Não foi possível carregar o catálogo distribuído.", {
+        cause: result.error,
+      });
+    }
+    distributedItems = result.data;
+  }
+
+  const ownedIds = new Set(ownedItemsResult.data.map((item) => item.id));
+  const allItems = [
+    ...ownedItemsResult.data.map((item) => {
+      const distribution = distributionMap.get(item.id);
+      return {
+        ...item,
+        catalog_source: "owned" as const,
+        distribution_status: distribution?.status ?? null,
+        effective_status: item.workflow_status as AdminContentStatus,
+        public_slug: distribution?.slug_override ?? item.canonical_slug,
+      };
+    }),
+    ...distributedItems
+      .filter((item) => !ownedIds.has(item.id))
+      .map((item) => {
+        const distribution = distributionMap.get(item.id)!;
+        return {
+          ...item,
+          catalog_source: "distributed" as const,
+          distribution_status: distribution.status,
+          effective_status: distributionStatusToAdminStatus(
+            distribution,
+            item.workflow_status,
+          ),
+          public_slug: distribution.slug_override ?? item.canonical_slug,
+          updated_at: distribution.updated_at ?? item.updated_at,
+        };
+      }),
+  ];
+  const items = (status
+    ? allItems.filter((item) => item.effective_status === status)
+    : allItems
+  ).sort(
+    (left, right) =>
+      new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime(),
+  );
 
   if (items.length === 0) {
     return [];

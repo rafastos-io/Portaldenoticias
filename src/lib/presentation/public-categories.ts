@@ -32,6 +32,7 @@ const CREDIT_CATEGORY_ORDER = [
 export function listPublicCategories(
   stories: PublicStory[],
   siteModel: SiteModelId,
+  navigation: string[] = [],
 ) {
   const categories = [
     ...new Map(
@@ -41,6 +42,19 @@ export function listPublicCategories(
       ]),
     ).values(),
   ];
+  const navigationOrder = new Map(
+    navigation
+      .filter((item) => item !== "Início")
+      .map((item, index) => [item, index]),
+  );
+  if (navigationOrder.size > 0) {
+    return categories
+      .filter((category) => navigationOrder.has(category.name))
+      .sort(
+        (left, right) =>
+          navigationOrder.get(left.name)! - navigationOrder.get(right.name)!,
+      );
+  }
   const preferredOrder =
     siteModel === "health-pharma"
       ? HEALTH_CATEGORY_ORDER

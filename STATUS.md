@@ -2,6 +2,53 @@
 
 Atualizado em: 23/08/2026.
 
+## C258 — escopo do catálogo BV e matérias distribuídas no Admin — 23/08/2026
+
+### Contrato da entrega
+
+- resultado: retirar do BV Educação as matérias herdadas de tenants
+  demonstrativos e tornar o catálogo autorizado visível no Admin;
+- aceite: 31 matérias autorizadas, 11 editorias com conteúdo, Glossário vazio,
+  destaques BV na home, rotas legadas bloqueadas e edição canônica protegida;
+- isolamento: apagar somente distribuições e placements do BV, sem alterar o
+  conteúdo canônico nem a operação dos quatro tenants de origem.
+
+### Implementação e evidências
+
+- migration idempotente
+  `20260824021722_restrict_bv_catalog_and_restore_home.sql` removeu 27
+  distribuições legadas do BV vinculadas a Abrafarma, Banco Horizonte, Crédito
+  Órbita e Seguros Atlas, preservando os itens canônicos desses tenants;
+- consulta remota final confirmou 31 distribuições autorizadas, zero legado,
+  11 categorias com conteúdo, navegação publicada com Glossário vazio e um
+  único evento de auditoria;
+- a home agora usa `BV-013` em `home.hero` e `BV-006`/`BV-017` em
+  `home.secondary`, todos pertencentes ao catálogo autorizado de 20/08/2026;
+- barra, home, editoria e matéria usam a navegação publicada como allowlist;
+  links diretos para a editoria e matéria legadas de Open Finance retornaram
+  estado não encontrado;
+- para tenants com `catalog_references`, o repositório público também exige
+  contrato autorizado ou propriedade do próprio tenant antes de carregar a
+  matéria; uma futura distribuição acidental em editoria permitida não vaza;
+- o Admin une conteúdos próprios e distribuídos, identifica a origem e oferece
+  somente `Ver no portal` para matérias distribuídas; as 31 linhas do BV não
+  exibem ação de editar, publicar, pausar ou retomar;
+- status e filtros de conteúdo distribuído combinam distribuição, workflow
+  canônico e janela de publicação; itens pausados, agendados, expirados ou com
+  canônico indisponível deixam de ser apresentados como publicados;
+- Playwright em 1440 x 1000 e 390 x 844 confirmou home sem editorias legadas,
+  destaque BV, ausência de overflow/overlay/erros e Admin com 31 itens;
+  evidências em `artifacts/c258-browser/`;
+- 34 arquivos/166 testes, `pnpm lint`, `pnpm typecheck`, `pnpm build` e
+  `git diff --check` aprovados;
+- advisors de segurança e performance foram solicitados após a migration, mas
+  a conexão disponível respondeu sem permissão; as consultas remotas de RLS,
+  isolamento, escopo, auditoria e idempotência permaneceram aprovadas.
+- revisão independente final aprovada sem achados P0–P3 depois das correções de
+  escopo contratual, status efetivo e cobertura comportamental.
+
+Status: `DONE`.
+
 ## C257 — jornada de crédito e especialista responde — 23/08/2026
 
 ### Contrato da entrega

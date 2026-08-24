@@ -27,19 +27,24 @@ export default async function CategoryPage({
       : await resolveDefaultPublicTenant();
   if (!tenant) notFound();
   const [stories, theme] = await Promise.all([
-    listPublicStories(tenant.id),
+    listPublicStories(tenant.id, tenant.catalogReferences),
     getTenantTheme(tenant.id),
   ]);
   if (!theme) notFound();
+  const categories = listPublicCategories(
+    stories,
+    theme.siteModel,
+    theme.navigation,
+  );
+  if (!categories.some((category) => category.slug === slug)) notFound();
   const categoryStories = stories
     .filter((story) => story.categorySlug === slug)
     .sort(
       (left, right) =>
         (left.editorialOrder ?? Number.MAX_SAFE_INTEGER) -
         (right.editorialOrder ?? Number.MAX_SAFE_INTEGER),
-    );
+  );
   if (categoryStories.length === 0) notFound();
-  const categories = listPublicCategories(stories, theme.siteModel);
 
   return (
     <PublicShell categories={categories} tenant={tenant} theme={theme}>

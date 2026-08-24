@@ -32,7 +32,7 @@ async function loadHome(request: ReturnType<typeof parsePublicTenantRequest>) {
     const theme = await getTenantTheme(tenant.id);
     if (!theme) return { found: false as const, ok: true as const };
     const [stories, placements, marketQuotes] = await Promise.all([
-      listPublicStories(tenant.id),
+      listPublicStories(tenant.id, tenant.catalogReferences),
       listHomePlacementIds(tenant.id),
       getMarketQuotes(theme.siteModel),
     ]);
@@ -99,9 +99,19 @@ export default async function HomePage({
     notFound();
   }
   const { marketQuotes, placements, stories, tenant, theme } = loaded;
-  const categories = listPublicCategories(stories, theme.siteModel);
+  const categories = listPublicCategories(
+    stories,
+    theme.siteModel,
+    theme.navigation,
+  );
+  const allowedCategorySlugs = new Set(
+    categories.map((category) => category.slug),
+  );
+  const visibleStories = stories.filter((story) =>
+    allowedCategorySlugs.has(story.categorySlug),
+  );
   const orderedIds = placements.map((placement) => placement.content_item_id);
-  const ordered = [...stories].sort((left, right) => {
+  const ordered = [...visibleStories].sort((left, right) => {
     const leftIndex = orderedIds.indexOf(left.id);
     const rightIndex = orderedIds.indexOf(right.id);
     return (

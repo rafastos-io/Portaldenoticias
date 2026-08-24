@@ -17,6 +17,15 @@ function logoAssetId(brand: unknown) {
   return typeof value === "string" ? value : null;
 }
 
+function readNavigation(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) =>
+    typeof item === "string" && item.trim().length > 0
+      ? [item.trim().slice(0, 120)]
+      : [],
+  );
+}
+
 export async function getTenantTheme(tenantIdInput: string) {
   const tenantId = toTenantId(tenantIdInput);
   const supabase = createServerSupabaseClient();
@@ -30,7 +39,7 @@ export async function getTenantTheme(tenantIdInput: string) {
   if (!theme?.published_version_id) return null;
   const { data: version, error: versionError } = await supabase
     .from("theme_versions")
-    .select("id, tokens_json, components_json, brand_json")
+    .select("id, tokens_json, components_json, navigation_json, brand_json")
     .eq("theme_id", theme.id)
     .eq("id", theme.published_version_id)
     .maybeSingle();
@@ -43,10 +52,12 @@ export async function getTenantTheme(tenantIdInput: string) {
     legacySiteModel: resolveLegacySiteModel(tenantId),
     tokens: version.tokens_json,
   });
+  const navigation = readNavigation(version.navigation_json);
   const assetId = logoAssetId(version.brand_json);
   if (!assetId) {
     return {
       id: version.id,
+      navigation,
       ...parsed,
     };
   }
@@ -73,6 +84,7 @@ export async function getTenantTheme(tenantIdInput: string) {
 
   return {
     id: version.id,
+    navigation,
     ...parsed,
     logoAlt: asset?.alt_text ?? parsed.logoAlt,
     logoUrl: signed?.signedUrl ?? null,

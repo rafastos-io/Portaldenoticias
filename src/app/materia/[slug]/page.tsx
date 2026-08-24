@@ -27,13 +27,20 @@ export default async function StoryPage({
       : await resolveDefaultPublicTenant();
   if (!tenant) notFound();
   const [stories, theme] = await Promise.all([
-    listPublicStories(tenant.id),
+    listPublicStories(tenant.id, tenant.catalogReferences),
     getTenantTheme(tenant.id),
   ]);
   if (!theme) notFound();
+  const categories = listPublicCategories(
+    stories,
+    theme.siteModel,
+    theme.navigation,
+  );
   const story = stories.find((item) => item.canonicalSlug === slug);
   if (!story) notFound();
-  const categories = listPublicCategories(stories, theme.siteModel);
+  if (!categories.some((category) => category.slug === story.categorySlug)) {
+    notFound();
+  }
   return (
     <PublicShell categories={categories} tenant={tenant} theme={theme}>
       <SiteModelArticle

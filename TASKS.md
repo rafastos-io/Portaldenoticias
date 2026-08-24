@@ -50,6 +50,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C255 | P1 | READY | C254 | Avatar discreto de matérias relacionadas por categoria |
 | C256 | P1 | DONE | C254 | Ajustar posicionamento, rodapé, navegação editorial e lista de notícias do BV Educação |
 | C257 | P1 | DONE | C256 | Adicionar Jornada de crédito BV e Especialista responde ao catálogo autorizado |
+| C258 | P0 | DONE | C257 | Restringir catálogo BV e exibir conteúdos distribuídos com segurança no Admin |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
@@ -432,6 +433,18 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
 - exibir todos os sete itens na página da editoria e manter a ordem editorial;
 - validar idempotência, isolamento, direitos, embed, navegação, 390/1440,
   lint, tipos, testes, build e banco remoto.
+
+### C258
+
+- remover do `bv-educacao` somente as distribuições herdadas dos quatro tenants
+  demonstrativos, preservando seus conteúdos canônicos;
+- manter 31 conteúdos autorizados, 11 categorias com conteúdo e Glossário vazio;
+- substituir os três placements legados da home por matérias BV autorizadas;
+- usar a navegação publicada como allowlist para barra, home, editoria e matéria;
+- listar no Admin conteúdos próprios e distribuídos, diferenciando origem;
+- impedir edição canônica e ações de status em conteúdo apenas distribuído;
+- validar isolamento, idempotência, portal/Admin em 390/1440, lint, tipos,
+  testes, build, banco remoto, Preview e Production.
 
 ## Como desbloquear
 

@@ -712,3 +712,4 @@ select private.apply_weight_loss_pens_analysis();
 select private.apply_bv_educacao_credit_catalog();
 select private.apply_bv_credit_journey_and_expert_categories();
 select private.restrict_bv_credit_additions_to_bv_tenant();
+select private.restrict_bv_catalog_and_restore_home();

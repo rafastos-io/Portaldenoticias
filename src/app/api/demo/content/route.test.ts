@@ -76,7 +76,10 @@ describe("GET /api/demo/content", () => {
       total: 1,
     });
     expect(payload.items).toHaveLength(1);
-    expect(mocks.listPublicStories).toHaveBeenCalledWith(tenant.id);
+    expect(mocks.listPublicStories).toHaveBeenCalledWith(
+      tenant.id,
+      undefined,
+    );
   });
 
   it("recusa tenant inexistente após consultar o catálogo persistido", async () => {

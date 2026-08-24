@@ -8,6 +8,7 @@ import { createServerSupabaseClient } from "./server";
 import { toTenantId } from "./tenant-scope";
 
 export type PublicTenant = {
+  catalogReferences?: string[];
   displayName: string;
   id: string;
   slug: string;
@@ -179,6 +180,35 @@ export function readTenantSlogan(
     return settings.slogan.trim();
   }
   return fallback;
+}
+
+export function readTenantCatalogReferences(settings: Json) {
+  if (
+    typeof settings !== "object" ||
+    settings === null ||
+    Array.isArray(settings) ||
+    !Array.isArray(settings.catalog_references)
+  ) {
+    return [];
+  }
+  return settings.catalog_references.flatMap((reference) =>
+    typeof reference === "string" && reference.trim()
+      ? [reference.trim().slice(0, 160)]
+      : [],
+  );
+}
+
+export function isDistributionWithinCatalogScope(
+  itemOwnerTenantId: string,
+  tenantId: string,
+  contractReference: string | null,
+  allowedReferences: ReadonlySet<string>,
+) {
+  return (
+    allowedReferences.size === 0 ||
+    itemOwnerTenantId === tenantId ||
+    (contractReference !== null && allowedReferences.has(contractReference))
+  );
 }
 
 export function getPublicCategoryName(
@@ -360,6 +390,7 @@ export async function resolvePublicTenant(
   if (!data) return null;
 
   return {
+    catalogReferences: readTenantCatalogReferences(data.settings_json),
     displayName: data.display_name,
     id: data.id,
     slug: data.slug,
@@ -392,6 +423,7 @@ export async function resolvePublicTenantById(
   if (!data) return null;
 
   return {
+    catalogReferences: readTenantCatalogReferences(data.settings_json),
     displayName: data.display_name,
     id: data.id,
     slug: data.slug,
@@ -410,6 +442,7 @@ export async function resolveDefaultPublicTenant() {
 
 export async function listPublicStories(
   tenantIdInput: string,
+  catalogReferences: string[] = [],
 ): Promise<PublicStory[]> {
   const tenantId = toTenantId(tenantIdInput);
   const supabase = createServerSupabaseClient();
@@ -417,7 +450,7 @@ export async function listPublicStories(
   const { data: distributions, error: distributionError } = await supabase
     .from("distributions")
     .select(
-      "content_item_id, headline_override, subtitle_override, slug_override, category_override_id",
+      "content_item_id, headline_override, subtitle_override, slug_override, category_override_id, contract_reference",
     )
     .eq("tenant_id", tenantId)
     .eq("status", "active")
@@ -436,14 +469,30 @@ export async function listPublicStories(
   const { data: items, error: itemError } = await supabase
     .from("content_items")
     .select(
-      "id, canonical_slug, current_published_revision_id, last_published_at",
+      "id, owner_tenant_id, canonical_slug, current_published_revision_id, last_published_at",
     )
     .in("id", itemIds)
     .eq("workflow_status", "published")
     .order("last_published_at", { ascending: false });
 
   if (itemError) throw new Error("Falha ao consultar conteúdo público.", { cause: itemError });
-  const revisionIds = items.flatMap((item) =>
+  const distributionMap = new Map(
+    distributions.map((row) => [row.content_item_id, row]),
+  );
+  const allowedReferences = new Set(catalogReferences);
+  const visibleItems =
+    allowedReferences.size === 0
+      ? items
+      : items.filter((item) => {
+          const distribution = distributionMap.get(item.id);
+          return isDistributionWithinCatalogScope(
+            item.owner_tenant_id,
+            tenantId,
+            distribution?.contract_reference ?? null,
+            allowedReferences,
+          );
+        });
+  const revisionIds = visibleItems.flatMap((item) =>
     item.current_published_revision_id
       ? [item.current_published_revision_id]
       : [],
@@ -515,11 +564,7 @@ export async function listPublicStories(
       row.category_id,
     ]),
   );
-  const distributionMap = new Map(
-    distributions.map((row) => [row.content_item_id, row]),
-  );
-
-  return items.flatMap((item) => {
+  return visibleItems.flatMap((item) => {
     const revisionId = item.current_published_revision_id;
     const revision = revisionId ? revisions.get(revisionId) : null;
     const distribution = distributionMap.get(item.id);

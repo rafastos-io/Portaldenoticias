@@ -23,7 +23,19 @@ const database = vi.hoisted(() => ({
         last_published_at: null,
         owner_tenant_id: "22222222-2222-4222-8222-222222222222",
         updated_at: "2026-07-25T00:00:00.000Z",
-        workflow_status: "draft",
+        workflow_status: "published",
+      },
+    ],
+    distributions: [
+      {
+        channels: ["portal"],
+        content_item_id: "33333333-3333-4333-8333-333333333333",
+        ends_at: null,
+        slug_override: null,
+        starts_at: null,
+        status: "active",
+        tenant_id: "11111111-1111-4111-8111-111111111111",
+        updated_at: "2026-07-25T01:00:00.000Z",
       },
     ],
     content_revision_authors: [
@@ -102,6 +114,9 @@ vi.mock("./server", () => ({
             payload: { column, value },
             table,
           });
+          return query;
+        },
+        contains() {
           return query;
         },
         ilike() {
@@ -217,13 +232,56 @@ await expect(
     });
   });
 
-  it("filtra a listagem pelo proprietário antes de buscar revisões", async () => {
-    await expect(listAdminContent(TENANT_A_ID)).resolves.toEqual([]);
+  it("lista conteúdo distribuído sem transferir a propriedade canônica", async () => {
+    await expect(listAdminContent(TENANT_A_ID)).resolves.toEqual([
+      expect.objectContaining({
+        catalog_source: "distributed",
+        effective_status: "published",
+        id: TENANT_B_ITEM_ID,
+        owner_tenant_id: TENANT_B_ID,
+        public_slug: "materia-atlas",
+        revision: expect.objectContaining({ id: REVISION_ID }),
+      }),
+    ]);
     expect(database.calls).toContainEqual({
       operation: "eq",
       payload: { column: "owner_tenant_id", value: TENANT_A_ID },
       table: "content_items",
     });
+    expect(database.calls).toContainEqual({
+      operation: "eq",
+      payload: { column: "tenant_id", value: TENANT_A_ID },
+      table: "distributions",
+    });
+  });
+
+  it("combina distribuição e canônico antes de aplicar o filtro", async () => {
+    await expect(listAdminContent(TENANT_A_ID, "published")).resolves.toEqual([
+      expect.objectContaining({
+        effective_status: "published",
+        id: TENANT_B_ITEM_ID,
+        workflow_status: "published",
+      }),
+    ]);
+    const item = database.tables.content_items[0]!;
+    item.workflow_status = "draft";
+    try {
+      await expect(listAdminContent(TENANT_A_ID, "published")).resolves.toEqual(
+        [],
+      );
+    } finally {
+      item.workflow_status = "published";
+    }
+
+    const distribution = database.tables.distributions[0]!;
+    distribution.starts_at = "2999-01-01T00:00:00.000Z";
+    try {
+      await expect(listAdminContent(TENANT_A_ID, "published")).resolves.toEqual(
+        [],
+      );
+    } finally {
+      distribution.starts_at = null;
+    }
   });
 
   it("envia tenant obrigatório aos RPCs de criação e status", async () => {

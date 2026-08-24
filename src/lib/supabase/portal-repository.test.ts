@@ -13,8 +13,10 @@ import {
   getDemoTenantIdentity,
   getDemoTenantThemeFallback,
   getPublicCategoryName,
+  isDistributionWithinCatalogScope,
   readPublicStoryBodyBlocks,
   readEditorialOrigin,
+  readTenantCatalogReferences,
   readTenantSlogan,
   resolveDefaultPublicTenant,
 } from "./portal-repository";
@@ -60,6 +62,44 @@ describe("identidade pública de tenant", () => {
       readTenantSlogan({ slogan: "Educação para escolhas mais leves" }),
     ).toBe("Educação para escolhas mais leves");
     expect(readTenantSlogan({}, "Fallback seguro")).toBe("Fallback seguro");
+  });
+
+  it("normaliza as referências autorizadas do catálogo do tenant", () => {
+    expect(
+      readTenantCatalogReferences({
+        catalog_references: [" CONTRATO-A ", null, 12, "CONTRATO-B"],
+      }),
+    ).toEqual(["CONTRATO-A", "CONTRATO-B"]);
+    expect(readTenantCatalogReferences({})).toEqual([]);
+  });
+
+  it("aceita somente conteúdo próprio ou contrato autorizado quando há escopo", () => {
+    const references = new Set(["CONTRATO-A"]);
+    expect(
+      isDistributionWithinCatalogScope("tenant-b", "tenant-a", null, new Set()),
+    ).toBe(true);
+    expect(
+      isDistributionWithinCatalogScope("tenant-a", "tenant-a", null, references),
+    ).toBe(true);
+    expect(
+      isDistributionWithinCatalogScope(
+        "tenant-b",
+        "tenant-a",
+        "CONTRATO-A",
+        references,
+      ),
+    ).toBe(true);
+    expect(
+      isDistributionWithinCatalogScope("tenant-b", "tenant-a", null, references),
+    ).toBe(false);
+    expect(
+      isDistributionWithinCatalogScope(
+        "tenant-b",
+        "tenant-a",
+        "CONTRATO-B",
+        references,
+      ),
+    ).toBe(false);
   });
 
   it("normaliza o rótulo público da editoria ti sem alterar o slug", () => {
