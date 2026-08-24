@@ -710,3 +710,5 @@ select private.align_broadcast_saude_briefing_order();
 select private.apply_technology_and_innovation_category_label();
 select private.apply_weight_loss_pens_analysis();
 select private.apply_bv_educacao_credit_catalog();
+select private.apply_bv_credit_journey_and_expert_categories();
+select private.restrict_bv_credit_additions_to_bv_tenant();

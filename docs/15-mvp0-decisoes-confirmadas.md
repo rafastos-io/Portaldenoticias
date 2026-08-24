@@ -72,6 +72,22 @@ do modelo `financial-services-credit`:
   duplicação por tenant;
 - a editoria Glossário é criada vazia até o responsável fornecer verbetes.
 
+### Emenda da jornada de crédito BV — 23/08/2026
+
+O responsável autorizou duas novas editorias para a validação `BV Educação`:
+
+- `Jornada de crédito BV` recebe sete títulos em sequência cronológica; enquanto
+  os textos definitivos não forem fornecidos, cada pauta exibe um placeholder
+  explícito informando que o conteúdo ainda será anexado;
+- `Especialista responde` recebe os três links do YouTube fornecidos no
+  briefing como referências externas incorporáveis;
+- vídeo, thumbnail e transcrição não são copiados; a reprodução usa o domínio
+  de privacidade reforçada e mantém link para a origem;
+- a referência operacional é `CLIENTE-VALIDACAO-BV-2026-08-23` e o conteúdo
+  continua canônico, distribuído por referência apenas ao tenant
+  `bv-educacao`; compartilhar o modelo visual não autoriza publicação automática
+  em outro white-label.
+
 ## Marcas fictícias
 
 ### Banco Demo Horizonte

@@ -24,6 +24,8 @@ const CREDIT_CATEGORY_ORDER = [
   "alivio-no-orcamento",
   "guias",
   "dicas-valiosas",
+  "jornada-de-credito-bv",
+  "especialista-responde",
   "glossario",
 ] as const;
 

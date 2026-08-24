@@ -2,6 +2,57 @@
 
 Atualizado em: 23/08/2026.
 
+## C257 — jornada de crédito e especialista responde — 23/08/2026
+
+### Contrato da entrega
+
+- resultado: adicionar ao catálogo autorizado do BV Educação uma jornada de
+  crédito em sete etapas e três respostas em vídeo fornecidas pelo cliente;
+- aceite: placeholders explícitos e ordenados, links externos sem cópia da
+  mídia, conteúdo canônico único, distribuição restrita ao tenant BV e
+  páginas completas em desktop e mobile;
+- autorização registrada como `CLIENTE-VALIDACAO-BV-2026-08-23`.
+
+### Implementação e evidências
+
+- migration idempotente `20260824011021_add_bv_credit_journey_and_expert_categories.sql`
+  criou as editorias `Jornada de crédito BV` e `Especialista responde`;
+- sete pautas usam a ordem cronológica do briefing e informam claramente que o
+  conteúdo definitivo está em preparação e será anexado após fornecimento e
+  aprovação;
+- três referências usam as URLs fornecidas do YouTube; vídeo, thumbnail e
+  transcrição não foram copiados, e as distribuições externas mantêm
+  `allow_full_body=false` e `allow_media=false`;
+- conteúdo canônico pertence à plataforma e deve ser distribuído por referência
+  somente para `bv-educacao`;
+- consulta remota inicial confirmou 2 categorias, 10 itens (7 placeholders e 3
+  vídeos), ordem integral da jornada, três URLs corretas,
+  navegação publicada e direitos externos consistentes;
+- a revisão independente detectou que a primeira aplicação também alcançava o
+  tenant Órbita; a migration corretiva `20260824013903` remove essa distribuição,
+  restaura navegação/configuração e registra evento compensatório append-only;
+- `20260824011021` foi preservada com o SQL efetivamente aplicado; o seed chama
+  em seguida a correção `20260824013903`, reproduzindo histórico e estado final;
+- reaplicação remota final confirmou idempotência e isolamento: 10 itens
+  canônicos, 10 distribuições no `bv-educacao`, zero no `credito-demo-orbita`,
+  navegação/configuração C257 ausentes no Órbita e um único evento compensatório;
+- as migrations C257 foram aplicadas isoladamente via Management API e somente
+  as versões `20260824011021` e `20260824013903` foram registradas como aplicadas;
+  o histórico anterior divergente não foi reparado nem executado em lote;
+- advisors Supabase de segurança e performance retornaram zero alertas;
+- navegador Playwright em 1440 x 1000 e 390 x 844 confirmou sete e três cards,
+  ordem editorial, menu desktop/mobile, matéria em vídeo, embed
+  `youtube-nocookie`, conteúdo significativo e ausência de overlay ou erros da
+  aplicação;
+- após a correção, Playwright confirmou a jornada no BV e estado não encontrado
+  na rota equivalente do Órbita, cuja home também não contém as duas editorias;
+- 33 arquivos/159 testes, `pnpm lint`, `pnpm typecheck`, `pnpm build` e
+  `git diff --check` aprovados antes da aplicação remota.
+- reverificação independente final aprovada sem achados P0–P3 após as correções
+  de isolamento e imutabilidade do histórico.
+
+Status: `DONE`.
+
 ## C256 — posicionamento e navegação do BV Educação — 23/08/2026
 
 ### Contrato da entrega

@@ -49,6 +49,7 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 | C254 | P0 | DONE | C253 | Incorporar vídeos e reforçar acessibilidade pública gratuita |
 | C255 | P1 | READY | C254 | Avatar discreto de matérias relacionadas por categoria |
 | C256 | P1 | DONE | C254 | Ajustar posicionamento, rodapé, navegação editorial e lista de notícias do BV Educação |
+| C257 | P1 | DONE | C256 | Adicionar Jornada de crédito BV e Especialista responde ao catálogo autorizado |
 
 `C205` é uma entrega editorial independente: melhora a densidade e a variedade
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
@@ -419,6 +420,18 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
 - indicar visualmente quando existem editorias fora da área visível;
 - fazer chamadas sem imagem ocuparem a largura disponível na lista de notícias;
 - validar 390/768/1440, foco, movimento reduzido, lint, tipos, testes e build.
+
+### C257
+
+- criar `Jornada de crédito BV` com sete pautas na ordem do briefing;
+- publicar placeholders explícitos até o recebimento dos textos definitivos;
+- criar `Especialista responde` com três vídeos externos fornecidos;
+- não copiar vídeo, thumbnail ou transcrição do YouTube;
+- preservar conteúdo canônico único e distribuir por referência somente para o
+  tenant `bv-educacao` autorizado nesta solicitação;
+- exibir todos os sete itens na página da editoria e manter a ordem editorial;
+- validar idempotência, isolamento, direitos, embed, navegação, 390/1440,
+  lint, tipos, testes, build e banco remoto.
 
 ## Como desbloquear
 

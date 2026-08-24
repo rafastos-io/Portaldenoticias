@@ -20,6 +20,8 @@ describe("ordenação das editorias públicas", () => {
       story("programando-o-futuro", "Programando o futuro"),
       story("isso-ou-aquilo", "Isso ou aquilo"),
       story("saia-das-dividas", "Saia das dívidas"),
+      story("especialista-responde", "Especialista responde"),
+      story("jornada-de-credito-bv", "Jornada de crédito BV"),
     ];
 
     expect(
@@ -36,6 +38,8 @@ describe("ordenação das editorias públicas", () => {
       "alivio-no-orcamento",
       "guias",
       "dicas-valiosas",
+      "jornada-de-credito-bv",
+      "especialista-responde",
     ]);
   });
 });

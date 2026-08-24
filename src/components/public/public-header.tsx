@@ -36,14 +36,10 @@ export function PublicHeader({
   const model = getSiteModelDefinition(theme.siteModel);
   const brandCopy = getPublicBrandCopy(tenant.slug, model);
   const centered = theme.siteModel === "insurance-pension";
-  const visibleCategories = categories.slice(
-    0,
-    theme.siteModel === "health-pharma"
-      ? 9
-      : theme.siteModel === "financial-services-credit"
-        ? 10
-        : 5,
-  );
+  const visibleCategories =
+    theme.siteModel === "financial-services-credit"
+      ? categories
+      : categories.slice(0, theme.siteModel === "health-pharma" ? 9 : 5);
   return (
     <header
       className="model-header border-b border-border-subtle bg-surface-raised"

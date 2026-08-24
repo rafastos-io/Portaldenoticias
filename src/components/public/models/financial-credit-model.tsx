@@ -142,9 +142,10 @@ export function FinancialCreditHome({
 }
 
 function FinancialNewsList({
+  limit = 6,
   stories,
   tenant,
-}: Pick<HomeModelProps, "stories" | "tenant">) {
+}: Pick<HomeModelProps, "stories" | "tenant"> & { limit?: number }) {
   if (stories.length === 0) return null;
   return (
     <section aria-labelledby="financial-latest" className="page-container py-12 sm:py-16">
@@ -158,7 +159,7 @@ function FinancialNewsList({
           </h2>
         </div>
         <div className="border-t-2 border-brand-primary">
-          {stories.slice(0, 6).map((story) => (
+          {stories.slice(0, limit).map((story) => (
             <article
               className={`grid gap-4 border-b border-border-subtle py-5 ${
                 story.imagePath ? "sm:grid-cols-[9rem_1fr]" : "grid-cols-1"
@@ -189,6 +190,7 @@ export function FinancialCreditCategory({
   stories,
   tenant,
 }: CategoryModelProps) {
+  const orderedStories = orderFinancialCategoryStories(stories);
   return (
     <main className="py-10 sm:py-14" id="conteudo-principal">
       <div className="page-container grid gap-7 border-b-4 border-brand-primary pb-8 lg:grid-cols-[0.7fr_1.3fr]">
@@ -205,8 +207,22 @@ export function FinancialCreditCategory({
           antes de avançar.
         </p>
       </div>
-      <FinancialNewsList stories={stories} tenant={tenant} />
+      <FinancialNewsList
+        limit={orderedStories.length}
+        stories={orderedStories}
+        tenant={tenant}
+      />
     </main>
+  );
+}
+
+export function orderFinancialCategoryStories(
+  stories: CategoryModelProps["stories"],
+) {
+  return [...stories].sort(
+    (left, right) =>
+      (left.editorialOrder ?? Number.MAX_SAFE_INTEGER) -
+      (right.editorialOrder ?? Number.MAX_SAFE_INTEGER),
   );
 }
 
