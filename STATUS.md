@@ -117,6 +117,43 @@ Status: `DONE`.
 
 Status: `DONE`.
 
+## R302 — renderer compartilhado no preview — 31/08/2026
+
+### Implementação
+
+- removidos `LivePortalPreview`, `PreviewHome`, `PreviewCategory` e
+  `PreviewArticle`, que formavam uma segunda linguagem visual dentro do ADM;
+- criado `PublicPortalRenderer`, agora consumido pelas rotas públicas de home,
+  editoria e matéria e pela central de identidade;
+- o preview roda em iframe same-origin com rota própria protegida por
+  `requireDemoSession`, isolando viewport, preferências de acessibilidade e
+  VLibras do shell administrativo;
+- alterações ainda não salvas são enviadas por contrato versionado e validado,
+  aceitando mensagens somente da mesma origin e da janela pai esperada;
+- fixtures tipadas exercitam conteúdo demonstrativo, cotações, múltiplas
+  editorias e estado sem imagem sem recriar componentes visuais;
+- modelo desconhecido falha fechado em estado de erro explícito;
+- o aviso do Next sobre `scroll-behavior` foi eliminado declarando o contrato
+  no elemento raiz.
+
+### Verificação
+
+- teste de paridade prova que as três rotas e o preview dependem do renderer
+  compartilhado e que a implementação paralela não reaparece;
+- testes do contrato cobrem mensagem válida, modelo inválido, estado sem imagem,
+  contraste AA da fixture e gate de sessão da rota isolada;
+- Playwright local verificou home, editoria e matéria em 390, 768 e 1440 px,
+  totalizando 9 combinações, com uma alteração de nome não salva visível;
+- smoke administrativo aprovado nos 13 passos de login, sessão, origin, cookie,
+  navegação e logout;
+- `pnpm check`, TypeScript estrito e `git diff --check` aprovados; nenhuma
+  mutation de banco, deploy, Preview ou Production foi executada.
+
+Evidência detalhada em
+`docs/29-evidencia-r302-renderer-compartilhado.md`.
+
+Status: `DONE`.
+
 ## C258 — escopo do catálogo BV e matérias distribuídas no Admin — 23/08/2026
 
 ### Contrato da entrega
@@ -1336,7 +1373,7 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-`R301` está aplicado, registrado e em `DONE`: a próxima ação estrutural é
-`R302`, substituindo o preview paralelo pelo renderer real compartilhado. O
-housekeeping das migrations antigas entra em R303. A nova frente visual começa
-em `R310` somente após `R305` e a decisão D34.
+`R302` está em `DONE`: a próxima ação estrutural é `R303`, consolidando o
+registro dos quatro modelos, a fonte de verdade de `site_model` e a paridade
+TypeScript/SQL. O housekeeping das migrations antigas entra no mesmo R303. A
+nova frente visual começa em `R310` somente após `R305` e a decisão D34.

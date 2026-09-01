@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { SiteModelCategory } from "@/components/public/models";
-import { PublicShell } from "@/components/public/public-shell";
+import { PublicPortalRenderer } from "@/components/public/public-portal-renderer";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
 import { listPublicCategories } from "@/lib/presentation/public-categories";
 import {
@@ -47,13 +46,13 @@ export default async function CategoryPage({
   if (categoryStories.length === 0) notFound();
 
   return (
-    <PublicShell categories={categories} tenant={tenant} theme={theme}>
-      <SiteModelCategory
-        categoryName={categoryStories[0]!.categoryName}
-        siteModel={theme.siteModel}
-        stories={categoryStories}
-        tenant={tenant}
-      />
-    </PublicShell>
+    <PublicPortalRenderer
+      categories={categories}
+      categoryName={categoryStories[0]!.categoryName}
+      page="editoria"
+      stories={categoryStories}
+      tenant={tenant}
+      theme={theme}
+    />
   );
 }

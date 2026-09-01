@@ -68,8 +68,8 @@ protocolo está em `docs/25-protocolo-revisao-estrutural.md` e a baseline em
 |---|---|---|---|---|
 | R300 | P0 | DONE | - | Criar branch, protocolo, baseline automatizada e relatório priorizado |
 | R301 | P0 | DONE | R300 | Tornar cadastro editorial e metadados uma única transação sem perda de JSON |
-| R302 | P1 | READY | R301 | Substituir preview paralelo pelo renderer real compartilhado |
-| R303 | P1 | BLOCKED | R302 | Consolidar `site_model`, registro de componentes e paridade TypeScript/SQL |
+| R302 | P1 | DONE | R301 | Substituir preview paralelo pelo renderer real compartilhado |
+| R303 | P1 | READY | R302 | Consolidar `site_model`, registro de componentes e paridade TypeScript/SQL |
 | R304 | P1 | BLOCKED | R303 | Remover código morto confirmado, exceções por slug e reconciliar documentação |
 | R305 | P1 | BLOCKED | R304 | Versionar matriz E2E dos quatro modelos e corrigir atritos mobile |
 | R310 | P1 | BLOCKED | R305,D34 | Implementar o quinto modelo a partir de direção visual aprovada |
@@ -546,7 +546,9 @@ Ao concluir uma tarefa, atualizar para `DONE` e trocar dependentes de `BLOCKED` 
 T013/T014 e C213 estão concluídas. A revisão promovida em 31/08/2026 fechou
 `R300` e `R301`; o preflight transacional no banco oficial passou em 23/23
 asserções e está documentado em `docs/28-evidencia-r301-banco-oficial.md`.
-`R302` está `READY`. O relatório completo da baseline está em
+`R302` está `DONE`, com evidência em
+`docs/29-evidencia-r302-renderer-compartilhado.md`. `R303` está `READY`. O
+relatório completo da baseline está em
 `docs/27-relatorio-verificacao-completa-2026-08-31.md`. `C214` e `C255`
 preservam estado `READY`, mas ficam congeladas até a matriz estrutural de
 `R305`.

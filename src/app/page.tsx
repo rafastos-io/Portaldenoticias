@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { SiteModelHome } from "@/components/public/models";
+import { PublicPortalRenderer } from "@/components/public/public-portal-renderer";
 import { PublicShell } from "@/components/public/public-shell";
 import { getMarketQuotes } from "@/lib/market/market-data";
 import { listPublicCategories } from "@/lib/presentation/public-categories";
@@ -129,22 +129,24 @@ export default async function HomePage({
     : null;
 
   return (
-    <PublicShell categories={categories} tenant={tenant} theme={theme}>
-      <main id="conteudo-principal">
-        {hero ? (
-          <SiteModelHome
-            hero={hero}
-            heroEyebrow={heroPlacement?.eyebrow_override}
-            marketQuotes={marketQuotes}
-            siteModel={theme.siteModel}
-            stories={ordered}
-            tenant={tenant}
-          />
-        ) : (
+    hero ? (
+      <PublicPortalRenderer
+        categories={categories}
+        hero={hero}
+        heroEyebrow={heroPlacement?.eyebrow_override}
+        marketQuotes={marketQuotes}
+        page="home"
+        stories={ordered}
+        tenant={tenant}
+        theme={theme}
+      />
+    ) : (
+      <PublicShell categories={categories} tenant={tenant} theme={theme}>
+        <main id="conteudo-principal">
           <PublicEmpty tenantName={tenant.displayName} />
-        )}
-      </main>
-    </PublicShell>
+        </main>
+      </PublicShell>
+    )
   );
 }
 

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
 
 import {
@@ -9,6 +8,7 @@ import {
   uploadThemeLogoAction,
 } from "@/app/admin/(protected)/actions";
 import { TenantMutationForm } from "@/components/admin/tenant-mutation-form";
+import { IdentityPortalPreviewFrame } from "@/components/admin/identity-portal-preview-frame";
 import {
   APPROVED_FONTS,
   contrastRatio,
@@ -21,6 +21,10 @@ import {
   SITE_MODEL_IDS,
   type SiteModelId,
 } from "@/lib/presentation/site-models";
+import type {
+  PortalPreviewPage,
+  PortalPreviewWidth,
+} from "@/lib/presentation/portal-preview";
 
 const control =
   "min-h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950";
@@ -32,9 +36,6 @@ const labels = {
     "sans-humana": "Humana",
   },
 } as const;
-
-type PreviewPage = "home" | "editoria" | "materia";
-type PreviewWidth = 390 | 768 | 1440;
 
 type IdentityWorkbenchProps = {
   initialTheme: ThemeValues;
@@ -50,8 +51,9 @@ export function IdentityWorkbench({
   const [theme, setTheme] = useState(initialTheme);
   const [logoPreview, setLogoPreview] = useState(initialTheme.logoUrl);
   const [logoError, setLogoError] = useState<string | null>(null);
-  const [previewPage, setPreviewPage] = useState<PreviewPage>("home");
-  const [previewWidth, setPreviewWidth] = useState<PreviewWidth>(1440);
+  const [previewPage, setPreviewPage] = useState<PortalPreviewPage>("home");
+  const [previewWidth, setPreviewWidth] =
+    useState<PortalPreviewWidth>(1440);
 
   const changed = useMemo(
     () => JSON.stringify(theme) !== JSON.stringify(initialTheme),
@@ -449,9 +451,11 @@ export function IdentityWorkbench({
         </div>
 
         <div className="mt-6 overflow-x-auto bg-slate-100 p-3 sm:p-5">
-          <LivePortalPreview
+          <IdentityPortalPreviewFrame
             logoUrl={logoPreview}
             page={previewPage}
+            tenantId={tenantId}
+            tenantSlug={tenantSlug}
             theme={theme}
             width={previewWidth}
           />
@@ -529,234 +533,5 @@ function SelectField<T extends readonly string[]>({
         ))}
       </select>
     </label>
-  );
-}
-
-function LivePortalPreview({
-  logoUrl,
-  page,
-  theme,
-  width,
-}: {
-  logoUrl: string | null;
-  page: PreviewPage;
-  theme: ThemeValues;
-  width: PreviewWidth;
-}) {
-  const compact = width === 390;
-  const font =
-    theme.font === "sans-editorial"
-      ? "Georgia, 'Times New Roman', serif"
-      : theme.font === "sans-humana"
-        ? "'Trebuchet MS', Arial, sans-serif"
-        : "Arial, Helvetica, sans-serif";
-  const style = {
-    "--preview-accent": theme.accent,
-    "--preview-background": theme.background,
-    "--preview-primary": theme.primary,
-    "--preview-secondary": theme.secondary,
-    "--preview-text": theme.textColor,
-    color: theme.textColor,
-    fontFamily: font,
-    maxWidth: `${width}px`,
-  } as CSSProperties;
-
-  return (
-    <div
-      className="mx-auto min-h-[38rem] overflow-hidden bg-[var(--preview-background)] shadow-[0_12px_40px_rgba(15,23,42,0.12)]"
-      style={style}
-    >
-      <div className="h-1.5 bg-[var(--preview-primary)]" />
-      <header
-        className={`border-b border-black/15 px-5 py-4 ${
-          theme.header === "brand-centered"
-            ? "text-center"
-            : "flex items-center justify-between"
-        }`}
-      >
-        <div>
-          {logoUrl ? (
-            <div className="relative h-9 w-40">
-              <Image
-                alt={theme.logoAlt || theme.brandName}
-                className="object-contain object-left"
-                fill
-                sizes="160px"
-                src={logoUrl}
-                unoptimized
-              />
-            </div>
-          ) : (
-            <p
-              className={`font-black tracking-[-0.04em] text-[var(--preview-primary)] ${
-                compact ? "text-xl" : "text-3xl"
-              }`}
-            >
-              {theme.brandName}
-            </p>
-          )}
-          {theme.header !== "masthead-minimal" ? (
-            <p className="mt-1 text-[10px] opacity-65">{theme.slogan}</p>
-          ) : null}
-        </div>
-        {theme.header !== "brand-centered" && !compact ? (
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em]">
-            Saúde · Economia · Longevidade
-          </p>
-        ) : null}
-      </header>
-      <nav className="flex gap-5 overflow-hidden border-b border-black/15 px-5 py-3 text-[10px] font-bold uppercase tracking-wide">
-        <span>Destaques</span>
-        <span>Economia</span>
-        <span>Inovação</span>
-        <span>Previdência</span>
-      </nav>
-
-      {page === "home" ? (
-        <PreviewHome compact={compact} theme={theme} />
-      ) : page === "editoria" ? (
-        <PreviewCategory compact={compact} />
-      ) : (
-        <PreviewArticle compact={compact} />
-      )}
-    </div>
-  );
-}
-
-function PreviewHome({
-  compact,
-  theme,
-}: {
-  compact: boolean;
-  theme: ThemeValues;
-}) {
-  const gridHero = theme.hero === "featured-grid";
-  return (
-    <div className="p-5 sm:p-7">
-      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--preview-primary)]">
-        Longevidade &amp; Economia
-      </p>
-      <div
-        className={`mt-3 grid gap-4 ${
-          !compact && gridHero ? "grid-cols-[1.2fr_0.8fr]" : ""
-        }`}
-      >
-        <div
-          className={`${
-            theme.hero === "science-feature"
-              ? "border-t-4 border-[var(--preview-accent)] pt-4"
-              : ""
-          }`}
-        >
-          <h3
-            className={`max-w-3xl font-black leading-[0.96] tracking-[-0.045em] text-[var(--preview-primary)] ${
-              compact ? "text-4xl" : "text-6xl"
-            }`}
-          >
-            Novas escolhas redesenham o futuro da longevidade
-          </h3>
-          <p className="mt-4 max-w-2xl text-sm leading-6 opacity-75">
-            Economia, ciência e proteção ganham uma leitura editorial clara,
-            visual e orientada a contexto.
-          </p>
-        </div>
-        {gridHero && !compact ? (
-          <div className="grid gap-3">
-            <div className="min-h-28 bg-[var(--preview-secondary)] p-4 text-white">
-              <p className="text-lg font-bold">Tecnologia amplia acesso ao cuidado</p>
-            </div>
-            <div className="min-h-28 bg-[var(--preview-primary)] p-4 text-white">
-              <p className="text-lg font-bold">Planejamento muda com novas gerações</p>
-            </div>
-          </div>
-        ) : null}
-      </div>
-      <div className="mt-8 border-t border-black/20">
-        {[
-          "Prevenção vira estratégia para empresas e famílias",
-          "Biotecnologia aproxima pesquisa e novos negócios",
-          "Carreiras mais longas exigem outras formas de planejar",
-        ].map((title, index) => (
-          <div
-            className={`border-b border-black/15 py-4 ${
-              theme.card === "compact-horizontal"
-                ? "grid grid-cols-[1.5rem_1fr] gap-3"
-                : ""
-            }`}
-            key={title}
-          >
-            <span className="text-[10px] opacity-45">0{index + 1}</span>
-            <p className={`${compact ? "text-lg" : "text-xl"} font-bold leading-tight`}>
-              {title}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PreviewCategory({ compact }: { compact: boolean }) {
-  return (
-    <div className="p-5 sm:p-8">
-      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--preview-primary)]">
-        Editoria
-      </p>
-      <h3
-        className={`mt-3 font-black tracking-[-0.04em] text-[var(--preview-primary)] ${
-          compact ? "text-4xl" : "text-6xl"
-        }`}
-      >
-        Longevidade &amp; Economia
-      </h3>
-      <div className="mt-7 border-t border-black/20">
-        {[
-          "A nova economia de uma vida mais longa",
-          "Proteção financeira ganha outras camadas",
-          "Consumo maduro impulsiona serviços especializados",
-          "Mobilidade entra no planejamento familiar",
-        ].map((title) => (
-          <article className="border-b border-black/15 py-5" key={title}>
-            <p className="text-[10px] font-bold uppercase text-[var(--preview-primary)]">
-              Análise
-            </p>
-            <h4 className={`${compact ? "text-xl" : "text-2xl"} mt-2 font-bold`}>
-              {title}
-            </h4>
-          </article>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PreviewArticle({ compact }: { compact: boolean }) {
-  return (
-    <article className="p-5 sm:p-8">
-      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--preview-primary)]">
-        Análise
-      </p>
-      <h3
-        className={`mt-3 max-w-4xl font-black leading-[0.98] tracking-[-0.045em] text-[var(--preview-primary)] ${
-          compact ? "text-4xl" : "text-6xl"
-        }`}
-      >
-        Longevidade amplia o horizonte das decisões econômicas
-      </h3>
-      <p className="mt-5 max-w-3xl text-base leading-7 opacity-70">
-        Mudanças demográficas aproximam saúde, patrimônio, trabalho e inovação.
-      </p>
-      <p className="mt-5 text-xs font-bold">Por Marina Vale · 27 jul 2026</p>
-      <div className="mt-8 max-w-2xl space-y-4 text-sm leading-7">
-        <p>
-          Viver mais altera a sequência das decisões e amplia a importância de
-          escolhas que possam ser revistas ao longo do tempo.
-        </p>
-        <p>
-          O movimento também cria oportunidades para serviços mais claros,
-          inclusivos e conectados às diferentes fases da vida adulta.
-        </p>
-      </div>
-    </article>
   );
 }

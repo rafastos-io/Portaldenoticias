@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { SiteModelArticle } from "@/components/public/models";
-import { PublicShell } from "@/components/public/public-shell";
+import { PublicPortalRenderer } from "@/components/public/public-portal-renderer";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
 import { listPublicCategories } from "@/lib/presentation/public-categories";
 import {
@@ -42,12 +41,12 @@ export default async function StoryPage({
     notFound();
   }
   return (
-    <PublicShell categories={categories} tenant={tenant} theme={theme}>
-      <SiteModelArticle
-        siteModel={theme.siteModel}
-        story={story}
-        tenant={tenant}
-      />
-    </PublicShell>
+    <PublicPortalRenderer
+      categories={categories}
+      page="materia"
+      story={story}
+      tenant={tenant}
+      theme={theme}
+    />
   );
 }
