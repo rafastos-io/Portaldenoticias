@@ -1,6 +1,121 @@
 # Status do MVP-0
 
-Atualizado em: 23/08/2026.
+Atualizado em: 31/08/2026.
+
+## Verificação completa da revisão estrutural — 31/08/2026
+
+### Resultado
+
+- relatório detalhado criado em
+  `docs/27-relatorio-verificacao-completa-2026-08-31.md`;
+- `pnpm audit:structure`, `pnpm typecheck:strict` e o pipeline oficial
+  `pnpm check` foram aprovados;
+- resultado do pipeline: lint e tipos limpos, 35 arquivos/170 testes e build de
+  11 rotas aprovados;
+- smoke de acessibilidade aprovado em 2 rotas × 3 viewports;
+- smoke administrativo aprovado nos 13 passos de login, sessão, origin,
+  adulteração de cookie, navegação e logout; relatório bruto preservado em
+  `artifacts/revisao-estrutural/smoke-admin/`;
+- seis tenants passaram em home mobile/desktop (12 cenários), e um
+  representante de cada um dos quatro modelos passou por editoria e matéria em
+  mobile/desktop (16 cenários);
+- inspeção visual com assets externos confirmou logo e VLibras; achado P2: o
+  botão do VLibras cobre parte do resumo do hero em 390 px;
+- logs de browser registraram warnings P2 para `data-scroll-behavior` no
+  elemento raiz e carregamento não prioritário da imagem LCP do hero;
+- nenhuma falha P0 foi reproduzida;
+- na verificação inicial, Supabase local não estava disponível porque o Docker
+  não estava instalado; a lacuna de rollback, retry e isolamento real foi
+  fechada depois pelo preflight transacional descrito em `R301`;
+- `demo:reset`, Preview, Production e promoção não foram executados porque são
+  destrutivos/externos ou não representam este branch não publicado;
+- `R305` foi registrado para tornar permanente a matriz E2E usada nesta
+  verificação.
+
+Status: `DONE` para o relatório; liberação geral permanece condicionada a
+`R301`–`R305`.
+
+## R300 — protocolo e baseline da revisão estrutural — 31/08/2026
+
+### Resultado
+
+- branch `codex/revisao-estrutural-nova-frente` criada a partir de `363a16e`,
+  preservando `BV/` e todos os artefatos não rastreados;
+- protocolo repetível criado em
+  `docs/25-protocolo-revisao-estrutural.md`;
+- baseline e achados registrados em
+  `docs/26-auditoria-estrutural-2026-08-31.md`;
+- `pnpm audit:structure` adicionado sem dependência nova para apontar órfãos,
+  arquivos grandes, slugs de tenant em runtime, supressões e catches amplos;
+- baseline inicial: lint, tipos, TypeScript com símbolos locais não usados e
+  34 arquivos/166 testes aprovados;
+- zero P0 confirmado; P1 prioritários: transação editorial parcial, preview
+  paralelo, fonte dupla de composição, allowlists espalhadas, exceções por slug
+  e cobertura insuficiente da arquitetura visual;
+- quinto modelo não foi inventado sem briefing: a decisão D34 registra público,
+  segmento, promessa, ID e tenant/assets ainda necessários;
+- nenhuma mutation de Supabase, Vercel ou Production foi executada.
+
+Status: `DONE`.
+
+## R301 — atomicidade de conteúdo e metadados — 31/08/2026
+
+### Implementação local
+
+- removido o segundo update executado pelo repository depois da RPC de
+  criação/edição;
+- migration `20260831110000_make_editorial_metadata_atomic.sql` cria as RPCs
+  `cms_create_editorial_content` e `cms_update_editorial_content`;
+- conteúdo, revisão, seleção de mídia, tipo, tópicos, patrocínio e correção
+  agora pertencem à mesma transação PostgreSQL;
+- `body_json` recebe merge por `jsonb_set`, preservando `demo_media`, conteúdo
+  estruturado e metadados existentes;
+- número de linhas alteradas é verificado; mudar de patrocinado para outro tipo
+  restaura `content_type=article` de forma explícita;
+- RPCs usam `security invoker`, `search_path` vazio, execução revogada de
+  `PUBLIC`/`anon`/`authenticated` e concedida somente a `service_role`;
+- wrappers agora recusam categoria ou autoria privada de outro tenant,
+  permitindo somente referências do tenant atual ou do tenant de plataforma;
+- repository e tipos locais do banco foram atualizados para o novo contrato;
+- regressões cobrem criação patrocinada e correção por uma única RPC;
+- preflight pgTAP versionado em
+  `supabase/tests/preflight/editorial_atomicity_preflight.sql`, com 23
+  asserções para função/privilégio, variantes, merge de JSON, retry, rollback
+  posterior à criação e isolamento entre tenants;
+- `pnpm audit:structure`, `pnpm lint`, `pnpm typecheck`,
+  `pnpm typecheck:strict`, 35 arquivos/170 testes, `pnpm build` e
+  `git diff --check` aprovados.
+
+### Verificação no banco oficial
+
+- o responsável confirmou `Portaldenoticias` (`yhatwpxsxntlorfgxpdl`) como o
+  projeto oficial e autorizou o ensaio transacional sem branch paga;
+- safety probe somente de leitura confirmou zero contenção, fixtures válidas e
+  ausência de triggers/funções com efeito HTTP nas tabelas exercitadas;
+- runner nativo aplica a migration somente dentro da transação, sem instalar
+  pgTAP e sem criar trigger em tabela persistente;
+- `lock_timeout=3s`, `statement_timeout=60s` e `ROLLBACK` obrigatório;
+- 23/23 asserções passaram no PostgreSQL 17.6 em aproximadamente 4,3 segundos;
+- a contraprova confirmou zero funções R301 persistidas, zero slugs `r301-*`,
+  zero locks aguardando e zero sessões `idle in transaction`;
+- depois do preflight, o responsável aplicou a migration completa pelo SQL
+  Editor e apresentou `Success. No rows returned`;
+- a verificação pós-migration encontrou 2/2 funções, `security invoker`,
+  `search_path` vazio, guards/merge esperados, execução somente por
+  `service_role`, zero locks e zero transações abandonadas;
+- lint remoto e advisors de segurança/performance não encontraram problemas;
+  lint, tipos, TypeScript estrito, 35 arquivos/170 testes e build das 11 rotas
+  passaram novamente depois de versionar o protocolo;
+- evidência completa em `docs/28-evidencia-r301-banco-oficial.md`;
+- como a aplicação ocorreu pelo SQL Editor, a versão foi registrada depois com
+  `migration repair`; `20260831110000` aparece alinhada local/remoto. Existem
+  divergências históricas anteriores, que serão reconciliadas no housekeeping
+  do R303 antes da próxima migration estrutural; o smoke pós-deploy continua
+  sendo gate de release;
+- a UI continua enviando somente `standard`; as variantes completas permanecem
+  separadas em C220 e no achado A06 da auditoria.
+
+Status: `DONE`.
 
 ## C258 — escopo do catálogo BV e matérias distribuídas no Admin — 23/08/2026
 
@@ -1221,6 +1336,7 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-Não há P0 pronta. A próxima tarefa executável é `C213` (`P1`, `READY`):
-completar o fluxo de criação/duplicação de tenant demo usando o modelo já
-persistido e reverificado.
+`R301` está aplicado, registrado e em `DONE`: a próxima ação estrutural é
+`R302`, substituindo o preview paralelo pelo renderer real compartilhado. O
+housekeeping das migrations antigas entra em R303. A nova frente visual começa
+em `R310` somente após `R305` e a decisão D34.

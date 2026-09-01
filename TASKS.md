@@ -56,6 +56,25 @@ está em `docs/17-plano-ciclo-de-melhoria.md`.
 do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
 `C221`, `C230` ou `C240`.
 
+## Ciclo 3 — revisão estrutural e nova frente
+
+Este ciclo foi promovido pelo responsável em 31/08/2026. Enquanto `R301` a
+`R305` não estiverem concluídas, tarefas `READY` do Ciclo 2 permanecem
+tecnicamente prontas, mas não devem introduzir nova superfície no portal. O
+protocolo está em `docs/25-protocolo-revisao-estrutural.md` e a baseline em
+`docs/26-auditoria-estrutural-2026-08-31.md`.
+
+| ID | Pri. | Estado | Dependências | Entrega |
+|---|---|---|---|---|
+| R300 | P0 | DONE | - | Criar branch, protocolo, baseline automatizada e relatório priorizado |
+| R301 | P0 | DONE | R300 | Tornar cadastro editorial e metadados uma única transação sem perda de JSON |
+| R302 | P1 | READY | R301 | Substituir preview paralelo pelo renderer real compartilhado |
+| R303 | P1 | BLOCKED | R302 | Consolidar `site_model`, registro de componentes e paridade TypeScript/SQL |
+| R304 | P1 | BLOCKED | R303 | Remover código morto confirmado, exceções por slug e reconciliar documentação |
+| R305 | P1 | BLOCKED | R304 | Versionar matriz E2E dos quatro modelos e corrigir atritos mobile |
+| R310 | P1 | BLOCKED | R305,D34 | Implementar o quinto modelo a partir de direção visual aprovada |
+| R311 | P1 | BLOCKED | R310 | Matriz local/Preview do novo modelo e auditoria adversarial |
+
 ## Critérios por tarefa
 
 ### T001
@@ -446,11 +465,88 @@ do MVP publicado, mas não altera as dependências técnicas de `C214`, `C220`,
 - validar isolamento, idempotência, portal/Admin em 390/1440, lint, tipos,
   testes, build, banco remoto, Preview e Production.
 
+### R300
+
+- preservar `main`, arquivos não rastreados e estado de origem;
+- adotar protocolo repetível para incorreto, morto, inútil, atalho e dívida;
+- executar baseline sem mutação externa;
+- registrar achados P0/P1/P2 com evidência e ordem de correção;
+- documentar gate específico para o quinto modelo.
+
+### R301
+
+- teste deve reproduzir perda/estado parcial antes da correção;
+- conteúdo, revisão, mídia, tipo editorial e metadados são gravados na mesma
+  transação;
+- `body_json` preserva campos existentes por merge explícito;
+- todo resultado de escrita é validado;
+- erro e retry não criam item ou revisão duplicada;
+- categoria e autoria pertencem ao tenant atual ou ao tenant de plataforma;
+- teste negativo de tenant e rollback remoto antes de concluir.
+
+### R302
+
+- remover `LivePortalPreview` paralelo;
+- home, editoria e matéria do preview usam os mesmos componentes do portal;
+- dados de preview são fixtures tipadas, não uma segunda linguagem visual;
+- mudanças não salvas continuam visíveis em 390/768/1440;
+- contraste, estados sem imagem e modelo inválido são verificados.
+
+### R303
+
+- reconciliar divergências históricas local/remoto antes de criar a próxima
+  migration estrutural, sem reaplicar DDL ou seeds já presentes;
+- `site_model` passa a ser a fonte de verdade estrutural;
+- compatibilidade de `header/hero/card` recebe fronteira e data de retirada;
+- registro único associa ID, definição e componentes de home/editoria/matéria;
+- allowlist SQL possui teste de paridade com TypeScript;
+- migração é backward-compatible e falha fechado para ID desconhecido.
+
+### R304
+
+- confirmar e remover apenas órfãos reais;
+- mover textos/links específicos de marca para configuração validada;
+- eliminar fallback por slug ou restringi-lo explicitamente a fixture local;
+- reconciliar `TASKS.md`, `STATUS.md`, `.env.example` e estado real;
+- dividir arquivos grandes somente onde testes preservem comportamento.
+
+### R305
+
+- versionar o ensaio de seis tenants em 390/768/1440;
+- atravessar home, primeira editoria e primeira matéria de um tenant por modelo;
+- falhar em HTTP inesperado, modelo divergente, overlay, `pageerror`, conteúdo
+  vazio ou overflow horizontal;
+- capturar erros de console e registrar warnings de framework/performance;
+- ampliar acessibilidade além do tenant BV sem duplicar regras por slug;
+- separar pré-requisitos de `next dev`, Preview e Production para evitar falso
+  negativo de rede/cookie;
+- impedir que VLibras ou outro controle flutuante cubra conteúdo em 390 px.
+
+### R310
+
+- D34 decidida e registrada antes de editar código;
+- novo modelo difere em ao menos seis eixos de `docs/22`;
+- nenhuma árvore de rota, matéria ou CSS/JS arbitrário duplicado;
+- nenhuma condicional por slug do tenant de validação;
+- home, editoria e matéria usam o registro consolidado;
+- troca e persistência sem rebuild; modelo inválido falha fechado.
+
+### R311
+
+- 390/768/1440, teclado, foco, zoom de 200% e reduced motion;
+- com imagem, sem imagem, catálogo vazio e erro;
+- teste negativo de tenant, modelo inválido e persistência;
+- lint, tipos, testes, build, Preview e verificador independente;
+- Production somente mediante autorização separada.
+
 ## Como desbloquear
 
 Ao concluir uma tarefa, atualizar para `DONE` e trocar dependentes de `BLOCKED` para `READY` quando todas as dependências estiverem concluídas e nenhuma decisão externa faltar.
 
-T013 e T014 estão concluídas: login, sessão, páginas protegidas e logout foram
-reverificados em Preview e Production, e o auditor independente aprovou o commit
-final sem achados P0/P1. No estado atual, `C212` está concluída e `C213` é a
-próxima tarefa executável.
+T013/T014 e C213 estão concluídas. A revisão promovida em 31/08/2026 fechou
+`R300` e `R301`; o preflight transacional no banco oficial passou em 23/23
+asserções e está documentado em `docs/28-evidencia-r301-banco-oficial.md`.
+`R302` está `READY`. O relatório completo da baseline está em
+`docs/27-relatorio-verificacao-completa-2026-08-31.md`. `C214` e `C255`
+preservam estado `READY`, mas ficam congeladas até a matriz estrutural de
+`R305`.

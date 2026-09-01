@@ -1,0 +1,61 @@
+{
+  "baseUrl": "http://127.0.0.1:3000",
+  "environment": "local",
+  "finishedAt": "2026-08-31T13:52:19.331Z",
+  "passed": false,
+  "startedAt": "2026-08-31T13:52:03.448Z",
+  "steps": [
+    {
+      "durationMs": 428,
+      "name": "abrir login e confirmar aviso demo",
+      "passed": true
+    },
+    {
+      "durationMs": 230,
+      "name": "recusar login inválido",
+      "passed": true
+    },
+    {
+      "durationMs": 43,
+      "name": "confirmar sessão 401",
+      "passed": true,
+      "details": {
+        "status": 401
+      }
+    },
+    {
+      "durationMs": 226,
+      "name": "recusar tentativa com Origin externa",
+      "passed": true,
+      "details": {
+        "actionStatus": 500,
+        "sessionStatus": 401
+      }
+    },
+    {
+      "durationMs": 14405,
+      "name": "aceitar login válido e redirecionar",
+      "passed": true,
+      "details": {
+        "redirectedTo": "/admin"
+      }
+    },
+    {
+      "durationMs": 78,
+      "name": "confirmar sessão 200",
+      "passed": true,
+      "details": {
+        "actor": "demo-operator",
+        "demo": true,
+        "status": 200
+      }
+    },
+    {
+      "durationMs": 10,
+      "error": "Cookie demo não foi encontrado para adulteração.",
+      "name": "recusar cookie adulterado sem remover sessão Vercel",
+      "passed": false
+    }
+  ],
+  "error": "Cookie demo não foi encontrado para adulteração."
+}

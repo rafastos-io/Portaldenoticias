@@ -445,72 +445,6 @@ async function resolveAuthorByName(
   return created.id;
 }
 
-async function applyEditorialMetadata(input: {
-  contentId: string;
-  correctionNote: string | null;
-  editorialType: EditorialType;
-  keyTopics: string[];
-  revisionId: string | null;
-  sponsorshipLabel: string | null;
-  tenantId: string;
-}) {
-  if (input.editorialType === "standard" && !input.correctionNote && !input.sponsorshipLabel && input.keyTopics.length === 0) {
-    return;
-  }
-
-  const supabase = createServerSupabaseClient();
-  let targetRevisionId = input.revisionId;
-
-  if (!targetRevisionId) {
-    const { data: revision, error: revisionError } = await supabase
-      .from("content_revisions")
-      .select("id")
-      .eq("content_item_id", input.contentId)
-      .order("revision_number", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (revisionError || !revision) {
-      throw new Error("Não foi possível localizar a revisão criada.", {
-        cause: revisionError,
-      });
-    }
-    targetRevisionId = revision.id;
-  }
-
-  const patch: {
-    body_json: Json;
-    correction_note?: string;
-    sponsorship_label?: string;
-  } = {
-    body_json: {
-      editorial_type: input.editorialType,
-      key_topics: input.keyTopics,
-    },
-  };
-  if (input.correctionNote) patch.correction_note = input.correctionNote;
-  if (input.sponsorshipLabel) patch.sponsorship_label = input.sponsorshipLabel;
-
-  const { error: updateError } = await supabase
-    .from("content_revisions")
-    .update(patch)
-    .eq("id", targetRevisionId);
-
-  if (updateError) {
-    throw new Error("Não foi possível salvar os metadados editoriais.", {
-      cause: updateError,
-    });
-  }
-
-  if (input.editorialType === "sponsored") {
-    await supabase
-      .from("content_items")
-      .update({ content_type: "sponsored" })
-      .eq("id", input.contentId)
-      .eq("owner_tenant_id", input.tenantId);
-  }
-}
-
 export async function createAdminContent(input: {
   authorName: string;
   body: string;
@@ -528,13 +462,17 @@ export async function createAdminContent(input: {
 }) {
   const supabase = createServerSupabaseClient();
   const authorId = await resolveAuthorByName(input.tenantId, input.authorName);
-  const { data, error } = await supabase.rpc("cms_create_content_with_media", {
+  const { data, error } = await supabase.rpc("cms_create_editorial_content", {
     p_author_id: toEntityId(authorId),
     p_body_text: input.body,
     p_category_id: toEntityId(input.categoryId),
+    p_correction_note: input.correctionNote,
+    p_editorial_type: input.editorialType,
     p_image_alt: input.imageAlt,
     p_image_mode: input.imageMode,
+    p_key_topics: input.keyTopics,
     p_slug: input.slug,
+    p_sponsorship_label: input.sponsorshipLabel,
     p_subtitle: input.subtitle,
     p_tenant_id: toTenantId(input.tenantId),
     p_title: input.title,
@@ -543,16 +481,6 @@ export async function createAdminContent(input: {
   if (error) {
     throw new Error("Não foi possível criar a matéria.", { cause: error });
   }
-
-  await applyEditorialMetadata({
-    contentId: data,
-    correctionNote: input.correctionNote,
-    editorialType: input.editorialType,
-    keyTopics: input.keyTopics,
-    revisionId: null,
-    sponsorshipLabel: input.sponsorshipLabel,
-    tenantId: input.tenantId,
-  });
 
   return data;
 }
@@ -575,13 +503,17 @@ export async function updateAdminContent(input: {
 }) {
   const supabase = createServerSupabaseClient();
   const authorId = await resolveAuthorByName(input.tenantId, input.authorName);
-  const { data, error } = await supabase.rpc("cms_update_content_with_media", {
+  const { data, error } = await supabase.rpc("cms_update_editorial_content", {
     p_author_id: toEntityId(authorId),
     p_body_text: input.body,
     p_category_id: toEntityId(input.categoryId),
     p_content_id: toEntityId(input.contentId),
+    p_correction_note: input.correctionNote,
+    p_editorial_type: input.editorialType,
     p_image_alt: input.imageAlt,
     p_image_mode: input.imageMode,
+    p_key_topics: input.keyTopics,
+    p_sponsorship_label: input.sponsorshipLabel,
     p_subtitle: input.subtitle,
     p_tenant_id: toTenantId(input.tenantId),
     p_title: input.title,
@@ -590,16 +522,6 @@ export async function updateAdminContent(input: {
   if (error) {
     throw new Error("Não foi possível editar a matéria.", { cause: error });
   }
-
-  await applyEditorialMetadata({
-    contentId: input.contentId,
-    correctionNote: input.correctionNote,
-    editorialType: input.editorialType,
-    keyTopics: input.keyTopics,
-    revisionId: data,
-    sponsorshipLabel: input.sponsorshipLabel,
-    tenantId: input.tenantId,
-  });
 
   return data;
 }

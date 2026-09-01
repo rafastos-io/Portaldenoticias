@@ -194,6 +194,7 @@ import {
   findOwnedContentItem,
   listAdminContent,
   setAdminContentStatus,
+  updateAdminContent,
 } from "./content-repository";
 
 describe("content repository tenant isolation", () => {
@@ -312,7 +313,7 @@ await expect(
     ).toEqual([
       expect.objectContaining({
         payload: expect.objectContaining({ p_tenant_id: TENANT_A_ID }),
-        table: "cms_create_content_with_media",
+        table: "cms_create_editorial_content",
       }),
       expect.objectContaining({
         payload: expect.objectContaining({
@@ -321,6 +322,74 @@ await expect(
         }),
         table: "cms_set_content_status",
       }),
+    ]);
+  });
+
+  it("envia mídia e metadados editoriais na mesma RPC transacional", async () => {
+    await createAdminContent({
+      authorName: "Joana Neri",
+      body: "Texto fictício com mais de oitenta caracteres para validar a operação persistente do CMS demonstrativo.",
+      categoryId: CATEGORY_ID,
+      correctionNote: null,
+      editorialType: "sponsored",
+      imageAlt: "Composição abstrata fictícia sobre saúde e longevidade.",
+      imageMode: "fallback",
+      keyTopics: [],
+      slug: "conteudo-patrocinado",
+      sponsorshipLabel: "Conteúdo patrocinado fictício",
+      subtitle: "Linha fina para conteúdo patrocinado fictício.",
+      tenantId: TENANT_A_ID,
+      title: "Conteúdo patrocinado fictício",
+    });
+
+    expect(database.calls.filter((call) => call.operation === "rpc")).toEqual([
+      {
+        operation: "rpc",
+        payload: expect.objectContaining({
+          p_correction_note: null,
+          p_editorial_type: "sponsored",
+          p_image_mode: "fallback",
+          p_key_topics: [],
+          p_sponsorship_label: "Conteúdo patrocinado fictício",
+          p_tenant_id: TENANT_A_ID,
+        }),
+        table: "cms_create_editorial_content",
+      },
+    ]);
+  });
+
+  it("edita revisão e metadados editoriais por uma única RPC", async () => {
+    await updateAdminContent({
+      authorName: "Joana Neri",
+      body: "Texto fictício atualizado com mais de oitenta caracteres para validar a operação persistente do CMS.",
+      categoryId: CATEGORY_ID,
+      contentId: TENANT_B_ITEM_ID,
+      correctionNote: "A linha fina foi corrigida para maior clareza.",
+      editorialType: "correction",
+      imageAlt: "",
+      imageMode: "none",
+      keyTopics: [],
+      slug: "materia-atlas",
+      sponsorshipLabel: null,
+      subtitle: "Linha fina atualizada para a matéria fictícia.",
+      tenantId: TENANT_A_ID,
+      title: "Matéria fictícia atualizada",
+    });
+
+    expect(database.calls.filter((call) => call.operation === "rpc")).toEqual([
+      {
+        operation: "rpc",
+        payload: expect.objectContaining({
+          p_content_id: TENANT_B_ITEM_ID,
+          p_correction_note: "A linha fina foi corrigida para maior clareza.",
+          p_editorial_type: "correction",
+          p_image_mode: "none",
+          p_key_topics: [],
+          p_sponsorship_label: null,
+          p_tenant_id: TENANT_A_ID,
+        }),
+        table: "cms_update_editorial_content",
+      },
     ]);
   });
 });

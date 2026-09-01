@@ -65,6 +65,9 @@ O MVP será uma plataforma multi-tenant com conteúdo canônico compartilhado e 
 | [Decisões confirmadas do MVP-0](docs/15-mvp0-decisoes-confirmadas.md) | Recorte rápido para Vercel + Supabase |
 | [Catálogo fictício de seed](docs/16-catalogo-ficticio-seed.md) | Marcas, autores, editorias e 24 matérias |
 | [Validação Broadcast Saúde](docs/24-validacao-broadcast-saude-conteudo-real.md) | Marcas de saúde, conteúdo autorizado, fontes e ticker |
+| [Protocolo de revisão estrutural](docs/25-protocolo-revisao-estrutural.md) | Método repetível para auditar correção, dívida, código morto e novas frentes |
+| [Evidência R301 no banco oficial](docs/28-evidencia-r301-banco-oficial.md) | Preflight transacional, 23 asserções e contraprova de rollback |
+| [Auditoria estrutural de 31/08/2026](docs/26-auditoria-estrutural-2026-08-31.md) | Baseline, achados priorizados e gates do quinto modelo |
 | [Plano do Ciclo 2](docs/17-plano-ciclo-de-melhoria.md) | Estabilização, ondas e métricas do ciclo |
 | [Maleabilidade de marcas](docs/18-maleabilidade-de-marcas-e-personalizacao.md) | Cadastro de demos, tokens, presets e variantes |
 | [Variantes editoriais](docs/19-variantes-de-cadastro-e-operacao-editorial.md) | Templates, distribuição e contexto do ADM |
@@ -94,8 +97,8 @@ externas exibidas apenas como links de origem.
 
 ## Estado atual
 
-Fase: MVP-0 implementado e publicado; estabilização do login e abertura do
-Ciclo 2 em andamento.
+Fase: MVP-0 implementado e publicado; Ciclo 2 parcialmente concluído e revisão
+estrutural aberta antes da próxima frente visual.
 
 Domínio público atual:
 `https://portaldenoticias-five.vercel.app`.

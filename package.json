@@ -10,11 +10,13 @@
     "dev": "next dev",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "next typegen && tsc --noEmit",
+    "typecheck:strict": "tsc --noEmit --incremental false --noUnusedLocals --noUnusedParameters",
     "test": "vitest run",
     "test:watch": "vitest",
     "demo:reset": "node --env-file-if-exists=.env.local scripts/reset-demo.mjs",
     "smoke:admin": "node --env-file-if-exists=.env.local scripts/smoke-admin.mjs",
     "smoke:a11y": "node scripts/smoke-accessibility.mjs",
+    "audit:structure": "node scripts/structural-audit.mjs",
     "release:promote": "node --env-file-if-exists=.env.local scripts/promote-with-smoke.mjs",
     "build": "next build",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"

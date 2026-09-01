@@ -1,0 +1,100 @@
+{
+  "baseUrl": "http://127.0.0.1:3000",
+  "environment": "local",
+  "finishedAt": "2026-08-31T13:56:01.695Z",
+  "passed": true,
+  "startedAt": "2026-08-31T13:55:33.028Z",
+  "steps": [
+    {
+      "durationMs": 856,
+      "name": "abrir login e confirmar aviso demo",
+      "passed": true
+    },
+    {
+      "durationMs": 475,
+      "name": "recusar login inválido",
+      "passed": true
+    },
+    {
+      "durationMs": 1117,
+      "name": "confirmar sessão 401",
+      "passed": true,
+      "details": {
+        "status": 401
+      }
+    },
+    {
+      "durationMs": 1722,
+      "name": "recusar tentativa com Origin externa",
+      "passed": true,
+      "details": {
+        "actionStatus": 500,
+        "sessionStatus": 401
+      }
+    },
+    {
+      "durationMs": 7546,
+      "name": "aceitar login válido e redirecionar",
+      "passed": true,
+      "details": {
+        "redirectedTo": "/admin"
+      }
+    },
+    {
+      "durationMs": 83,
+      "name": "confirmar sessão 200",
+      "passed": true,
+      "details": {
+        "actor": "demo-operator",
+        "demo": true,
+        "status": 200
+      }
+    },
+    {
+      "durationMs": 54,
+      "name": "recusar cookie adulterado sem remover sessão Vercel",
+      "passed": true,
+      "details": {
+        "nonDemoCookiesPreserved": true,
+        "sessionStatus": 401
+      }
+    },
+    {
+      "durationMs": 3392,
+      "name": "restabelecer sessão válida",
+      "passed": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "durationMs": 3698,
+      "name": "recarregar Conteúdo protegido",
+      "passed": true
+    },
+    {
+      "durationMs": 1125,
+      "name": "navegar Identidades",
+      "passed": true
+    },
+    {
+      "durationMs": 3422,
+      "name": "navegar Auditoria",
+      "passed": true
+    },
+    {
+      "durationMs": 2051,
+      "name": "voltar a Conteúdo",
+      "passed": true
+    },
+    {
+      "durationMs": 2572,
+      "name": "logout e novo bloqueio",
+      "passed": true,
+      "details": {
+        "blockedPath": "/admin/login",
+        "sessionStatus": 401
+      }
+    }
+  ]
+}

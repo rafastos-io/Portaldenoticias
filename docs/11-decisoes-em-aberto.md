@@ -99,15 +99,33 @@ Decidido para o MVP-0: não há acesso de cliente. Existe apenas um gate de ADM 
 
 ### D10 - Hospedagem e fornecedores
 
-Decidido parcialmente:
+Decidido:
 
 - aplicação: Vercel;
 - banco e storage: Supabase;
 - autenticação: não usar no MVP-0;
 - gate demo por variável de ambiente e cookie assinado;
-- região preferencial do Supabase: São Paulo quando disponível.
+- projeto Supabase definitivo: `Portaldenoticias`
+  (`yhatwpxsxntlorfgxpdl`), região `us-east-2`;
+- observabilidade completa continua pós-MVP-0; logs e smokes atuais compõem o
+  recorte demonstrativo.
 
-Ainda decidir observabilidade e o projeto Supabase definitivo.
+### D34 - quinto modelo e nova frente visual
+
+Pergunta: qual público, segmento e promessa editorial devem definir o quinto
+modelo estrutural?
+
+Antes de implementar, decidir:
+
+- nome e ID estável;
+- tarefa principal do leitor;
+- diferença em pelo menos seis eixos de `docs/22`;
+- tenant de validação e direitos de marca/assets;
+- módulos e dados existentes que sustentam a composição;
+- relação com os quatro modelos atuais, sem criar fork ou `if` por cliente.
+
+O quinto modelo permanece bloqueado até essa decisão e até os gates de preview
+real e contrato único registrados em `docs/25` e `docs/26`.
 
 ## P1 - definem detalhes do produto
 
@@ -198,7 +216,7 @@ Escolher solução e base legal antes de inserir scripts.
 | D07 | A definir | Growth/Editorial/Jurídico | - | Aberta |
 | D08 | A definir | Editorial/SEO/Jurídico | - | Aberta |
 | D09 | Apenas ADM demo com USER/User123 | Produto/Comercial | 24/07/2026 | Decidida MVP-0 |
-| D10 | Vercel + Supabase; projeto ainda a escolher | Tecnologia/Segurança | 24/07/2026 | Parcial |
+| D10 | Vercel + Supabase `Portaldenoticias` (`yhatwpxsxntlorfgxpdl`, `us-east-2`) | Tecnologia/Segurança | 25/07/2026 | Decidida MVP-0 |
 | D21 | Criar e duplicar tenants apenas demonstrativos por preset no Ciclo 2 | Produto/Comercial | 26/07/2026 | Decidida Ciclo 2 |
 | D22 | Logo e mídia fictícia no Storage isolado por tenant no Ciclo 2 | Produto/Tecnologia | 26/07/2026 | Decidida Ciclo 2 |
 | D23 | Templates editoriais demonstrativos padrão, explicador/análise, patrocinado, correção e sem mídia no Ciclo 2 | Editorial/Produto | 26/07/2026 | Decidida Ciclo 2 |
@@ -211,3 +229,4 @@ Escolher solução e base legal antes de inserir scripts.
 | D31 | Catálogo real autorizado para Abrafarma e Broadcast Saúde, com procedência, fidelidade e links externos sem reprodução integral | Cliente/Editorial | 09/08/2026 | Decidida validação |
 | D32 | Marca `BV Educação` autorizada pelo responsável para validação white-label; logo deve usar a origem oficial de imprensa do banco BV, ficar no Storage isolado e registrar `authorized-brand-validation`; isso não autoriza copiar matérias ou ampliar o escopo editorial | Cliente/Marca | 20/08/2026 | Decidida validação |
 | D33 | As 18 matérias fornecidas em `BV/` e os três vídeos indicados foram autorizados para a validação `BV Educação` e para compartilhamento por referência com tenants ativos do modelo de crédito; textos locais preservam fonte e autoria, vídeos permanecem externos e a autorização usa `CLIENTE-VALIDACAO-BV-2026-08-20` | Cliente/Editorial | 20/08/2026 | Decidida validação |
+| D34 | Definir público, segmento, promessa, ID e tenant de validação do quinto modelo | Produto/Design/Cliente | - | Aberta |

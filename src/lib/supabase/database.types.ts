@@ -944,6 +944,24 @@ export type Database = {
         }
         Returns: string
       }
+      cms_create_editorial_content: {
+        Args: {
+          p_author_id: string
+          p_body_text: string
+          p_category_id: string
+          p_correction_note: string | null
+          p_editorial_type: string
+          p_image_alt: string
+          p_image_mode: string
+          p_key_topics: string[]
+          p_slug: string
+          p_sponsorship_label: string | null
+          p_subtitle: string
+          p_tenant_id: string
+          p_title: string
+        }
+        Returns: string
+      }
       cms_create_demo_tenant: {
         Args: {
           p_display_name: string
@@ -1041,6 +1059,24 @@ export type Database = {
           p_content_id: string
           p_image_alt: string
           p_image_mode: string
+          p_subtitle: string
+          p_tenant_id: string
+          p_title: string
+        }
+        Returns: string
+      }
+      cms_update_editorial_content: {
+        Args: {
+          p_author_id: string
+          p_body_text: string
+          p_category_id: string
+          p_content_id: string
+          p_correction_note: string | null
+          p_editorial_type: string
+          p_image_alt: string
+          p_image_mode: string
+          p_key_topics: string[]
+          p_sponsorship_label: string | null
           p_subtitle: string
           p_tenant_id: string
           p_title: string
