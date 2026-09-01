@@ -31,11 +31,16 @@ function themeData() {
 
 describe("validação da identidade no servidor", () => {
   it("aceita a identidade estruturada e normaliza as cores", () => {
-    expect(parseThemeForm(themeData())).toMatchObject({
+    const parsed = parseThemeForm(themeData());
+    expect(parsed).toMatchObject({
       brandName: "Banco Demo Horizonte",
       primary: "#12324A",
+      siteModel: "investments-asset-management",
       tenantId: TENANT_ID,
     });
+    expect(parsed).not.toHaveProperty("header");
+    expect(parsed).not.toHaveProperty("hero");
+    expect(parsed).not.toHaveProperty("card");
   });
 
   it("calcula contraste WCAG conhecido", () => {

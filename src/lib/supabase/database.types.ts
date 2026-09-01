@@ -1065,6 +1065,25 @@ export type Database = {
         }
         Returns: string
       }
+      cms_resolve_site_model_components: {
+        Args: { p_site_model: string }
+        Returns: Json
+      }
+      cms_save_theme_v3: {
+        Args: {
+          p_accent: string
+          p_background: string
+          p_brand_name: string
+          p_font: string
+          p_primary: string
+          p_secondary: string
+          p_site_model: string
+          p_slogan: string
+          p_tenant_id: string
+          p_text_color: string
+        }
+        Returns: string
+      }
       cms_update_editorial_content: {
         Args: {
           p_author_id: string

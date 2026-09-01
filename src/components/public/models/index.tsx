@@ -1,6 +1,11 @@
 import type { ComponentType } from "react";
 
-import type { SiteModelId } from "@/lib/presentation/site-models";
+import {
+  parseSiteModel,
+  SITE_MODELS,
+  type SiteModelDefinition,
+  type SiteModelId,
+} from "@/lib/presentation/site-models";
 
 import {
   FinancialCreditArticle,
@@ -28,38 +33,52 @@ import type {
   HomeModelProps,
 } from "./model-types";
 
-const HOME_MODELS: Record<SiteModelId, ComponentType<HomeModelProps>> = {
-  "financial-services-credit": FinancialCreditHome,
-  "health-pharma": HealthPharmaHome,
-  "insurance-pension": InsuranceHome,
-  "investments-asset-management": InvestmentsHome,
+export type SiteModelRegistration = {
+  Article: ComponentType<ArticleModelProps>;
+  Category: ComponentType<CategoryModelProps>;
+  Home: ComponentType<HomeModelProps>;
+  definition: SiteModelDefinition;
 };
 
-const CATEGORY_MODELS: Record<
-  SiteModelId,
-  ComponentType<CategoryModelProps>
-> = {
-  "financial-services-credit": FinancialCreditCategory,
-  "health-pharma": HealthPharmaCategory,
-  "insurance-pension": InsuranceCategory,
-  "investments-asset-management": InvestmentsCategory,
-};
+export const SITE_MODEL_REGISTRY = {
+  "financial-services-credit": {
+    Article: FinancialCreditArticle,
+    Category: FinancialCreditCategory,
+    Home: FinancialCreditHome,
+    definition: SITE_MODELS["financial-services-credit"],
+  },
+  "health-pharma": {
+    Article: HealthPharmaArticle,
+    Category: HealthPharmaCategory,
+    Home: HealthPharmaHome,
+    definition: SITE_MODELS["health-pharma"],
+  },
+  "insurance-pension": {
+    Article: InsuranceArticle,
+    Category: InsuranceCategory,
+    Home: InsuranceHome,
+    definition: SITE_MODELS["insurance-pension"],
+  },
+  "investments-asset-management": {
+    Article: InvestmentsArticle,
+    Category: InvestmentsCategory,
+    Home: InvestmentsHome,
+    definition: SITE_MODELS["investments-asset-management"],
+  },
+} satisfies Readonly<Record<SiteModelId, SiteModelRegistration>>;
 
-const ARTICLE_MODELS: Record<
-  SiteModelId,
-  ComponentType<ArticleModelProps>
-> = {
-  "financial-services-credit": FinancialCreditArticle,
-  "health-pharma": HealthPharmaArticle,
-  "insurance-pension": InsuranceArticle,
-  "investments-asset-management": InvestmentsArticle,
-};
+export function getSiteModelRegistration(
+  value: unknown,
+): SiteModelRegistration | null {
+  const siteModel = parseSiteModel(value);
+  return siteModel ? SITE_MODEL_REGISTRY[siteModel] : null;
+}
 
 export function SiteModelHome({
   siteModel,
   ...props
 }: HomeModelProps & { siteModel: SiteModelId }) {
-  const Model = HOME_MODELS[siteModel];
+  const Model = SITE_MODEL_REGISTRY[siteModel].Home;
   return <Model {...props} />;
 }
 
@@ -67,7 +86,7 @@ export function SiteModelCategory({
   siteModel,
   ...props
 }: CategoryModelProps & { siteModel: SiteModelId }) {
-  const Model = CATEGORY_MODELS[siteModel];
+  const Model = SITE_MODEL_REGISTRY[siteModel].Category;
   return <Model {...props} />;
 }
 
@@ -75,6 +94,6 @@ export function SiteModelArticle({
   siteModel,
   ...props
 }: ArticleModelProps & { siteModel: SiteModelId }) {
-  const Model = ARTICLE_MODELS[siteModel];
+  const Model = SITE_MODEL_REGISTRY[siteModel].Article;
   return <Model {...props} />;
 }

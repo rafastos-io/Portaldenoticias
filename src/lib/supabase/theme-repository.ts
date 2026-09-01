@@ -97,10 +97,7 @@ export async function saveAdminTheme(input: {
   accent: string;
   background: string;
   brandName: string;
-  card: string;
   font: string;
-  header: string;
-  hero: string;
   primary: string;
   secondary: string;
   siteModel: string;
@@ -109,14 +106,11 @@ export async function saveAdminTheme(input: {
   textColor: string;
 }) {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("cms_save_theme_v2", {
+  const { data, error } = await supabase.rpc("cms_save_theme_v3", {
     p_accent: input.accent,
     p_background: input.background,
     p_brand_name: input.brandName,
-    p_card: input.card,
     p_font: input.font,
-    p_header: input.header,
-    p_hero: input.hero,
     p_primary: input.primary,
     p_secondary: input.secondary,
     p_site_model: input.siteModel,

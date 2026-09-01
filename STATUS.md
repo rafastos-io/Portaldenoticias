@@ -154,6 +154,46 @@ Evidência detalhada em
 
 Status: `DONE`.
 
+## R303 — registro central e contrato de `site_model` — 31/08/2026
+
+### Banco oficial e compatibilidade
+
+- o histórico do projeto oficial `Portaldenoticias`
+  (`yhatwpxsxntlorfgxpdl`) foi reconciliado sem criar branch paga e sem
+  reaplicar DDL ou seeds já existentes;
+- três versões remotas antigas foram substituídas no histórico pelos timestamps
+  dos arquivos locais equivalentes somente após auditoria de catálogo, funções
+  e posicionamentos;
+- a única migration historicamente ausente, `rename_ti_category`, foi simulada,
+  aplicada e verificada antes da migration estrutural;
+- as 32 versões locais/remotas estão alinhadas;
+- a migration `20260901011057_centralize_site_model_registry.sql` adiciona um
+  resolvedor SQL server-only, a RPC canônica `cms_save_theme_v3` e preserva
+  `cms_save_theme_v2` como wrapper compatível;
+- o contrato antigo de `header/hero/card` fica limitado a leitura derivada e ao
+  wrapper `v2`, com retirada em `R311`, até 31/10/2026;
+- ensaio real de `v2` e `v3` passou dentro de transação com `ROLLBACK`; nenhuma
+  identidade, auditoria ou timestamp de produção foi persistido pelo teste;
+- ID desconhecido foi recusado com `unapproved site model`.
+
+### Código e verificação
+
+- os IDs são derivados das definições canônicas, sem uma segunda lista manual;
+- `SITE_MODEL_REGISTRY` associa cada ID à definição e aos componentes de home,
+  editoria e matéria, com cobertura exaustiva pelo TypeScript;
+- as opções legadas de composição usadas na leitura/preview são derivadas das
+  definições e não são mais enviadas pela aplicação ao salvar;
+- teste de paridade extrai os IDs do resolvedor SQL e exige igualdade exata com
+  o registro TypeScript;
+- auditoria remota somente leitura: `PASS`, quatro modelos resolvidos, zero
+  composições divergentes, anon negado e `service_role` autorizado;
+- lint, TypeScript estrito, 38 arquivos/184 testes, build das 12 rotas,
+  auditoria estrutural e `git diff --check` aprovados.
+
+Evidência detalhada em `docs/30-evidencia-r303-registro-modelos.md`.
+
+Status: `DONE`. `R304` está `READY`.
+
 ## C258 — escopo do catálogo BV e matérias distribuídas no Admin — 23/08/2026
 
 ### Contrato da entrega
@@ -1373,7 +1413,7 @@ O verificador independente identificou e as especificações passaram a cobrir:
 
 ## Próxima ação do executor
 
-`R302` está em `DONE`: a próxima ação estrutural é `R303`, consolidando o
-registro dos quatro modelos, a fonte de verdade de `site_model` e a paridade
-TypeScript/SQL. O housekeeping das migrations antigas entra no mesmo R303. A
-nova frente visual começa em `R310` somente após `R305` e a decisão D34.
+`R303` está em `DONE`: a próxima ação estrutural é `R304`, confirmando e
+removendo somente código órfão real, eliminando exceções por slug e
+reconciliando a documentação operacional. A nova frente visual começa em
+`R310` somente após `R305` e a decisão D34.

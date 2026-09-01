@@ -1,28 +1,19 @@
-export const SITE_MODEL_IDS = [
-  "financial-services-credit",
-  "investments-asset-management",
-  "insurance-pension",
-  "health-pharma",
-] as const;
-
-export type SiteModelId = (typeof SITE_MODEL_IDS)[number];
-
-type LegacyComposition = {
+export type LegacyComposition = {
   card: "compact-horizontal" | "data-led" | "image-top";
   header: "brand-centered" | "masthead-clean" | "masthead-minimal";
   hero: "featured-grid" | "science-feature" | "split-editorial";
 };
 
-export type SiteModelDefinition = {
+type SiteModelDefinitionShape = {
   composition: LegacyComposition;
   description: string;
   eyebrow: string;
-  id: SiteModelId;
+  id: string;
   label: string;
   navigation: readonly string[];
 };
 
-export const SITE_MODELS: Record<SiteModelId, SiteModelDefinition> = {
+const SITE_MODEL_DEFINITIONS = {
   "financial-services-credit": {
     composition: {
       card: "image-top",
@@ -103,7 +94,40 @@ export const SITE_MODELS: Record<SiteModelId, SiteModelDefinition> = {
       "Longevidade",
     ],
   },
+} as const satisfies Readonly<Record<string, SiteModelDefinitionShape>>;
+
+export type SiteModelId = keyof typeof SITE_MODEL_DEFINITIONS;
+
+export type SiteModelDefinition = Omit<SiteModelDefinitionShape, "id"> & {
+  id: SiteModelId;
 };
+
+export const SITE_MODELS: Readonly<
+  Record<SiteModelId, SiteModelDefinition>
+> = SITE_MODEL_DEFINITIONS;
+
+export const SITE_MODEL_IDS = Object.freeze(
+  Object.keys(SITE_MODELS) as SiteModelId[],
+);
+
+function uniqueCompositionValues<Key extends keyof LegacyComposition>(
+  key: Key,
+): readonly LegacyComposition[Key][] {
+  return Object.freeze([
+    ...new Set(SITE_MODEL_IDS.map((id) => SITE_MODELS[id].composition[key])),
+  ]);
+}
+
+export const SITE_MODEL_HEADERS = uniqueCompositionValues("header");
+export const SITE_MODEL_HEROES = uniqueCompositionValues("hero");
+export const SITE_MODEL_CARDS = uniqueCompositionValues("card");
+
+export const LEGACY_COMPONENT_COMPATIBILITY = Object.freeze({
+  fields: ["header", "hero", "card"] as const,
+  mode: "derived-read-only",
+  removeAfter: "2026-10-31",
+  removalMilestone: "R311",
+});
 
 const LEGACY_SITE_MODELS: Readonly<Record<string, SiteModelId>> = {
   "00000000-0000-4000-8000-000000000002":

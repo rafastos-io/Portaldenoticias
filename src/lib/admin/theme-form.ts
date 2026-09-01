@@ -1,6 +1,9 @@
 import {
   getSiteModelDefinition,
   parseSiteModel,
+  SITE_MODEL_CARDS,
+  SITE_MODEL_HEADERS,
+  SITE_MODEL_HEROES,
   SITE_MODEL_IDS,
   type SiteModelId,
 } from "@/lib/presentation/site-models";
@@ -12,21 +15,9 @@ export const APPROVED_FONTS = [
   "sans-humana",
   "sans-geometrica",
 ] as const;
-export const APPROVED_HEADERS = [
-  "masthead-clean",
-  "brand-centered",
-  "masthead-minimal",
-] as const;
-export const APPROVED_HEROES = [
-  "split-editorial",
-  "featured-grid",
-  "science-feature",
-] as const;
-export const APPROVED_CARDS = [
-  "image-top",
-  "compact-horizontal",
-  "data-led",
-] as const;
+export const APPROVED_HEADERS = SITE_MODEL_HEADERS;
+export const APPROVED_HEROES = SITE_MODEL_HEROES;
+export const APPROVED_CARDS = SITE_MODEL_CARDS;
 export const APPROVED_LOGO_RIGHTS = [
   "demo-original",
   "authorized-brand-validation",
@@ -334,16 +325,11 @@ export function parseThemeForm(formData: FormData) {
   }
 
   const siteModel = option(formData, "siteModel", SITE_MODEL_IDS);
-  const composition = getSiteModelDefinition(siteModel).composition;
-
   return {
     accent: color(formData, "accent"),
     background,
     brandName: text(formData, "brandName", "Nome da marca", 120),
-    card: composition.card,
     font: option(formData, "font", APPROVED_FONTS),
-    header: composition.header,
-    hero: composition.hero,
     primary,
     secondary: color(formData, "secondary"),
     siteModel,
