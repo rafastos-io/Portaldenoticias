@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
+import { DM_Sans, Saira } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
@@ -21,6 +21,16 @@ const dmSans = DM_Sans({
   variable: "--font-dm-sans",
 });
 
+// Display face for model wordmarks; also fetched only where a model uses it.
+const saira = Saira({
+  display: "swap",
+  preload: false,
+  style: ["italic"],
+  subsets: ["latin"],
+  variable: "--font-saira",
+  weight: ["700", "800"],
+});
+
 type RootLayoutProps = Readonly<{
   children: ReactNode;
 }>;
@@ -28,7 +38,7 @@ type RootLayoutProps = Readonly<{
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
-      className={dmSans.variable}
+      className={`${dmSans.variable} ${saira.variable}`}
       data-scroll-behavior="smooth"
       lang="pt-BR"
     >

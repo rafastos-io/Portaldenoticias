@@ -13,6 +13,10 @@ import {
   AutomotiveMobilityHome,
 } from "./automotive-mobility-model";
 import {
+  AutomotiveMobilityFooter,
+  AutomotiveMobilityHeader,
+} from "./automotive-mobility-chrome";
+import {
   FinancialCreditArticle,
   FinancialCreditCategory,
   FinancialCreditHome,
@@ -36,11 +40,16 @@ import type {
   ArticleModelProps,
   CategoryModelProps,
   HomeModelProps,
+  ShellChromeProps,
 } from "./model-types";
 
 export type SiteModelRegistration = {
   Article: ComponentType<ArticleModelProps>;
   Category: ComponentType<CategoryModelProps>;
+  /** Optional model-owned footer; the shared footer is used otherwise. */
+  Footer?: ComponentType<ShellChromeProps>;
+  /** Optional model-owned header; the shared header is used otherwise. */
+  Header?: ComponentType<ShellChromeProps>;
   Home: ComponentType<HomeModelProps>;
   definition: SiteModelDefinition;
 };
@@ -49,6 +58,8 @@ export const SITE_MODEL_REGISTRY = {
   "automotive-mobility": {
     Article: AutomotiveMobilityArticle,
     Category: AutomotiveMobilityCategory,
+    Footer: AutomotiveMobilityFooter,
+    Header: AutomotiveMobilityHeader,
     Home: AutomotiveMobilityHome,
     definition: SITE_MODELS["automotive-mobility"],
   },

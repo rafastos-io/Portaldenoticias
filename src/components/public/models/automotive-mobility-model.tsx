@@ -255,7 +255,10 @@ function LaneHeader({
   title: string;
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="relative isolate flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <span aria-hidden="true" className="auto-watermark hidden md:block">
+        {eyebrow}
+      </span>
       <div>
         <p
           className={`flex items-center gap-3 text-xs font-bold tracking-[0.18em] uppercase ${
@@ -306,6 +309,42 @@ function Arrow() {
     >
       <path d="M5 12h14M13 6l6 6-6 6" />
     </svg>
+  );
+}
+
+/** Dashed lane with a car and a finish flag: decorative fold divider. */
+function RoadDivider() {
+  return (
+    <div aria-hidden="true" className="auto-road">
+      <svg
+        className="size-6 shrink-0"
+        fill="none"
+        focusable="false"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        viewBox="0 0 24 24"
+      >
+        <path d="M3 15.5h1.2l1.4-3.6A2 2 0 0 1 7.5 10.6h7.2a2 2 0 0 1 1.6.8l2.2 3h1.6a1 1 0 0 1 1 1V17H3z" />
+        <circle cx="7.5" cy="17.5" r="1.6" />
+        <circle cx="16.5" cy="17.5" r="1.6" />
+      </svg>
+      <span className="auto-road-line" />
+      <svg
+        className="size-6 shrink-0"
+        fill="none"
+        focusable="false"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        viewBox="0 0 24 24"
+      >
+        <path d="M5 21V4M5 4h13l-2.5 4.5L18 13H5" />
+        <path d="M9.5 4v9M14 4v9M5 8.5h11.5" />
+      </svg>
+    </div>
   );
 }
 
@@ -447,6 +486,7 @@ function HomeHero({
             aria-hidden="true"
             className="auto-hero-shade absolute inset-0 -z-10"
           />
+          <span aria-hidden="true" className="auto-hero-speed" />
           <div className="auto-hero-copy hero-copy grid gap-4 p-6 sm:p-10">
             <p className="w-fit rounded-full bg-accent px-3 py-1.5 text-[0.7rem] font-bold tracking-[0.12em] text-brand-primary uppercase">
               {heroEyebrow ?? "Manchete"}
@@ -471,8 +511,24 @@ function HomeHero({
         {credit.length > 0 ? (
           <aside
             aria-labelledby="credito-em-foco"
-            className="auto-panel flex flex-col rounded-[var(--radius-lg)] p-6 sm:p-8"
+            className="auto-panel relative isolate flex flex-col overflow-hidden rounded-[var(--radius-lg)] p-6 sm:p-8"
           >
+            <svg
+              aria-hidden="true"
+              className="auto-gauge absolute -right-8 -bottom-10 -z-10 size-44"
+              fill="none"
+              focusable="false"
+              stroke="currentColor"
+              strokeLinecap="round"
+              viewBox="0 0 100 100"
+            >
+              <path d="M15 70a35 35 0 1 1 70 0" strokeWidth="6" />
+              <path d="M50 70 70 42" strokeWidth="4" />
+              <path
+                d="M22 52l5 2M33 36l4 4M50 30v6M67 36l-4 4M78 52l-5 2"
+                strokeWidth="3"
+              />
+            </svg>
             <p className="flex items-center gap-3 text-xs font-bold tracking-[0.18em] text-brand-secondary uppercase">
               <CategoryIcon className="size-4" slug={CREDIT_CATEGORY} />
               Crédito em foco
@@ -526,9 +582,10 @@ function Lane({
     return (
       <section
         aria-labelledby={titleId}
-        className="auto-track bg-surface-inverse py-14 text-white sm:py-20"
+        className="auto-track bg-surface-inverse pb-14 text-white sm:pb-20"
         id={lane.id}
       >
+        <div aria-hidden="true" className="auto-checker mb-14 sm:mb-20" />
         <div className="page-container grid gap-10">
           <LaneHeader
             eyebrow={lane.eyebrow}
@@ -587,6 +644,7 @@ function Lane({
         className="page-container grid gap-10 py-14 sm:py-20"
         id={lane.id}
       >
+        <RoadDivider />
         <LaneHeader eyebrow={lane.eyebrow} id={titleId} title={lane.title} />
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {groups.map((group) => {
@@ -624,6 +682,7 @@ function Lane({
       className="page-container grid gap-10 py-14 sm:py-20"
       id={lane.id}
     >
+      <RoadDivider />
       <LaneHeader
         eyebrow={lane.eyebrow}
         href={href}

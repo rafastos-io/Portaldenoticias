@@ -239,8 +239,128 @@ textarea {
   align-items: center;
 }
 
-[data-site-model="automotive-mobility"] .model-footer {
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+/* Masthead: brand band with speed lines and a dashed lane edge. */
+.auto-masthead {
+  background:
+    radial-gradient(70% 160% at 100% 0%, color-mix(in srgb, var(--brand-secondary) 75%, transparent), transparent 70%),
+    var(--brand-primary);
+}
+
+.auto-masthead-speed {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 0 45%;
+  background: repeating-linear-gradient(
+    -62deg,
+    transparent 0 2.2rem,
+    rgb(255 255 255 / 5%) 2.2rem 2.35rem
+  );
+  mask-image: linear-gradient(90deg, transparent, #000 40%);
+}
+
+.auto-masthead-lane,
+.auto-footer-road::after {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 0.25rem;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 2.6rem, transparent 2.6rem 4rem);
+}
+
+.auto-masthead-lane {
+  bottom: 0;
+}
+
+.auto-wordmark {
+  font-family: var(--font-saira), "Arial Black", Arial, sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.auto-lockup-rule {
+  width: 0.2rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 20%, transparent));
+  transform: skewX(-14deg);
+}
+
+/* Footer: straight asphalt edge instead of the rounded top used elsewhere. */
+.auto-footer {
+  background:
+    radial-gradient(60% 120% at 0% 100%, color-mix(in srgb, var(--brand-secondary) 55%, transparent), transparent 70%),
+    var(--brand-primary);
+}
+
+.auto-footer-road {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1.1rem;
+  background: color-mix(in srgb, var(--brand-primary) 55%, #05070f);
+}
+
+.auto-footer-road::after {
+  content: "";
+  top: calc(50% - 0.125rem);
+  opacity: 0.8;
+}
+
+/* Section ornaments. */
+.auto-watermark {
+  position: absolute;
+  z-index: -1;
+  top: -0.35em;
+  right: 0;
+  font-family: var(--font-saira), "Arial Black", Arial, sans-serif;
+  font-size: clamp(3.5rem, 9vw, 7.5rem);
+  font-style: italic;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--brand-secondary) 16%, transparent);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.auto-track .auto-watermark {
+  -webkit-text-stroke-color: rgb(255 255 255 / 12%);
+}
+
+.auto-road {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--brand-secondary);
+}
+
+.auto-road-line {
+  flex: 1;
+  height: 0.2rem;
+  border-radius: 999px;
+  background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--brand-secondary) 35%, transparent) 0 1.6rem, transparent 1.6rem 2.8rem);
+}
+
+.auto-checker {
+  height: 1rem;
+  background:
+    repeating-conic-gradient(rgb(255 255 255 / 85%) 0 25%, transparent 0 50%) 0 0 / 1rem 1rem;
+  opacity: 0.5;
+}
+
+.auto-hero-speed {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 0 50%;
+  background: repeating-linear-gradient(-62deg, transparent 0 3rem, rgb(255 255 255 / 6%) 3rem 3.15rem);
+  mask-image: linear-gradient(90deg, transparent, #000 60%);
+}
+
+.auto-gauge {
+  color: color-mix(in srgb, var(--brand-secondary) 22%, transparent);
 }
 
 .auto-visual {
