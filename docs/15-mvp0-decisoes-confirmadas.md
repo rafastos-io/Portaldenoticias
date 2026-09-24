@@ -101,8 +101,13 @@ demonstrativo `financiacar` ("FinanciaCar — um portal do banco BV"):
 - as 28 matérias são fictícias, próprias do tenant, rotuladas como
   "Conteúdo demonstrativo" e voláteis: serão despublicadas quando o material
   editorial real for fornecido e autorizado;
-- não há fotografia nesta etapa; o modelo exibe um visual gráfico da marca até o
-  recebimento de imagens com direitos registrados;
+- as 28 imagens das matérias foram geradas por IA (ChatGPT) a partir de
+  `docs/31-financiacar-prompts-imagens.md`, fornecidas pelo responsável em
+  23/09/2026 e registradas com `rights_basis = demo-ai-generated`; o visual
+  gráfico da marca permanece como fallback para matérias sem imagem;
+- reexecutar `private.apply_financiacar_demo_portal()` redefine as imagens para
+  o fallback; nesse caso, reexecutar também
+  `private.apply_financiacar_article_images()`;
 - a referência operacional é `DEMO-FINANCIACAR-2026-09-23`;
 - `R304` e `R305` foram adiadas, não canceladas (ver `TASKS.md`).
 
