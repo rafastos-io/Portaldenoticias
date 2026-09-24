@@ -48,7 +48,10 @@ export type SiteModelRegistration = {
   Category: ComponentType<CategoryModelProps>;
   /** Optional model-owned footer; the shared footer is used otherwise. */
   Footer?: ComponentType<ShellChromeProps>;
-  /** Optional model-owned header; the shared header is used otherwise. */
+  /**
+   * Optional model-owned header; the shared header is used otherwise. A model
+   * header must render <AccessibilityControls variant="inline" />.
+   */
   Header?: ComponentType<ShellChromeProps>;
   Home: ComponentType<HomeModelProps>;
   definition: SiteModelDefinition;

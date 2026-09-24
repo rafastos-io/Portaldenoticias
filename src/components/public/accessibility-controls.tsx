@@ -60,7 +60,12 @@ function getServerSnapshot() {
   return "";
 }
 
-export function AccessibilityControls() {
+export function AccessibilityControls({
+  variant = "bar",
+}: {
+  /** "bar" renders its own strip; "inline" is embedded in a model header. */
+  variant?: "bar" | "inline";
+} = {}) {
   const storedPreferences = useSyncExternalStore(
     subscribe,
     getSnapshot,
@@ -95,12 +100,36 @@ export function AccessibilityControls() {
     preferences.reducedMotion ? "reduzidas" : "padrão"
   }.`;
 
-  return (
-    <div className="border-b border-border-subtle bg-surface-raised">
-      <div className="page-container flex min-h-11 items-center justify-end py-1">
+  const panel = (
         <details className="relative">
-          <summary className="cursor-pointer list-none rounded-sm px-3 py-2 text-sm font-bold text-brand-primary underline underline-offset-4">
-            Acessibilidade
+          <summary
+            className={
+              variant === "inline"
+                ? "flex min-h-10 min-w-10 cursor-pointer list-none items-center justify-center gap-2 rounded-full border border-white/35 px-2.5 sm:px-4 text-sm font-bold text-white transition-colors hover:bg-white hover:text-brand-primary"
+                : "cursor-pointer list-none rounded-sm px-3 py-2 text-sm font-bold text-brand-primary underline underline-offset-4"
+            }
+          >
+            {variant === "inline" ? (
+              <svg
+                aria-hidden="true"
+                className="size-4"
+                fill="none"
+                focusable="false"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="4.5" r="1.8" />
+                <path d="M5 8.5 12 10l7-1.5M12 10v4.5M9 21l3-6.5 3 6.5" />
+              </svg>
+            ) : null}
+            {variant === "inline" ? (
+              <span className="sr-only sm:not-sr-only">Acessibilidade</span>
+            ) : (
+              "Acessibilidade"
+            )}
           </summary>
           <div className="absolute right-0 z-50 mt-1 w-[min(22rem,calc(100vw-2rem))] border border-border-subtle bg-surface-raised p-4 text-text-primary shadow-lg">
             <p className="font-bold">Preferências de leitura</p>
@@ -157,6 +186,14 @@ export function AccessibilityControls() {
             </p>
           </div>
         </details>
+  );
+
+  if (variant === "inline") return panel;
+
+  return (
+    <div className="border-b border-border-subtle bg-surface-raised">
+      <div className="page-container flex min-h-11 items-center justify-end py-1">
+        {panel}
       </div>
     </div>
   );

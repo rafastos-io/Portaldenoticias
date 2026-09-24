@@ -81,7 +81,8 @@ export function PublicShell({
       <a className="skip-link" href="#conteudo-principal">
         Pular para o conteúdo
       </a>
-      <AccessibilityControls />
+      {/* Model-owned headers embed the accessibility controls themselves. */}
+      {ModelHeader ? null : <AccessibilityControls />}
       {ModelHeader ? (
         <ModelHeader categories={categories} tenant={tenant} theme={theme} />
       ) : (

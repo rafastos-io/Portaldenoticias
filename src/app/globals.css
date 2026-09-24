@@ -250,6 +250,7 @@ textarea {
   position: absolute;
   z-index: -1;
   inset: 0 0 0 45%;
+  overflow: hidden;
   background: repeating-linear-gradient(
     -62deg,
     transparent 0 2.2rem,
@@ -258,7 +259,6 @@ textarea {
   mask-image: linear-gradient(90deg, transparent, #000 40%);
 }
 
-.auto-masthead-lane,
 .auto-footer-road::after {
   position: absolute;
   right: 0;
@@ -267,15 +267,10 @@ textarea {
   background: repeating-linear-gradient(90deg, var(--accent) 0 2.6rem, transparent 2.6rem 4rem);
 }
 
-.auto-masthead-lane {
-  bottom: 0;
-}
-
 .auto-wordmark {
-  font-family: var(--font-saira), "Arial Black", Arial, sans-serif;
-  font-style: italic;
+  font-family: var(--font-heading);
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.06em;
 }
 
 .auto-lockup-rule {
@@ -313,21 +308,20 @@ textarea {
   z-index: -1;
   top: -0.35em;
   right: 0;
-  font-family: var(--font-saira), "Arial Black", Arial, sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(3.5rem, 9vw, 7.5rem);
-  font-style: italic;
   font-weight: 800;
   line-height: 1;
   text-transform: uppercase;
   color: transparent;
-  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--brand-secondary) 16%, transparent);
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--brand-secondary) 7%, transparent);
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
 }
 
 .auto-track .auto-watermark {
-  -webkit-text-stroke-color: rgb(255 255 255 / 12%);
+  -webkit-text-stroke-color: rgb(255 255 255 / 6%);
 }
 
 .auto-road {
@@ -335,6 +329,7 @@ textarea {
   align-items: center;
   gap: 1rem;
   color: var(--brand-secondary);
+  opacity: 0.28;
 }
 
 .auto-road-line {

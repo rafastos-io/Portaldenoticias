@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { AccessibilityControls } from "@/components/public/accessibility-controls";
 import { EditorialNavigation } from "@/components/public/editorial-navigation";
 import type { ThemeValues } from "@/lib/admin/theme-form";
 
@@ -33,7 +34,7 @@ function BrandLockup({
         <>
           <span
             className={`relative block shrink-0 ${
-              size === "lg" ? "size-14 sm:size-16" : "size-10 sm:size-12"
+              size === "lg" ? "size-11 sm:size-12" : "size-9 sm:size-10"
             }`}
           >
             <Image
@@ -49,7 +50,7 @@ function BrandLockup({
           <span
             aria-hidden="true"
             className={`auto-lockup-rule shrink-0 ${
-              size === "lg" ? "h-14 sm:h-16" : "h-10 sm:h-12"
+              size === "lg" ? "h-11 sm:h-12" : "h-9 sm:h-10"
             }`}
           />
         </>
@@ -58,8 +59,8 @@ function BrandLockup({
         <span
           className={`auto-wordmark block leading-[0.9] uppercase ${
             size === "lg"
-              ? "text-[2.4rem] sm:text-[3.4rem]"
-              : "text-[1.55rem] sm:text-[2.15rem]"
+              ? "text-[1.55rem] sm:text-[1.9rem]"
+              : "text-[1.2rem] sm:text-[1.45rem]"
           }`}
         >
           {head}
@@ -74,25 +75,6 @@ function BrandLockup({
         </span>
       </span>
     </span>
-  );
-}
-
-function Speedometer() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-5"
-      fill="none"
-      focusable="false"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeWidth="1.8"
-      viewBox="0 0 24 24"
-    >
-      <path d="M4 17a8 8 0 1 1 16 0" />
-      <path d="m12 17 4-5" />
-      <path d="M7.5 12.5 6.4 11.6M12 9V7.6M16.6 11.6l-1.1.9" />
-    </svg>
   );
 }
 
@@ -112,7 +94,7 @@ export function AutomotiveMobilityHeader({
 
   return (
     <header className="model-header" data-site-model={theme.siteModel}>
-      <div className="auto-masthead relative isolate overflow-hidden text-white">
+      <div className="auto-masthead relative isolate z-20 text-white">
         <span aria-hidden="true" className="auto-masthead-speed" />
         <div className="page-container flex min-h-24 items-center justify-between gap-6 py-4 sm:min-h-28">
           <Link
@@ -122,17 +104,13 @@ export function AutomotiveMobilityHeader({
           >
             <BrandLockup theme={theme} />
           </Link>
-          <div className="hidden shrink-0 items-center gap-4 md:flex">
-            <p className="text-right text-sm leading-5 text-white/80 first-letter:uppercase">
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            <AccessibilityControls variant="inline" />
+            <p className="hidden text-right text-sm leading-5 text-white/80 first-letter:uppercase md:block">
               {today}
-            </p>
-            <p className="flex min-h-10 items-center gap-2 rounded-full border border-white/25 px-4 text-xs font-bold tracking-[0.12em] text-white uppercase">
-              <Speedometer />
-              Edição demonstrativa
             </p>
           </div>
         </div>
-        <span aria-hidden="true" className="auto-masthead-lane" />
       </div>
 
       <div className="bg-surface-raised">
