@@ -21,6 +21,10 @@ export function getPublicBrandCopy(
     };
   }
 
+  if (model.brandCopy) {
+    return { ...model.brandCopy, headerEyebrow: model.eyebrow };
+  }
+
   return {
     footerDescription:
       "Jornalismo sobre saúde, longevidade, inovação e seus impactos econômicos, apresentado em uma experiência editorial white-label.",

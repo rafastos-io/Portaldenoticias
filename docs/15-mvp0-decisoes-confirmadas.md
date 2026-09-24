@@ -88,6 +88,24 @@ O responsável autorizou duas novas editorias para a validação `BV Educação`
   `bv-educacao`; compartilhar o modelo visual não autoriza publicação automática
   em outro white-label.
 
+### Emenda FinanciaCar e quinto modelo — 23/09/2026
+
+O responsável autorizou o quinto modelo visual `automotive-mobility` e o tenant
+demonstrativo `financiacar` ("FinanciaCar — um portal do banco BV"):
+
+- a identidade usa a paleta atual do Banco BV observada no site institucional
+  (`#192A9A`, `#223AD2`, `#31C7ED`, `#15191E`) para validação comercial; a
+  fonte proprietária do banco é substituída por DM Sans somente dentro do modelo;
+- o tenant é novo, `demo`, `noindex` e isolado; o `bv-educacao` não é alterado
+  até o novo modelo estabilizar;
+- as 28 matérias são fictícias, próprias do tenant, rotuladas como
+  "Conteúdo demonstrativo" e voláteis: serão despublicadas quando o material
+  editorial real for fornecido e autorizado;
+- não há fotografia nesta etapa; o modelo exibe um visual gráfico da marca até o
+  recebimento de imagens com direitos registrados;
+- a referência operacional é `DEMO-FINANCIACAR-2026-09-23`;
+- `R304` e `R305` foram adiadas, não canceladas (ver `TASKS.md`).
+
 ### Correção do escopo editorial BV — 23/08/2026
 
 - o catálogo público do `bv-educacao` fica restrito aos contratos

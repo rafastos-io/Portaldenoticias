@@ -70,10 +70,17 @@ protocolo está em `docs/25-protocolo-revisao-estrutural.md` e a baseline em
 | R301 | P0 | DONE | R300 | Tornar cadastro editorial e metadados uma única transação sem perda de JSON |
 | R302 | P1 | DONE | R301 | Substituir preview paralelo pelo renderer real compartilhado |
 | R303 | P1 | DONE | R302 | Consolidar `site_model`, registro de componentes e paridade TypeScript/SQL |
-| R304 | P1 | READY | R303 | Remover código morto confirmado, exceções por slug e reconciliar documentação |
-| R305 | P1 | BLOCKED | R304 | Versionar matriz E2E dos quatro modelos e corrigir atritos mobile |
-| R310 | P1 | BLOCKED | R305,D34 | Implementar o quinto modelo a partir de direção visual aprovada |
+| R304 | P1 | READY | R303 | Remover código morto confirmado, exceções por slug e reconciliar documentação — **pendência de segurança adiada, obrigatória antes de migrar `bv-educacao` ou abrir um sexto modelo** |
+| R305 | P1 | BLOCKED | R304 | Versionar matriz E2E dos cinco modelos e corrigir atritos mobile — **pendência de segurança adiada, mesma condição de R304** |
+| R310 | P1 | IN_PROGRESS | D34 | Implementar o quinto modelo `automotive-mobility` e o tenant isolado `financiacar` |
 | R311 | P1 | BLOCKED | R310 | Matriz local/Preview do novo modelo e auditoria adversarial |
+
+Emenda de 23/09/2026: D34 foi decidida (briefing FinanciaCar/Banco BV). O
+responsável autorizou antecipar `R310` antes de `R304`/`R305` porque a entrega
+cria um tenant novo e isolado e não altera nenhum tenant existente. `R304` e
+`R305` continuam obrigatórias e voltam a ser a prioridade assim que o
+FinanciaCar estabilizar. Registro na CENTRAL:
+`Freelancers/05 - Decisões/DEC-2026-09-02 - Definir o quinto modelo do Broadcast`.
 
 ## Critérios por tarefa
 

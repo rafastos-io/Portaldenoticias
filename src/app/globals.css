@@ -223,6 +223,103 @@ textarea {
   align-items: center;
 }
 
+[data-site-model="automotive-mobility"] {
+  --container: 80rem;
+  --radius-md: 1.125rem;
+  --radius-lg: 1.75rem;
+  --surface-muted: color-mix(in srgb, var(--brand-secondary) 8%, #ffffff);
+  --border-subtle: color-mix(in srgb, var(--brand-primary) 14%, #ffffff);
+  --text-muted: color-mix(in srgb, var(--text-primary) 72%, #ffffff);
+  font-family: var(--font-body);
+}
+
+[data-site-model="automotive-mobility"] .model-header nav a {
+  min-height: 3rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+[data-site-model="automotive-mobility"] .model-footer {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.auto-visual {
+  background:
+    radial-gradient(120% 90% at 100% 100%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 60%),
+    linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+}
+
+.auto-visual[data-tone="sky"] {
+  background:
+    radial-gradient(110% 90% at 0% 100%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 62%),
+    linear-gradient(160deg, var(--brand-secondary), var(--brand-primary));
+}
+
+.auto-visual[data-tone="night"] {
+  background:
+    radial-gradient(100% 80% at 100% 0%, color-mix(in srgb, var(--brand-secondary) 70%, transparent), transparent 65%),
+    linear-gradient(150deg, color-mix(in srgb, var(--brand-primary) 70%, #05070f), var(--brand-primary));
+}
+
+/* Dashed lane marking: a quiet automotive signature for image-less stories. */
+.auto-visual-lane {
+  position: absolute;
+  inset: auto -10% 22% -10%;
+  height: 0.28rem;
+  transform: rotate(-8deg);
+  background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 80%, #ffffff) 0 2.4rem, transparent 2.4rem 4.2rem);
+  opacity: 0.55;
+}
+
+.auto-visual-icon {
+  opacity: 0.22;
+  stroke-width: 1.1;
+}
+
+.auto-hero-shade {
+  background: linear-gradient(0deg, rgb(5 8 20 / 88%) 0%, rgb(5 8 20 / 45%) 45%, rgb(5 8 20 / 5%) 80%);
+}
+
+.auto-hero-copy a:not([class*="bg-white"]) {
+  color: inherit;
+}
+
+.auto-panel {
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-subtle),
+    0 1.25rem 2.5rem -2rem color-mix(in srgb, var(--brand-primary) 45%, transparent);
+}
+
+.auto-chip {
+  background: var(--surface-muted);
+}
+
+.auto-chip:hover {
+  background: color-mix(in srgb, var(--brand-secondary) 16%, #ffffff);
+}
+
+.auto-tint {
+  background: var(--surface-muted);
+}
+
+.auto-track {
+  background:
+    radial-gradient(80% 120% at 100% 0%, color-mix(in srgb, var(--brand-secondary) 55%, transparent), transparent 60%),
+    var(--brand-primary);
+}
+
+.auto-track .auto-chip,
+.auto-track a {
+  color: inherit;
+}
+
+.auto-category-band {
+  background:
+    radial-gradient(90% 140% at 100% 100%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 55%),
+    linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+}
+
 .editorial-nav-scroll {
   scrollbar-width: none;
   overscroll-behavior-inline: contain;

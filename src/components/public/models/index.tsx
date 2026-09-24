@@ -8,6 +8,11 @@ import {
 } from "@/lib/presentation/site-models";
 
 import {
+  AutomotiveMobilityArticle,
+  AutomotiveMobilityCategory,
+  AutomotiveMobilityHome,
+} from "./automotive-mobility-model";
+import {
   FinancialCreditArticle,
   FinancialCreditCategory,
   FinancialCreditHome,
@@ -41,6 +46,12 @@ export type SiteModelRegistration = {
 };
 
 export const SITE_MODEL_REGISTRY = {
+  "automotive-mobility": {
+    Article: AutomotiveMobilityArticle,
+    Category: AutomotiveMobilityCategory,
+    Home: AutomotiveMobilityHome,
+    definition: SITE_MODELS["automotive-mobility"],
+  },
   "financial-services-credit": {
     Article: FinancialCreditArticle,
     Category: FinancialCreditCategory,

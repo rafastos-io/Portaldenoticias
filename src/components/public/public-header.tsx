@@ -8,6 +8,7 @@ import { getSiteModelDefinition } from "@/lib/presentation/site-models";
 import type { PublicTenant } from "@/lib/supabase/portal-repository";
 
 const headerLayouts = {
+  "automotive-mobility": "justify-between",
   "financial-services-credit":
     "justify-between border-b-4 border-brand-primary",
   "health-pharma": "justify-between border-t-4 border-brand-primary",
@@ -17,6 +18,7 @@ const headerLayouts = {
 } as const;
 
 const brandSizes = {
+  "automotive-mobility": "text-xl sm:text-2xl",
   "financial-services-credit": "text-xl sm:text-2xl",
   "health-pharma": "text-lg sm:text-xl",
   "insurance-pension": "text-2xl sm:text-4xl",
@@ -37,9 +39,9 @@ export function PublicHeader({
   const brandCopy = getPublicBrandCopy(tenant.slug, model);
   const centered = theme.siteModel === "insurance-pension";
   const visibleCategories =
-    theme.siteModel === "financial-services-credit"
+    model.headerCategoryLimit === null
       ? categories
-      : categories.slice(0, theme.siteModel === "health-pharma" ? 9 : 5);
+      : categories.slice(0, model.headerCategoryLimit);
   return (
     <header
       className="model-header border-b border-border-subtle bg-surface-raised"

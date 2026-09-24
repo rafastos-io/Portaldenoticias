@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -6,17 +6,37 @@ import {
   SITE_MODEL_IDS,
 } from "./presentation/site-models";
 
-const migration = readFileSync(
+// Windows checkouts with core.autocrlf produce CRLF; the contract is newline-agnostic.
+const readSql = (url: URL) =>
+  readFileSync(url, "utf8").replace(/\r\n/g, "\n");
+
+const migration = readSql(
   new URL(
     "../../supabase/migrations/20260901011057_centralize_site_model_registry.sql",
     import.meta.url,
   ),
-  "utf8",
 );
+
+const migrationsDirectory = new URL(
+  "../../supabase/migrations/",
+  import.meta.url,
+);
+
+// The allowlist may be redefined by later migrations; the newest one wins.
+const latestResolverMigration = readdirSync(migrationsDirectory)
+  .filter((file) => file.endsWith(".sql"))
+  .sort()
+  .map((file) => readSql(new URL(file, migrationsDirectory)))
+  .filter((sql) =>
+    sql.includes(
+      "create or replace function public.cms_resolve_site_model_components",
+    ),
+  )
+  .at(-1)!;
 
 describe("centralized site model database contract", () => {
   it("keeps the SQL resolver allowlist in exact parity with TypeScript", () => {
-    const resolverBody = migration.match(
+    const resolverBody = latestResolverMigration.match(
       /create or replace function public\.cms_resolve_site_model_components[\s\S]+?\n\$\$;/,
     )?.[0];
     expect(resolverBody).toBeDefined();

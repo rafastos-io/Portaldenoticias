@@ -24,10 +24,8 @@ export function PublicShell({
 }: PublicShellProps) {
   const tenantQuery = `?tenant=${encodeURIComponent(tenant.slug)}`;
   const currentYear = new Date().getFullYear();
-  const brandCopy = getPublicBrandCopy(
-    tenant.slug,
-    getSiteModelDefinition(theme.siteModel),
-  );
+  const model = getSiteModelDefinition(theme.siteModel);
+  const brandCopy = getPublicBrandCopy(tenant.slug, model);
   const footerLinks =
     tenant.slug === "bv-educacao"
       ? [
@@ -46,11 +44,12 @@ export function PublicShell({
           { href: `/${tenantQuery}#mercados`, label: "Mercados" },
         ];
   const font =
-    theme.font === "sans-geometrica"
+    model.fontStacks?.[theme.font] ??
+    (theme.font === "sans-geometrica"
       ? "Arial, Helvetica, sans-serif"
       : theme.font === "sans-humana"
         ? "Trebuchet MS, Arial, sans-serif"
-        : "Georgia, Times New Roman, serif";
+        : "Georgia, Times New Roman, serif");
   const themeStyle = {
     "--accent": theme.accent,
     "--brand-primary": theme.primary,

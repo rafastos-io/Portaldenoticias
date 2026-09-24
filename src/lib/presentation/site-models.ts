@@ -4,10 +4,26 @@ export type LegacyComposition = {
   hero: "featured-grid" | "science-feature" | "split-editorial";
 };
 
+export type SiteModelFontKey =
+  | "sans-editorial"
+  | "sans-humana"
+  | "sans-geometrica";
+
+export type SiteModelBrandCopy = {
+  footerDescription: string;
+  footerTopics: string;
+  headerTopics: string;
+};
+
 type SiteModelDefinitionShape = {
+  brandCopy?: SiteModelBrandCopy;
   composition: LegacyComposition;
   description: string;
   eyebrow: string;
+  /** Font stacks that replace the shared defaults only inside this model. */
+  fontStacks?: Partial<Record<SiteModelFontKey, string>>;
+  /** Maximum categories in the header navigation; null shows all. */
+  headerCategoryLimit: number | null;
   id: string;
   label: string;
   navigation: readonly string[];
@@ -23,6 +39,7 @@ const SITE_MODEL_DEFINITIONS = {
     description:
       "Central editorial de serviços com entrada por necessidade, atalhos e explicadores.",
     eyebrow: "Serviços & decisões",
+    headerCategoryLimit: null,
     id: "financial-services-credit",
     label: "Serviços financeiros e crédito",
     navigation: [
@@ -43,6 +60,7 @@ const SITE_MODEL_DEFINITIONS = {
     description:
       "Publicação premium de inteligência com leitura de cenário, rail analítico e alta densidade.",
     eyebrow: "Inteligência de mercado",
+    headerCategoryLimit: 5,
     id: "investments-asset-management",
     label: "Investimentos e gestão de recursos",
     navigation: [
@@ -63,6 +81,7 @@ const SITE_MODEL_DEFINITIONS = {
     description:
       "Guia humano de proteção e longevidade organizado por objetivos e fases da vida.",
     eyebrow: "Proteção ao longo da vida",
+    headerCategoryLimit: 5,
     id: "insurance-pension",
     label: "Seguros e previdência",
     navigation: [
@@ -83,6 +102,7 @@ const SITE_MODEL_DEFINITIONS = {
     description:
       "Briefing científico contemporâneo para pesquisa, inovação, regulação e negócios.",
     eyebrow: "Ciência, saúde & negócios",
+    headerCategoryLimit: 9,
     id: "health-pharma",
     label: "Saúde e indústria farmacêutica",
     navigation: [
@@ -92,6 +112,40 @@ const SITE_MODEL_DEFINITIONS = {
       "Saúde digital",
       "Regulação",
       "Longevidade",
+    ],
+  },
+  "automotive-mobility": {
+    brandCopy: {
+      footerDescription:
+        "Informação para quem compra, financia e dirige: crédito, mercado, segurança, estrada e cultura automotiva em uma experiência editorial white-label.",
+      footerTopics: "Crédito · Mercado · Estrada",
+      headerTopics: "Crédito · Mercado · Estrada",
+    },
+    composition: {
+      card: "image-top",
+      header: "masthead-clean",
+      hero: "featured-grid",
+    },
+    description:
+      "Portal de notícias automotivo em faixas temáticas: dinheiro, carro e mobilidade antes, durante e depois da compra.",
+    eyebrow: "Dinheiro · Carro · Mobilidade",
+    fontStacks: {
+      "sans-geometrica":
+        "var(--font-dm-sans), 'DM Sans', Arial, Helvetica, sans-serif",
+    },
+    headerCategoryLimit: null,
+    id: "automotive-mobility",
+    label: "Mobilidade e automotivo",
+    navigation: [
+      "Crédito",
+      "Concessionárias",
+      "Evite Acidentes",
+      "Raridade",
+      "Ruas e Avenidas",
+      "Estradas",
+      "Serviços e Manutenção",
+      "Ainda terei um carro assim",
+      "Área do Piloto",
     ],
   },
 } as const satisfies Readonly<Record<string, SiteModelDefinitionShape>>;
