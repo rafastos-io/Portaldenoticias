@@ -72,7 +72,7 @@ protocolo está em `docs/25-protocolo-revisao-estrutural.md` e a baseline em
 | R303 | P1 | DONE | R302 | Consolidar `site_model`, registro de componentes e paridade TypeScript/SQL |
 | R304 | P1 | READY | R303 | Remover código morto confirmado, exceções por slug e reconciliar documentação — **pendência de segurança adiada, obrigatória antes de migrar `bv-educacao` ou abrir um sexto modelo** |
 | R305 | P1 | BLOCKED | R304 | Versionar matriz E2E dos cinco modelos e corrigir atritos mobile — **pendência de segurança adiada, mesma condição de R304** |
-| R310 | P1 | IN_PROGRESS | D34 | Implementar o quinto modelo `automotive-mobility` e o tenant isolado `financiacar` |
+| R310 | P1 | DONE | D34 | Implementar o quinto modelo `automotive-mobility` e o tenant isolado `financiacar` — promovido a produção em 24/09/2026 |
 | R311 | P1 | BLOCKED | R310 | Matriz local/Preview do novo modelo e auditoria adversarial |
 
 Emenda de 23/09/2026: D34 foi decidida (briefing FinanciaCar/Banco BV). O
@@ -81,6 +81,12 @@ cria um tenant novo e isolado e não altera nenhum tenant existente. `R304` e
 `R305` continuam obrigatórias e voltam a ser a prioridade assim que o
 FinanciaCar estabilizar. Registro na CENTRAL:
 `Freelancers/05 - Decisões/DEC-2026-09-02 - Definir o quinto modelo do Broadcast`.
+
+Emenda de 24/09/2026: junto com R310 foram para produção o título de aba e o
+favicon por cliente e a restauração da navegação própria do Crédito Demo Órbita
+(migration `20260924010000`), que havia recebido o menu do catálogo BV em
+20/08. Reexecutar `private.apply_bv_educacao_credit_catalog()` sobrescreve esse
+menu; nesse caso, reexecutar `private.restore_orbita_navigation()`.
 
 ## Critérios por tarefa
 
