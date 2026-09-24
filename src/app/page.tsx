@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PublicPortalRenderer } from "@/components/public/public-portal-renderer";
@@ -6,14 +7,16 @@ import { getMarketQuotes } from "@/lib/market/market-data";
 import { listPublicCategories } from "@/lib/presentation/public-categories";
 import { parsePublicTenantRequest } from "@/lib/public-tenant-request";
 import {
+  loadPublicStories,
+  loadPublicTenant,
+  loadTenantTheme,
+} from "@/lib/presentation/public-page-data";
+import { buildTenantMetadata } from "@/lib/presentation/tenant-metadata";
+import {
   getDemoTenantIdentity,
   getDemoTenantThemeFallback,
   listHomePlacementIds,
-  listPublicStories,
-  resolveDefaultPublicTenant,
-  resolvePublicTenant,
 } from "@/lib/supabase/portal-repository";
-import { getTenantTheme } from "@/lib/supabase/theme-repository";
 
 export const dynamic = "force-dynamic";
 
@@ -24,15 +27,14 @@ async function loadHome(request: ReturnType<typeof parsePublicTenantRequest>) {
     if (request.kind === "invalid") {
       return { found: false as const, ok: true as const };
     }
-    const tenant =
-      request.kind === "explicit"
-        ? await resolvePublicTenant(request.slug)
-        : await resolveDefaultPublicTenant();
+    const tenant = await loadPublicTenant(
+      request.kind === "explicit" ? request.slug : null,
+    );
     if (!tenant) return { found: false as const, ok: true as const };
-    const theme = await getTenantTheme(tenant.id);
+    const theme = await loadTenantTheme(tenant.id);
     if (!theme) return { found: false as const, ok: true as const };
     const [stories, placements, marketQuotes] = await Promise.all([
-      listPublicStories(tenant.id, tenant.catalogReferences),
+      loadPublicStories(tenant.id, tenant.catalogReferences),
       listHomePlacementIds(tenant.id),
       getMarketQuotes(theme.siteModel),
     ]);
@@ -48,6 +50,15 @@ async function loadHome(request: ReturnType<typeof parsePublicTenantRequest>) {
   } catch {
     return { ok: false as const };
   }
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  return buildTenantMetadata(params.tenant, { kind: "home" });
 }
 
 export default async function HomePage({

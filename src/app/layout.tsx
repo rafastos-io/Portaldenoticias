@@ -7,6 +7,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Broadcast Saúde & Longevidade",
   description: "Plataforma editorial B2B demonstrativa.",
+  icons: { icon: { type: "image/svg+xml", url: "/favicon.svg" } },
   robots: {
     index: false,
     follow: false,
